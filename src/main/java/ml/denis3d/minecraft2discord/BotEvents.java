@@ -132,6 +132,6 @@ public class BotEvents extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
         if (Config.SERVER.chatChannel.get() == event.getChannel().getIdLong())
             if (!event.getAuthor().isBot())
-                ServerLifecycleHooks.getCurrentServer().func_184103_al().sendMessage(new StringTextComponent("<Discord - " + event.getAuthor().getName() + "> " + event.getMessage().getContentDisplay()));
+                ServerLifecycleHooks.getCurrentServer().getPlayerList().sendMessage(new StringTextComponent("<Discord - " + event.getAuthor().getName() + "> " + event.getMessage().getContentDisplay()));
     }
 }

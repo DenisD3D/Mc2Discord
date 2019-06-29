@@ -33,9 +33,9 @@ minecraft {
     // stable_#            Stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'snapshot', version: '20190625-1.14.3'
+    mappings channel: 'snapshot', version: '20190627-1.14.3'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-    
+
     // accessTransformer = file('build/resources/main/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
@@ -91,7 +91,7 @@ dependencies {
 
 }
 
-build.dependsOn(shadowJar)
+
 
 shadowJar {
     relocate 'org.apache.commons.collections4', 'ml.denis3d.repack.org.apache.commons.collections4'
@@ -113,9 +113,11 @@ shadowJar {
 }
 
 reobf {
-    shadowJar
+    shadowJar {
+        dependsOn createMcpToSrg
+        mappings = createMcpToSrg.output
+    }
 }
-
 
 artifacts {
     archives shadowJar
@@ -136,3 +138,5 @@ jar {
         ])
     }
 }
+
+build.dependsOn(shadowJar)
