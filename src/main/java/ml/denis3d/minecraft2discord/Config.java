@@ -14,24 +14,41 @@ public class Config {
     }
 
     public static class Server {
+        //Discord config
         public final ForgeConfigSpec.ConfigValue<String> botToken;
+        ////Channels ids
         public final ForgeConfigSpec.ConfigValue<Long> chatChannel;
         public final ForgeConfigSpec.ConfigValue<Long> infoChannel;
 
-        public final ForgeConfigSpec.BooleanValue showJoinLeftMessages;
-        public final ForgeConfigSpec.BooleanValue showAdvancementMessages;
-        public final ForgeConfigSpec.BooleanValue showDeathMessages;
+        //Features on/off
+        public final ForgeConfigSpec.BooleanValue sendJoinLeftMessages;
+        public final ForgeConfigSpec.BooleanValue sendAdvancementMessages;
+        public final ForgeConfigSpec.BooleanValue sendDeathsMessages;
+        public final ForgeConfigSpec.BooleanValue sendServerStartStopMessages;
+        public final ForgeConfigSpec.BooleanValue discordCommandEnabled;
+
+        //Messages
+        public final ForgeConfigSpec.ConfigValue<String> joinMessage;
+        public final ForgeConfigSpec.ConfigValue<String> leftMessage;
+        public final ForgeConfigSpec.ConfigValue<String> advancementMessage;
+        public final ForgeConfigSpec.ConfigValue<String> deathMessage;
+        public final ForgeConfigSpec.ConfigValue<String> serverStartMessage;
+        public final ForgeConfigSpec.ConfigValue<String> serverStopMessage;
+
+        //Misc
+        public final ForgeConfigSpec.ConfigValue<String> discordInviteLink;
         public final ForgeConfigSpec.ConfigValue<String> discordPictureAPI;
 
         public Server(ForgeConfigSpec.Builder builder) {
-            builder.comment(" Config for the discord side")
+            //Discord config
+            builder.comment(" Config for data coming from your discord server")
                     .push("Discord");
 
             botToken = builder
-                    .comment(" Place here your Minecraft bot TOKEN")
+                    .comment(" Token for your Discord bot. Look at curseforge project one if you don't know how to get one")
                     .define("botToken", "");
 
-
+            ////Channels ids config
             builder.comment(" Discord Channels Ids")
                     .push("Channels");
 
@@ -40,25 +57,85 @@ public class Config {
                     .define("chat", 000000000000000000l);
 
             infoChannel = builder
-                    .comment(" Info : Death, success...")
+                    .comment(" Info : Death, Advancement, Join / Left, Server Start/Stop...")
                     .define("info", 000000000000000000l);
+
+            ////END Channels ids config
             builder.pop();
 
-            showJoinLeftMessages = builder
-                    .comment(" Show the player join/left messages (send in the info channel)")
-                    .define("showJoinLeftMessages", true);
+            //END Discord config
+            builder.pop();
 
-            showAdvancementMessages = builder
-                    .comment(" Show the advancement messages (send in the info channel)")
-                    .define("showAdvancementMessages", true);
+            //Features on/off
+            builder.comment(" Toggle features on and off (Send in info channel)")
+                    .push("Features");
 
-            showDeathMessages = builder
-                    .comment(" Show the death messages (send in the info channel)")
-                    .define("showDeathMessages", true);
+            sendJoinLeftMessages = builder
+                    .comment(" Send players join/left messages.")
+                    .define("sendJoinLeftMessages", true);
+
+            sendAdvancementMessages = builder
+                    .comment(" Send players advancements messages.")
+                    .define("sendAdvancementsMessages", true);
+
+            sendDeathsMessages = builder
+                    .comment(" Send players deaths messages.")
+                    .define("sendDeathsMessages", true);
+
+            sendServerStartStopMessages = builder
+                    .comment(" Send server start/stop messages.")
+                    .define("sendServerStartStopMessages", true);
+
+            discordCommandEnabled = builder
+                    .comment(" Enable or disable the discord command that show an invite link (cf : Misc.discordInviteLink")
+                    .define("discordCommandEnabled", true);
+
+            //END Features on/off
+            builder.pop();
+
+            //Message configuration
+            builder.comment(" Customise the messages here")
+                    .push("Messages");
+
+            joinMessage = builder
+                    .comment(" $1 = player name")
+                    .define("joinMessage", "$1 joined the game.");
+
+            leftMessage = builder
+                    .comment(" $1 = player name")
+                    .define("leftMessage", "$1 left the game.");
+
+            advancementMessage = builder
+                    .comment(" $1 = player name, $2 = advancement")
+                    .define("advancementMessage", "$1 has made the advancement $2.");
+
+            deathMessage = builder
+                    .comment(" $1 = player name, $2 = death message")
+                    .define("deathMessage", "$1 $2.");
+
+            serverStartMessage = builder
+                    .comment("No variable")
+                    .define("serverStartMessage", "Server has started.");
+
+            serverStopMessage = builder
+                    .comment("No variable")
+                    .define("serverStopMessage", "Server has stopped.");
+
+            //END Message configuration
+            builder.pop();
+
+            //Misc configuration
+            builder.comment(" Some miscellaneous configuration")
+                    .push("Misc");
+
+            discordInviteLink = builder
+                    .comment(" Invite link for your discord server")
+                    .define("discordInviteLink", "Invite link not set");
 
             discordPictureAPI = builder
-                    .comment(" Define the url where to request the discord profile picture of the player. $1 is player name and $2 is the player UUID Default : minotar.net API.")
+                    .comment(" API url for discord profile picture. $1 is player name and $2 is the player UUID.")
                     .define("discordPictureAPI", "https://minotar.net/avatar/$1");
+            //END Misc configuration
             builder.pop();
         }
     }

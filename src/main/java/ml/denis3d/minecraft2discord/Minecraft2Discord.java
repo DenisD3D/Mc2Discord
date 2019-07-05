@@ -2,12 +2,14 @@ package ml.denis3d.minecraft2discord;
 
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,6 +24,7 @@ public class Minecraft2Discord {
 
     public Minecraft2Discord() {
         MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onServerReady);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onServerStop);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SERVER_SPECS);
     }
 
@@ -30,10 +33,27 @@ public class Minecraft2Discord {
     }
 
     public void onServerReady(FMLServerStartingEvent event) {
+        if (Config.SERVER.discordCommandEnabled.get()) {
+            DiscordCommand.register(event.getCommandDispatcher());
+        }
+
         try {
             DISCORD_BOT = new JDABuilder(Config.SERVER.botToken.get()).addEventListener(new BotEvents()).build();
         } catch (LoginException e) {
             LOGGER.error(e.getMessage());
         }
+    }
+
+    public void onServerStop(FMLServerStoppedEvent event) {
+        if (Config.SERVER.sendServerStartStopMessages.get() || Config.SERVER.infoChannel.get() == 0) {
+            if (getDiscordBot() == null)
+                return;
+
+            TextChannel infoChannel = DISCORD_BOT.getTextChannelById(Config.SERVER.infoChannel.get());
+            if (infoChannel != null)
+                infoChannel.sendMessage(Config.SERVER.serverStopMessage.get()).queue();
+        }
+
+        DISCORD_BOT.shutdown();
     }
 }

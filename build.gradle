@@ -17,7 +17,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.14.3-1.0.0'
+version = '1.14.3-1.0.1'
 group = 'ml.denis3d.minecraft2discord' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'minecraft2discord'
 
@@ -87,8 +87,6 @@ dependencies {
     shadow ('net.dv8tion:JDA:3.8.3_463') {
         exclude module: 'opus-java'
     }
-
-
 }
 
 
@@ -130,7 +128,7 @@ jar {
         attributes([
             "Specification-Title": "Minecraft2Discord",
             "Specification-Vendor": "Denis3D",
-            "Specification-Version": "${version}", // We are version 1 of ourselves
+            "Specification-Version": "${version}",
             "Implementation-Title": project.name,
             "Implementation-Version": "${version}",
             "Implementation-Vendor" :"Denis3D",

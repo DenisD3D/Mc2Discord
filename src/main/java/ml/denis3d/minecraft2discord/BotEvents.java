@@ -60,7 +60,7 @@ public class BotEvents extends ListenerAdapter {
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {
         if (event.getEntityLiving() instanceof PlayerEntity) {
-            if (Config.SERVER.showDeathMessages.get() || Config.SERVER.infoChannel.get() == 0) {
+            if (Config.SERVER.sendDeathsMessages.get() || Config.SERVER.infoChannel.get() == 0) {
                 if (Minecraft2Discord.getDiscordBot() == null)
                     return;
 
@@ -69,7 +69,7 @@ public class BotEvents extends ListenerAdapter {
                 }
                 if (infoChannel != null) {
                     PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-                    infoChannel.sendMessage(player.getName().getUnformattedComponentText() + player.getCombatTracker().getDeathMessage().getUnformattedComponentText()).submit();
+                    infoChannel.sendMessage(Config.SERVER.deathMessage.get().replace("$1", player.getName().getUnformattedComponentText()).replace("$2", player.getCombatTracker().getDeathMessage().getUnformattedComponentText())).submit();
                 }
             }
         }
@@ -78,7 +78,7 @@ public class BotEvents extends ListenerAdapter {
     @SubscribeEvent
     public static void onAdvancement(AdvancementEvent event) {
         if (event.getEntityLiving() instanceof PlayerEntity && !event.getAdvancement().getId().getPath().startsWith("recipes")) {
-            if (Config.SERVER.showAdvancementMessages.get() || Config.SERVER.infoChannel.get() == 0) {
+            if (Config.SERVER.sendAdvancementMessages.get() || Config.SERVER.infoChannel.get() == 0) {
                 if (Minecraft2Discord.getDiscordBot() == null)
                     return;
 
@@ -87,7 +87,7 @@ public class BotEvents extends ListenerAdapter {
                 }
                 if (infoChannel != null) {
                     PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-                    infoChannel.sendMessage(player.getName().getUnformattedComponentText() + " has made the advancement " + event.getAdvancement().getDisplayText().getString()).submit();
+                    infoChannel.sendMessage(Config.SERVER.advancementMessage.get().replace("$1", player.getName().getUnformattedComponentText()).replace("$2", event.getAdvancement().getDisplayText().getString())).submit();
                 }
             }
         }
@@ -95,7 +95,8 @@ public class BotEvents extends ListenerAdapter {
 
     @SubscribeEvent
     public static void onPlayerLoggin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (Config.SERVER.showJoinLeftMessages.get() || Config.SERVER.infoChannel.get() == 0) {
+        System.out.println(event.getPlayer().getHeldItemMainhand().getItem());
+        if (Config.SERVER.sendJoinLeftMessages.get() || Config.SERVER.infoChannel.get() == 0) {
             if (Minecraft2Discord.getDiscordBot() == null)
                 return;
 
@@ -103,14 +104,14 @@ public class BotEvents extends ListenerAdapter {
                 infoChannel = Minecraft2Discord.getDiscordBot().getTextChannelById(Config.SERVER.infoChannel.get());
             }
             if (infoChannel != null) {
-                infoChannel.sendMessage(event.getPlayer().getName().getUnformattedComponentText() + " joined the game").submit();
+                infoChannel.sendMessage(Config.SERVER.joinMessage.get().replace("$1", event.getPlayer().getName().getUnformattedComponentText())).submit();
             }
         }
     }
 
     @SubscribeEvent
     public static void onPlayerLeft(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (Config.SERVER.showJoinLeftMessages.get() || Config.SERVER.infoChannel.get() == 0) {
+        if (Config.SERVER.sendJoinLeftMessages.get() || Config.SERVER.infoChannel.get() == 0) {
             if (Minecraft2Discord.getDiscordBot() == null)
                 return;
 
@@ -118,7 +119,7 @@ public class BotEvents extends ListenerAdapter {
                 infoChannel = Minecraft2Discord.getDiscordBot().getTextChannelById(Config.SERVER.infoChannel.get());
             }
             if (infoChannel != null) {
-                infoChannel.sendMessage(event.getPlayer().getName().getUnformattedComponentText() + " left the game").submit();
+                infoChannel.sendMessage(Config.SERVER.leftMessage.get().replace("$1", event.getPlayer().getName().getUnformattedComponentText())).submit();
             }
         }
     }
@@ -126,6 +127,14 @@ public class BotEvents extends ListenerAdapter {
     @Override
     public void onReady(ReadyEvent event) {
         System.out.println("Discord bot logged as " + event.getJDA().getSelfUser().getName());
+        if (Config.SERVER.sendServerStartStopMessages.get() || Config.SERVER.infoChannel.get() == 0) {
+            if (infoChannel == null) {
+                infoChannel = Minecraft2Discord.getDiscordBot().getTextChannelById(Config.SERVER.infoChannel.get());
+            }
+            if (infoChannel != null) {
+                infoChannel.sendMessage(Config.SERVER.serverStartMessage.get()).submit();
+            }
+        }
     }
 
     @Override
