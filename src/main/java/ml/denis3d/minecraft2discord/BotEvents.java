@@ -95,7 +95,6 @@ public class BotEvents extends ListenerAdapter {
 
     @SubscribeEvent
     public static void onPlayerLoggin(PlayerEvent.PlayerLoggedInEvent event) {
-        System.out.println(event.getPlayer().getHeldItemMainhand().getItem());
         if (Config.SERVER.sendJoinLeftMessages.get() || Config.SERVER.infoChannel.get() == 0) {
             if (Minecraft2Discord.getDiscordBot() == null)
                 return;
