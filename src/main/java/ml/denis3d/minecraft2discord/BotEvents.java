@@ -14,8 +14,10 @@ import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.List;
@@ -31,7 +33,6 @@ public class BotEvents extends ListenerAdapter {
 
     @SubscribeEvent
     public static void onServerChat(final ServerChatEvent event) {
-        System.out.println(event.getPlayer().getUniqueID().toString());
         if (Minecraft2Discord.getDiscordBot() == null)
             return;
         if (chatChannel == null) {
@@ -141,5 +142,55 @@ public class BotEvents extends ListenerAdapter {
         if (Config.SERVER.chatChannel.get() == event.getChannel().getIdLong())
             if (!event.getAuthor().isBot())
                 ServerLifecycleHooks.getCurrentServer().getPlayerList().sendMessage(new StringTextComponent("<Discord - " + event.getAuthor().getName() + "> " + event.getMessage().getContentDisplay()));
+    }
+
+
+    @SubscribeEvent
+    public static void onServerTick(TickEvent.ServerTickEvent event) {
+        InterModComms.getMessages("minecraft2discord").forEach(imcMessage -> {
+            if (imcMessage.getMethod().equals("info_channel"))
+            {
+                if (Config.SERVER.allowInterModComms.get() || Config.SERVER.infoChannel.get() == 0) {
+                    if (Minecraft2Discord.getDiscordBot() == null)
+                        return;
+
+                    if (infoChannel == null) {
+                        infoChannel = Minecraft2Discord.getDiscordBot().getTextChannelById(Config.SERVER.infoChannel.get());
+                    }
+                    if (infoChannel != null) {
+                        infoChannel.sendMessage(imcMessage.getMessageSupplier().get().toString()).submit();
+                    }
+                }
+            }
+
+            if (imcMessage.getMethod().equals("chat_channel"))
+            {
+                if (Config.SERVER.allowInterModComms.get() || Config.SERVER.chatChannel.get() == 0) {
+                    if (Minecraft2Discord.getDiscordBot() == null)
+                        return;
+
+                    if (chatChannel == null) {
+                        chatChannel = Minecraft2Discord.getDiscordBot().getTextChannelById(Config.SERVER.infoChannel.get());
+                    }
+                    if (chatChannel != null) {
+                        chatChannel.sendMessage(imcMessage.getMessageSupplier().get().toString()).submit();
+                    }
+                }
+            }
+
+            if (imcMessage.getMethod().matches("\\d+"))
+            {
+                if (Config.SERVER.allowInterModComms.get()) {
+                    if (Minecraft2Discord.getDiscordBot() == null)
+                        return;
+
+                    TextChannel channel = Minecraft2Discord.getDiscordBot().getTextChannelById(imcMessage.getMethod());
+
+                    if (channel != null) {
+                        channel.sendMessage(imcMessage.getMessageSupplier().get().toString()).submit();
+                    }
+                }
+            }
+        });
     }
 }

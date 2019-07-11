@@ -38,6 +38,8 @@ public class Config {
         //Misc
         public final ForgeConfigSpec.ConfigValue<String> discordInviteLink;
         public final ForgeConfigSpec.ConfigValue<String> discordPictureAPI;
+        public final ForgeConfigSpec.BooleanValue allowInterModComms;
+
 
         public Server(ForgeConfigSpec.Builder builder) {
             //Discord config
@@ -135,6 +137,11 @@ public class Config {
             discordPictureAPI = builder
                     .comment(" API url for discord profile picture. $1 is player name and $2 is the player UUID.")
                     .define("discordPictureAPI", "https://minotar.net/avatar/$1");
+
+            allowInterModComms = builder
+                    .comment(" Allow other mod to send message to discord using Minecraft2Discord")
+                    .define("discordCommandEnabled", true);
+
             //END Misc configuration
             builder.pop();
         }
