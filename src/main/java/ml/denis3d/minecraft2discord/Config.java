@@ -1,7 +1,11 @@
 package ml.denis3d.minecraft2discord;
 
+import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Config {
     public static final ForgeConfigSpec SERVER_SPECS;
@@ -16,6 +20,7 @@ public class Config {
     public static class Server {
         //Discord config
         public final ForgeConfigSpec.ConfigValue<String> botToken;
+        public final ForgeConfigSpec.ConfigValue<List<? extends Long>> commandAllowedUsersIds;
         ////Channels ids
         public final ForgeConfigSpec.ConfigValue<Long> chatChannel;
         public final ForgeConfigSpec.ConfigValue<Long> infoChannel;
@@ -39,7 +44,7 @@ public class Config {
         public final ForgeConfigSpec.ConfigValue<String> discordInviteLink;
         public final ForgeConfigSpec.ConfigValue<String> discordPictureAPI;
         public final ForgeConfigSpec.BooleanValue allowInterModComms;
-
+        public final ForgeConfigSpec.ConfigValue<List<? extends String>> hideAdvancementList;
 
         public Server(ForgeConfigSpec.Builder builder) {
             //Discord config
@@ -49,6 +54,10 @@ public class Config {
             botToken = builder
                     .comment(" Token for your Discord bot. Look at curseforge project one if you don't know how to get one")
                     .define("botToken", "");
+
+            commandAllowedUsersIds = builder
+                    .comment(" List of the member who is allowed to use command from discord (include op and no-op command)")
+                    .defineList("commandAllowedUsersIds", Lists.newArrayList(), o -> o instanceof Long);
 
             ////Channels ids config
             builder.comment(" Discord Channels Ids")
@@ -141,6 +150,10 @@ public class Config {
             allowInterModComms = builder
                     .comment(" Allow other mod to send message to discord using Minecraft2Discord")
                     .define("discordCommandEnabled", true);
+
+            hideAdvancementList = builder
+                    .comment(" List of advancement that will not be sent. 'modid' will remove every advancement from a mod (ex:minecraft) and modid:path/to/advancement will remove every advancement under this path (ex: minecraft:nether")
+                    .defineList("hideAdvancementList", Lists.newArrayList(), o -> o instanceof String);
 
             //END Misc configuration
             builder.pop();

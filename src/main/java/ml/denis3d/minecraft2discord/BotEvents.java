@@ -7,8 +7,14 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.webhook.WebhookClient;
 import net.dv8tion.jda.webhook.WebhookMessageBuilder;
+import net.minecraft.client.Minecraft;
+import net.minecraft.command.CommandSource;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -79,6 +85,10 @@ public class BotEvents extends ListenerAdapter {
     @SubscribeEvent
     public static void onAdvancement(AdvancementEvent event) {
         if (event.getEntityLiving() instanceof PlayerEntity && !event.getAdvancement().getId().getPath().startsWith("recipes")) {
+            if (Config.SERVER.hideAdvancementList.get().stream().anyMatch(s -> ((String) s).startsWith(event.getAdvancement().getId().toString())))
+            {
+                return;
+            }
             if (Config.SERVER.sendAdvancementMessages.get() || Config.SERVER.infoChannel.get() == 0) {
                 if (Minecraft2Discord.getDiscordBot() == null)
                     return;
@@ -139,9 +149,24 @@ public class BotEvents extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        if (Config.SERVER.chatChannel.get() == event.getChannel().getIdLong())
-            if (!event.getAuthor().isBot())
-                ServerLifecycleHooks.getCurrentServer().getPlayerList().sendMessage(new StringTextComponent("<Discord - " + event.getAuthor().getName() + "> " + event.getMessage().getContentDisplay()));
+        if (Config.SERVER.chatChannel.get() == event.getChannel().getIdLong()) {
+            if (!event.getAuthor().isBot()) {
+                if (event.getMessage().getContentRaw().startsWith("/") && Config.SERVER.commandAllowedUsersIds.get().contains(event.getAuthor().getIdLong())) {
+                    ServerLifecycleHooks.getCurrentServer().getCommandManager().handleCommand(
+                            new CommandSource(new DiscordCommandSource(event.getChannel()),
+                                    ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD) == null ? Vec3d.ZERO : new Vec3d(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getSpawnPoint()),
+                                    Vec2f.ZERO,
+                                    ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD),
+                                    4,
+                                    "Discord",
+                                    new StringTextComponent("Discord"),
+                                    ServerLifecycleHooks.getCurrentServer(),
+                                    (Entity) null), event.getMessage().getContentDisplay());
+                } else {
+                    ServerLifecycleHooks.getCurrentServer().getPlayerList().sendMessage(new StringTextComponent("<Discord - " + event.getAuthor().getName() + "> " + event.getMessage().getContentDisplay()));
+                }
+            }
+        }
     }
 
 
