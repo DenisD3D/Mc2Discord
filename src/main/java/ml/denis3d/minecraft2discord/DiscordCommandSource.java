@@ -15,7 +15,7 @@ public class DiscordCommandSource implements ICommandSource {
     @Override
     public void sendMessage(ITextComponent component) {
         if (channel != null) {
-            channel.sendMessage(component.getUnformattedComponentText()).submit();
+            channel.sendMessage(component.getFormattedText().replaceAll("§.", "")).submit();
         }
     }
 

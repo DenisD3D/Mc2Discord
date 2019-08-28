@@ -109,7 +109,7 @@ public class Config {
 
             enableDiscordPresence = builder
                     .comment(" Enable or disable discord presence of the bot (ex : Playing .......)")
-                    .define("enableDiscordPresence", true);
+                    .define("enableDiscordPresence", false);
 
             //END Features on/off
             builder.pop();
