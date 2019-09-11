@@ -17,7 +17,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.14.4-1.0.6'
+version = '1.14.4-1.0.7'
 group = 'ml.denis3d.minecraft2discord' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'minecraft2discord'
 

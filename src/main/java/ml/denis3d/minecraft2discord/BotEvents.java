@@ -44,22 +44,26 @@ public class BotEvents extends ListenerAdapter {
             chatChannel = Minecraft2Discord.getDiscordBot().getTextChannelById(Config.SERVER.chatChannel.get());
         }
         if (chatChannel != null && Config.SERVER.chatChannel.get() != 0) {
-            if (discordWebhookClient == null) {
-                if (discordWebhook == null) {
-                    List discordWebhooks = chatChannel.getWebhooks().complete().stream().filter(webhook -> webhook.getName().startsWith("Minecraft2Discord")).collect(Collectors.toList());
-                    if (discordWebhooks.size() == 0) {
-                        discordWebhook = chatChannel.createWebhook("Minecraft2Discord").complete();
-                    } else {
-                        discordWebhook = (Webhook) discordWebhooks.get(0);
+            if (Config.SERVER.useDiscordWebhooks.get()) {
+                if (discordWebhookClient == null) {
+                    if (discordWebhook == null) {
+                        List discordWebhooks = chatChannel.getWebhooks().complete().stream().filter(webhook -> webhook.getName().startsWith("Minecraft2Discord")).collect(Collectors.toList());
+                        if (discordWebhooks.size() == 0) {
+                            discordWebhook = chatChannel.createWebhook("Minecraft2Discord").complete();
+                        } else {
+                            discordWebhook = (Webhook) discordWebhooks.get(0);
+                        }
                     }
+                    discordWebhookClient = discordWebhook.newClient().build();
                 }
-                discordWebhookClient = discordWebhook.newClient().build();
+                builder = new WebhookMessageBuilder();
+                builder.setContent(event.getMessage())
+                        .setUsername(event.getUsername())
+                        .setAvatarUrl(Utils.globalVariableReplacement(Config.SERVER.discordPictureAPI.get()).replace("$1", event.getUsername()).replace("$2", event.getPlayer().getUniqueID().toString()));
+                discordWebhookClient.send(builder.build());
+            } else {
+                chatChannel.sendMessage("**" + event.getUsername() + "** : " + event.getMessage()).submit();
             }
-            builder = new WebhookMessageBuilder();
-            builder.setContent(event.getMessage())
-                    .setUsername(event.getUsername())
-                    .setAvatarUrl(Utils.globalVariableReplacement(Config.SERVER.discordPictureAPI.get()).replace("$1", event.getUsername()).replace("$2", event.getPlayer().getUniqueID().toString()));
-            discordWebhookClient.send(builder.build());
         }
 
         Utils.updateDiscordPresence();
@@ -100,7 +104,14 @@ public class BotEvents extends ListenerAdapter {
                 }
                 if (infoChannel != null) {
                     PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-                    infoChannel.sendMessage(Utils.globalVariableReplacement(Config.SERVER.advancementMessage.get()).replace("$1", player.getName().getUnformattedComponentText()).replace("$2", event.getAdvancement().getDisplayText().getString()).replace("$3", (event.getAdvancement().getDisplay().getDescription() != null ? event.getAdvancement().getDisplay().getDescription().getUnformattedComponentText() : ""))).submit();
+                    String message = Utils.globalVariableReplacement(Config.SERVER.advancementMessage.get());
+                    message = message.replace("$1", player.getName().getUnformattedComponentText());
+                    message = message.replace("$2", event.getAdvancement().getDisplayText().getString());
+                    if (event.getAdvancement().getDisplay() != null)
+                        message = message.replace("$3", event.getAdvancement().getDisplay().getDescription().getUnformattedComponentText());
+                    else
+                        message = message.replace("$3", "");
+                    infoChannel.sendMessage(message).submit();
                 }
             }
         }

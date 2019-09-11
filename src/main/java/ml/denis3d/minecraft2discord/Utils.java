@@ -16,7 +16,7 @@ public class Utils {
     }
 
     public static void updateDiscordPresence() {
-        if (Config.SERVER.enableDiscordPresence.get()) {
+        if (Config.SERVER.enableDiscordPresence.get() && Minecraft2Discord.getDiscordBot() != null) {
             Minecraft2Discord.getDiscordBot().getPresence().setGame(Game.playing(globalVariableReplacement(Config.SERVER.discordPresence.get())));
         }
 

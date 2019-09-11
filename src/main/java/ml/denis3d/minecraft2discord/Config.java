@@ -32,6 +32,7 @@ public class Config {
         public final ForgeConfigSpec.BooleanValue sendServerStartStopMessages;
         public final ForgeConfigSpec.BooleanValue discordCommandEnabled;
         public final ForgeConfigSpec.BooleanValue enableDiscordPresence;
+        public final ForgeConfigSpec.BooleanValue useDiscordWebhooks;
 
         //Messages
         public final ForgeConfigSpec.ConfigValue<String> joinMessage;
@@ -110,6 +111,10 @@ public class Config {
             enableDiscordPresence = builder
                     .comment(" Enable or disable discord presence of the bot (ex : Playing .......)")
                     .define("enableDiscordPresence", false);
+
+            useDiscordWebhooks = builder
+                    .comment(" Enable or disable the use of webhooks (custom profile picture and name in discord). If false message will be send with the bot account in the form : player_name : message")
+                    .define("useDiscordWebhooks", true);
 
             //END Features on/off
             builder.pop();
