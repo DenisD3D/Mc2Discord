@@ -1,9 +1,9 @@
 package ml.denis3d.minecraft2discord;
 
-import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Config {
@@ -22,8 +22,8 @@ public class Config {
         public final ForgeConfigSpec.ConfigValue<List<? extends Long>> commandAllowedUsersIds;
         public final ForgeConfigSpec.ConfigValue<List<? extends Long>> commandAllowedRolesIds;
         ////Channels ids
-        public final ForgeConfigSpec.ConfigValue<Long> chatChannel;
-        public final ForgeConfigSpec.ConfigValue<Long> infoChannel;
+        public final ForgeConfigSpec.LongValue chatChannel;
+        public final ForgeConfigSpec.LongValue infoChannel;
 
         //Features on/off
         public final ForgeConfigSpec.BooleanValue sendJoinLeftMessages;
@@ -60,11 +60,11 @@ public class Config {
 
             commandAllowedUsersIds = builder
                     .comment(" List of the members who is allowed to use command from discord (include op and no-op command)")
-                    .defineList("commandAllowedUsersIds", Lists.newArrayList(), o -> o instanceof Long);
+                    .defineList("commandAllowedUsersIds", ArrayList::new, e -> e instanceof Long);
 
             commandAllowedRolesIds = builder
                     .comment(" List of the roles who is allowed to use command from discord (include op and no-op command)")
-                    .defineList("commandAllowedRolesIds", Lists.newArrayList(), o -> o instanceof Long);
+                    .defineList("commandAllowedRolesIds", ArrayList::new, e -> e instanceof Long);
 
             ////Channels ids config
             builder.comment(" Discord Channels Ids")
@@ -72,11 +72,11 @@ public class Config {
 
             chatChannel = builder
                     .comment(" Chat : All players messages")
-                    .define("chat", 000000000000000000l);
+                    .defineInRange("chat", 0, 0, Long.MAX_VALUE);
 
             infoChannel = builder
                     .comment(" Info : Death, Advancement, Join / Left, Server Start/Stop...")
-                    .define("info", 000000000000000000l);
+                    .defineInRange("info", 0, 0, Long.MAX_VALUE);
 
             ////END Channels ids config
             builder.pop();
@@ -172,7 +172,7 @@ public class Config {
 
             hideAdvancementList = builder
                     .comment(" List of advancement that will not be sent. 'modid' will remove every advancement from a mod (ex:minecraft) and modid:path/to/advancement will remove every advancement under this path (ex: minecraft:nether")
-                    .defineList("hideAdvancementList", Lists.newArrayList(), o -> o instanceof String);
+                    .defineList("hideAdvancementList", ArrayList::new, e -> e instanceof String);
 
             //END Misc configuration
             builder.pop();

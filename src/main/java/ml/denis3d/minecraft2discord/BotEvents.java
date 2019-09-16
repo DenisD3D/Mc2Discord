@@ -43,7 +43,7 @@ public class BotEvents extends ListenerAdapter {
         if (chatChannel == null) {
             chatChannel = Minecraft2Discord.getDiscordBot().getTextChannelById(Config.SERVER.chatChannel.get());
         }
-        if (chatChannel != null && Config.SERVER.chatChannel.get() != 0) {
+        if (chatChannel != null && Config.SERVER.chatChannel.get() != 0L) {
             if (Config.SERVER.useDiscordWebhooks.get()) {
                 if (discordWebhookClient == null) {
                     if (discordWebhook == null) {
@@ -72,7 +72,7 @@ public class BotEvents extends ListenerAdapter {
     @SubscribeEvent
     public static void onLivingDeath(LivingDeathEvent event) {
         if (event.getEntityLiving() instanceof PlayerEntity) {
-            if (Config.SERVER.sendDeathsMessages.get() && Config.SERVER.infoChannel.get() != 0) {
+            if (Config.SERVER.sendDeathsMessages.get() && Config.SERVER.infoChannel.get() != 0L) {
                 if (Minecraft2Discord.getDiscordBot() == null)
                     return;
 
@@ -95,7 +95,7 @@ public class BotEvents extends ListenerAdapter {
             if (Config.SERVER.hideAdvancementList.get().stream().anyMatch(s -> s.startsWith(event.getAdvancement().getId().toString()))) {
                 return;
             }
-            if (Config.SERVER.sendAdvancementMessages.get() && Config.SERVER.infoChannel.get() != 0) {
+            if (Config.SERVER.sendAdvancementMessages.get() && Config.SERVER.infoChannel.get() != 0L) {
                 if (Minecraft2Discord.getDiscordBot() == null)
                     return;
 
@@ -121,7 +121,7 @@ public class BotEvents extends ListenerAdapter {
 
     @SubscribeEvent
     public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
-        if (Config.SERVER.sendJoinLeftMessages.get() && Config.SERVER.infoChannel.get() != 0) {
+        if (Config.SERVER.sendJoinLeftMessages.get() && Config.SERVER.infoChannel.get() != 0L) {
             if (Minecraft2Discord.getDiscordBot() == null)
                 return;
 
@@ -138,7 +138,7 @@ public class BotEvents extends ListenerAdapter {
 
     @SubscribeEvent
     public static void onPlayerLeft(PlayerEvent.PlayerLoggedOutEvent event) {
-        if (Config.SERVER.sendJoinLeftMessages.get() && Config.SERVER.infoChannel.get() != 0) {
+        if (Config.SERVER.sendJoinLeftMessages.get() && Config.SERVER.infoChannel.get() != 0L) {
             if (Minecraft2Discord.getDiscordBot() == null)
                 return;
 
@@ -157,7 +157,7 @@ public class BotEvents extends ListenerAdapter {
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         InterModComms.getMessages("minecraft2discord").forEach(imcMessage -> {
             if (imcMessage.getMethod().equals("info_channel")) {
-                if (Config.SERVER.allowInterModComms.get() && Config.SERVER.infoChannel.get() != 0) {
+                if (Config.SERVER.allowInterModComms.get() && Config.SERVER.infoChannel.get() != 0L) {
                     if (Minecraft2Discord.getDiscordBot() == null)
                         return;
 
@@ -171,7 +171,7 @@ public class BotEvents extends ListenerAdapter {
             }
 
             if (imcMessage.getMethod().equals("chat_channel")) {
-                if (Config.SERVER.allowInterModComms.get() && Config.SERVER.chatChannel.get() != 0) {
+                if (Config.SERVER.allowInterModComms.get() && Config.SERVER.chatChannel.get() != 0L) {
                     if (Minecraft2Discord.getDiscordBot() == null)
                         return;
 
@@ -202,7 +202,7 @@ public class BotEvents extends ListenerAdapter {
     @Override
     public void onReady(ReadyEvent event) {
         System.out.println("Discord bot logged as " + event.getJDA().getSelfUser().getName());
-        if (Config.SERVER.sendServerStartStopMessages.get() && Config.SERVER.infoChannel.get() != 0) {
+        if (Config.SERVER.sendServerStartStopMessages.get() && Config.SERVER.infoChannel.get() != 0L) {
             if (infoChannel == null) {
                 infoChannel = Minecraft2Discord.getDiscordBot().getTextChannelById(Config.SERVER.infoChannel.get());
             }
@@ -230,7 +230,7 @@ public class BotEvents extends ListenerAdapter {
                                     ServerLifecycleHooks.getCurrentServer(),
                                     null), event.getMessage().getContentDisplay());
                     if (event.getMessage().getContentRaw().startsWith("/say")) {
-                        if (Config.SERVER.infoChannel.get() != 0) {
+                        if (Config.SERVER.infoChannel.get() != 0L) {
                             if (infoChannel == null) {
                                 infoChannel = Minecraft2Discord.getDiscordBot().getTextChannelById(Config.SERVER.infoChannel.get());
                             }
