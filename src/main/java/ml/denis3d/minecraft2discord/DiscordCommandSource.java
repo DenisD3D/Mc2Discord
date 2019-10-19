@@ -1,6 +1,6 @@
 package ml.denis3d.minecraft2discord;
 
-import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageChannel;
 import net.minecraft.command.ICommandSource;
 import net.minecraft.util.text.ITextComponent;
 
@@ -15,7 +15,7 @@ public class DiscordCommandSource implements ICommandSource {
     @Override
     public void sendMessage(ITextComponent component) {
         if (channel != null) {
-            channel.sendMessage(component.getFormattedText().replaceAll("§.", "")).submit();
+            channel.sendMessage(component.getString()).submit();
         }
     }
 
@@ -33,4 +33,6 @@ public class DiscordCommandSource implements ICommandSource {
     public boolean allowLogging() {
         return false;
     }
+
+
 }

@@ -1,8 +1,8 @@
 package ml.denis3d.minecraft2discord;
 
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.ExtensionPoint;
@@ -42,7 +42,7 @@ public class Minecraft2Discord {
         }
 
         try {
-            DISCORD_BOT = new JDABuilder(Config.SERVER.botToken.get()).addEventListener(new BotEvents()).build();
+            DISCORD_BOT = new JDABuilder(Config.SERVER.botToken.get()).addEventListeners(new BotEvents()).build();
         } catch (LoginException e) {
             LOGGER.error(e.getMessage());
         }

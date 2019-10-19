@@ -1,5 +1,6 @@
 package ml.denis3d.minecraft2discord;
 
+import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -21,6 +22,7 @@ public class Config {
         public final ForgeConfigSpec.ConfigValue<String> botToken;
         public final ForgeConfigSpec.ConfigValue<List<? extends Long>> commandAllowedUsersIds;
         public final ForgeConfigSpec.ConfigValue<List<? extends Long>> commandAllowedRolesIds;
+        public final ForgeConfigSpec.ConfigValue<List<? extends String>> allowedCommandForEveryone;
         ////Channels ids
         public final ForgeConfigSpec.LongValue chatChannel;
         public final ForgeConfigSpec.LongValue infoChannel;
@@ -33,6 +35,7 @@ public class Config {
         public final ForgeConfigSpec.BooleanValue discordCommandEnabled;
         public final ForgeConfigSpec.BooleanValue enableDiscordPresence;
         public final ForgeConfigSpec.BooleanValue useDiscordWebhooks;
+        public final ForgeConfigSpec.BooleanValue allowBotSendMessage;
 
         //Messages
         public final ForgeConfigSpec.ConfigValue<String> joinMessage;
@@ -42,12 +45,14 @@ public class Config {
         public final ForgeConfigSpec.ConfigValue<String> serverStartMessage;
         public final ForgeConfigSpec.ConfigValue<String> serverStopMessage;
         public final ForgeConfigSpec.ConfigValue<String> discordPresence;
+        public final ForgeConfigSpec.ConfigValue<String> commandMissingPermissionsMessage;
 
         //Misc
         public final ForgeConfigSpec.ConfigValue<String> discordInviteLink;
         public final ForgeConfigSpec.ConfigValue<String> discordPictureAPI;
         public final ForgeConfigSpec.BooleanValue allowInterModComms;
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> hideAdvancementList;
+
 
         public Server(ForgeConfigSpec.Builder builder) {
             //Discord config
@@ -65,6 +70,10 @@ public class Config {
             commandAllowedRolesIds = builder
                     .comment(" List of the roles who is allowed to use command from discord (include op and no-op command)")
                     .defineList("commandAllowedRolesIds", ArrayList::new, e -> e instanceof Long);
+
+            allowedCommandForEveryone = builder
+                    .comment(" List of the commands that everyone is allowed to use in discord")
+                    .defineList("allowedCommandForEveryone", () -> Lists.newArrayList("help"), e -> e instanceof String);
 
             ////Channels ids config
             builder.comment(" Discord Channels Ids")
@@ -116,6 +125,10 @@ public class Config {
                     .comment(" Enable or disable the use of webhooks (custom profile picture and name in discord). If false message will be send with the bot account in the form : player_name : message")
                     .define("useDiscordWebhooks", true);
 
+            allowBotSendMessage = builder
+                    .comment("Allow bot to send message in discord chat")
+                    .define("allowBotSendMessage", false);
+
             //END Features on/off
             builder.pop();
 
@@ -150,6 +163,10 @@ public class Config {
             discordPresence = builder
                     .comment("Global variable only")
                     .define("discordPresence", "$online_players$ / $max_players$ players");
+
+            commandMissingPermissionsMessage = builder
+                    .comment("Message send when someone execute a command in discord without having the permission. Global variable only. Empty to disable")
+                    .define("commandMissingPermissionsMessage", "You doesn't have enough permission or the command doesn't exist");
 
             //END Message configuration
             builder.pop();

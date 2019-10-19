@@ -1,6 +1,6 @@
 package ml.denis3d.minecraft2discord;
 
-import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.api.entities.Activity;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 public class Utils {
@@ -17,7 +17,7 @@ public class Utils {
 
     public static void updateDiscordPresence() {
         if (Config.SERVER.enableDiscordPresence.get() && Minecraft2Discord.getDiscordBot() != null) {
-            Minecraft2Discord.getDiscordBot().getPresence().setGame(Game.playing(globalVariableReplacement(Config.SERVER.discordPresence.get())));
+            Minecraft2Discord.getDiscordBot().getPresence().setActivity(Activity.playing(globalVariableReplacement(Config.SERVER.discordPresence.get())));
         }
 
     }
