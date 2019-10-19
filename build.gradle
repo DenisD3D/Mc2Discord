@@ -85,27 +85,27 @@ dependencies {
     // Java Discord library
     shadow ('net.dv8tion:JDA:4.0.0_52') {
         exclude module: 'opus-java'
-        exclude module: 'slf4j'
     }
 
-    shadow("club.minnced:discord-webhooks:0.1.7")
     shadow("org.slf4j:slf4j-simple:1.7.28")
+    shadow("club.minnced:discord-webhooks:0.1.7")
 }
 
 
 
 shadowJar {
-    relocate 'club.minnced.discord.webhook', 'ml.denis3d.repack.club.minnced.discord.webhook'
-    relocate 'com.fasterxml.jackson', 'ml.denis3d.repack.com.fasterxml.jackson'
-    relocate 'com.iwebpp.crypto', 'ml.denis3d.repack.com.iwebpp.crypto'
-    relocate 'com.neovisionaries.ws', 'ml.denis3d.repack.com.neovisionaries.ws'
+    relocate 'org.apache.commons.collections4', 'ml.denis3d.repack.org.apache.commons.collections4'
     relocate 'gnu.trove', 'ml.denis3d.repack.gnu.trove'
-    relocate 'net.dv8tion.jda', 'ml.denis3d.repack.net.dv8tion.jda'
-    relocate 'okhttp3', 'ml.denis3d.repack.okhttp3'
-    relocate 'okio', 'ml.denis3d.repack.okio'
-    relocate 'org.apache.commons', 'ml.denis3d.repack.org.apache.commons'
-    relocate 'org.json', 'ml.denis3d.repack.org.json'
-    relocate 'org.slf4j', 'ml.denis3d.repack.org.slf4j'
+    relocate "com.neovisionaries.ws.client", "ml.denis3d.repack.com.neovisionaries.ws.client"
+    relocate "com.iwebpp.crypto", "ml.denis3d.repack.com.iwebpp.crypto"
+    relocate "net.dv8tion.jda", "ml.denis3d.repack.net.dv8tion.jda"
+    relocate "org.json", "ml.denis3d.repack.org.json"
+    relocate "okio", "ml.denis3d.repack.okio"
+    relocate "okhttp3", "ml.denis3d.repack.okhttp3"
+    relocate "okhttp3", "ml.denis3d.repack.okhttp3"
+    relocate "org.slf4j", "ml.denis3d.repack.org.slf4j"
+    relocate "com.fasterxml.jackson", "ml.denis3d.repack.com.fasterxml.jackson"
+    relocate "club.minnced.discord", "ml.denis3d.repack.club.minnced.discord"
 
     classifier ''
     configurations = [project.configurations.shadow]
