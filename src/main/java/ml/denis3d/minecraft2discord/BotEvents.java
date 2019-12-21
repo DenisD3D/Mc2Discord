@@ -70,8 +70,6 @@ public class BotEvents extends ListenerAdapter {
                 chatChannel.sendMessage("**" + event.getUsername() + "** : " + event.getMessage()).submit();
             }
         }
-
-        Utils.updateDiscordPresence();
     }
 
     @SubscribeEvent
@@ -90,8 +88,6 @@ public class BotEvents extends ListenerAdapter {
                 }
             }
         }
-
-        Utils.updateDiscordPresence();
     }
 
     @SubscribeEvent
@@ -120,8 +116,6 @@ public class BotEvents extends ListenerAdapter {
                 }
             }
         }
-
-        Utils.updateDiscordPresence();
     }
 
     @SubscribeEvent
@@ -289,7 +283,5 @@ public class BotEvents extends ListenerAdapter {
                 }
             }
         }
-
-        Utils.updateDiscordPresence();
     }
 }
