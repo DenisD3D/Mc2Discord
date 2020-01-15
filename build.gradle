@@ -16,7 +16,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.15.1-1.1.0'
+version = '1.15.1-1.1.2'
 group = 'ml.denis3d.minecraft2discord' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'minecraft2discord'
 
@@ -80,7 +80,7 @@ dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.15.1-30.0.0'
+    minecraft 'net.minecraftforge:forge:1.15.1-30.0.15'
 
     // Java Discord library
     shadow ('net.dv8tion:JDA:4.0.0_52') {
