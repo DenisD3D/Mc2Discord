@@ -26,14 +26,16 @@ public class Config {
         ////Channels ids
         public final ForgeConfigSpec.LongValue chatChannel;
         public final ForgeConfigSpec.LongValue infoChannel;
+        public final ForgeConfigSpec.LongValue editableTopicChannel;
 
         //Features on/off
         public final ForgeConfigSpec.BooleanValue sendJoinLeftMessages;
         public final ForgeConfigSpec.BooleanValue sendAdvancementMessages;
         public final ForgeConfigSpec.BooleanValue sendDeathsMessages;
         public final ForgeConfigSpec.BooleanValue sendServerStartStopMessages;
-        public final ForgeConfigSpec.BooleanValue discordCommandEnabled;
+        public final ForgeConfigSpec.BooleanValue enabledDiscordCommand;
         public final ForgeConfigSpec.BooleanValue enableDiscordPresence;
+        public final ForgeConfigSpec.BooleanValue enableEditableChannelTopicUpdate;
         public final ForgeConfigSpec.BooleanValue useDiscordWebhooks;
         public final ForgeConfigSpec.BooleanValue allowBotSendMessage;
 
@@ -45,19 +47,24 @@ public class Config {
         public final ForgeConfigSpec.ConfigValue<String> serverStartMessage;
         public final ForgeConfigSpec.ConfigValue<String> serverStopMessage;
         public final ForgeConfigSpec.ConfigValue<String> discordPresence;
+        public final ForgeConfigSpec.ConfigValue<String> editableChannelTopicUpdateMessage;
         public final ForgeConfigSpec.ConfigValue<String> commandMissingPermissionsMessage;
+        public final ForgeConfigSpec.ConfigValue<String> noneWebhookChatMessageFormat;
 
         //Misc
         public final ForgeConfigSpec.ConfigValue<String> discordInviteLink;
         public final ForgeConfigSpec.ConfigValue<String> discordPictureAPI;
+        public final ForgeConfigSpec.LongValue discordBotPresenceUpdatePeriod;
+        public final ForgeConfigSpec.LongValue editableChannelTopicUpdatePeriod;
         public final ForgeConfigSpec.BooleanValue allowInterModComms;
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> hideAdvancementList;
 
 
-        public Server(ForgeConfigSpec.Builder builder) {
+        public Server(ForgeConfigSpec.Builder builder)
+        {
             //Discord config
             builder.comment(" Config for data coming from your discord server")
-                    .push("Discord");
+                .push("Discord");
 
             botToken = builder
                     .comment(" Token for your Discord bot. Look at curseforge project one if you don't know how to get one")
@@ -77,15 +84,19 @@ public class Config {
 
             ////Channels ids config
             builder.comment(" Discord Channels Ids")
-                    .push("Channels");
+                .push("Channels");
 
             chatChannel = builder
-                    .comment(" Chat : All players messages")
-                    .defineInRange("chat", 0, 0, Long.MAX_VALUE);
+                .comment(" Chat : All players messages")
+                .defineInRange("chat", 0, 0, Long.MAX_VALUE);
 
             infoChannel = builder
-                    .comment(" Info : Death, Advancement, Join / Left, Server Start/Stop...")
-                    .defineInRange("info", 0, 0, Long.MAX_VALUE);
+                .comment(" Info : Death, Advancement, Join / Left, Server Start/Stop...")
+                .defineInRange("info", 0, 0, Long.MAX_VALUE);
+
+            editableTopicChannel = builder
+                .comment(" EditableTopic : id of the channel of which the topic can be updated periodically (see enableEditableChannelTopicUpdate, editableChannelTopicUpdateMessage, editableChannelTopicUpdatePeriod")
+                .defineInRange("editableTopic", 0, 0, Long.MAX_VALUE);
 
             ////END Channels ids config
             builder.pop();
@@ -95,7 +106,7 @@ public class Config {
 
             //Features on/off
             builder.comment(" Toggle features on and off (Send in info channel)")
-                    .push("Features");
+                .push("Features");
 
             sendJoinLeftMessages = builder
                     .comment(" Send players join/left messages.")
@@ -111,85 +122,105 @@ public class Config {
 
             sendServerStartStopMessages = builder
                     .comment(" Send server start/stop messages.")
-                    .define("sendServerStartStopMessages", true);
+                .define("sendServerStartStopMessages", true);
 
-            discordCommandEnabled = builder
-                    .comment(" Enable or disable the discord command that show an invite link (cf : Misc.discordInviteLink)")
-                    .define("discordCommandEnabled", true);
+            enabledDiscordCommand = builder
+                .comment(" Enable or disable the discord command that show an invite link (cf : Misc.discordInviteLink)")
+                .define("enabledDiscordCommand", false);
 
             enableDiscordPresence = builder
-                    .comment(" Enable or disable discord presence of the bot (ex : Playing .......)")
-                    .define("enableDiscordPresence", false);
+                .comment(" Enable or disable discord presence of the bot (ex : Playing .......)")
+                .define("enableDiscordPresence", false);
+
+            enableEditableChannelTopicUpdate = builder
+                .comment(" Enable or disable discord channel topic update (description of the channel that can be but next to his name)")
+                .define("enableEditableChannelTopicUpdate", false);
 
             useDiscordWebhooks = builder
-                    .comment(" Enable or disable the use of webhooks (custom profile picture and name in discord). If false message will be send with the bot account in the form : player_name : message")
-                    .define("useDiscordWebhooks", true);
+                .comment(" Enable or disable the use of webhooks (custom profile picture and name in discord). If false message will be send with the bot account in the form : player_name : message")
+                .define("useDiscordWebhooks", true);
 
             allowBotSendMessage = builder
-                    .comment("Allow bot to send message in discord chat")
-                    .define("allowBotSendMessage", false);
+                .comment("Allow bot to send message in discord chat")
+                .define("allowBotSendMessage", false);
 
             //END Features on/off
             builder.pop();
 
             //Message configuration
-            builder.comment(" Customise the messages here. Global variable : $online_players$, $max_players$, $motd$, $mc_version$, $server_hostname$, $server_port$")
+            builder.comment(" Customise the messages here. Global variable available for all the following fields : $online_players$, $max_players$, $motd$, $mc_version$, $server_hostname$, $server_port$, $unique_player$, $date$, $time$, $uptime$")
                     .push("Messages");
 
             joinMessage = builder
-                    .comment(" $1 = player name")
+                .comment(" $1 = player_name")
                     .define("joinMessage", "$1 joined the game.");
 
             leftMessage = builder
-                    .comment(" $1 = player name")
+                .comment(" $1 = player_name")
                     .define("leftMessage", "$1 left the game.");
 
             advancementMessage = builder
-                    .comment(" $1 = player name, $2 = advancement, $3 = advancement description")
+                .comment(" $1 = player_name, $2 = advancement, $3 = advancement description")
                     .define("advancementMessage", "$1 has made the advancement $2. $3");
 
             deathMessage = builder
-                    .comment(" $1 = player name, $2 = death message")
+                .comment(" $1 = player_name, $2 = death message")
                     .define("deathMessage", "$1 $2.");
 
             serverStartMessage = builder
                     .comment("Global variable only")
-                    .define("serverStartMessage", "Server has started.");
+                .define("serverStartMessage", "Server has started.");
 
             serverStopMessage = builder
-                    .comment("Global variable only")
-                    .define("serverStopMessage", "Server has stopped.");
+                .comment("Global variable only")
+                .define("serverStopMessage", "Server has stopped.");
 
             discordPresence = builder
-                    .comment("Global variable only")
-                    .define("discordPresence", "$online_players$ / $max_players$ players");
+                .comment("Global variable only")
+                .define("discordPresence", "$online_players$ / $max_players$ players");
+
+            editableChannelTopicUpdateMessage = builder
+                .comment("Global variable only")
+                .define("editableChannelTopicUpdateMessage", "$online_players$ / $max_players$ players");
 
             commandMissingPermissionsMessage = builder
-                    .comment("Message send when someone execute a command in discord without having the permission. Global variable only. Empty to disable")
-                    .define("commandMissingPermissionsMessage", "You doesn't have enough permission or the command doesn't exist");
+                .comment("Message send when someone execute a command in discord without having the permission. Empty to disable. Global variable only.")
+                .define("commandMissingPermissionsMessage", "You do not have enough permission or the command doesn't exist");
+
+            noneWebhookChatMessageFormat = builder
+                .comment("Format for the message sent by the bot while not using webhooks. Support discord markdown. Default to '**PLAYER** : MESSAGE. $1 = player_name, $2 = message")
+                .define("noneWebhookChatMessageFormat", "**$1** : $2");
 
             //END Message configuration
             builder.pop();
 
             //Misc configuration
             builder.comment(" Some miscellaneous configuration")
-                    .push("Misc");
+                .push("Misc");
 
             discordInviteLink = builder
-                    .comment(" Invite link for your discord server")
-                    .define("discordInviteLink", "Invite link not set");
+                .comment(" Invite link for your discord server")
+                .define("discordInviteLink", "Invite link not set");
 
             discordPictureAPI = builder
-                    .comment(" API url for discord profile picture. $1 is player name and $2 is the player UUID.")
-                    .define("discordPictureAPI", "https://minotar.net/avatar/$1");
+                .comment(" API url for discord profile picture. $1 is player name and $2 is the player UUID.")
+                .define("discordPictureAPI", "https://mc-heads.net/head/$1");
+
+            discordBotPresenceUpdatePeriod = builder
+                .comment(" Period between to presence update in seconds. Default 180s (3 minutes)")
+                .defineInRange("discordBotPresenceUpdatePeriod", 180, 1, Long.MAX_VALUE);
+
+            editableChannelTopicUpdatePeriod = builder
+                .comment(" Period between to presence update in seconds. Default 600s (10 minutes)")
+                .defineInRange("editableChannelTopicUpdatePeriod", 600, 1, Long.MAX_VALUE);
 
             allowInterModComms = builder
-                    .comment(" Allow other mod to send message to discord using Minecraft2Discord")
-                    .define("discordCommandEnabled", true);
+                .comment(" Allow other mod to send message to discord using Minecraft2Discord")
+                .define("allowInterModComms", true);
 
             hideAdvancementList = builder
-                    .comment(" List of advancement that will not be sent. 'modid' will remove every advancement from a mod (ex:minecraft) and modid:path/to/advancement will remove every advancement under this path (ex: minecraft:nether")
-                    .defineList("hideAdvancementList", ArrayList::new, e -> e instanceof String);
+                .comment(" List of advancement that will not be sent. 'modid' will remove every advancement from a mod (ex:minecraft) and modid:path/to/advancement will remove every advancement under this path (ex: minecraft:nether")
+                .defineList("hideAdvancementList", ArrayList::new, e -> e instanceof String);
 
             //END Misc configuration
             builder.pop();
