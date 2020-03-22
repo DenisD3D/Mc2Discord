@@ -67,7 +67,7 @@ public class Config {
                 .push("Discord");
 
             botToken = builder
-                    .comment(" Token for your Discord bot. Look at curseforge project one if you don't know how to get one")
+                .comment(" Token for your Discord bot. Look at curseforge project page if you don't know how to get one")
                     .define("botToken", "");
 
             commandAllowedUsersIds = builder
@@ -141,7 +141,7 @@ public class Config {
                 .define("useDiscordWebhooks", true);
 
             allowBotSendMessage = builder
-                .comment("Allow bot to send message in discord chat")
+                .comment("Allow bot message to be relayed on server chat")
                 .define("allowBotSendMessage", false);
 
             //END Features on/off

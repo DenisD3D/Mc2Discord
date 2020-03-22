@@ -2,6 +2,7 @@ package ml.denis3d.minecraft2discord.events;
 
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
+import com.vdurmont.emoji.EmojiParser;
 import ml.denis3d.minecraft2discord.Config;
 import ml.denis3d.minecraft2discord.DiscordCommandSource;
 import ml.denis3d.minecraft2discord.Minecraft2Discord;
@@ -123,10 +124,6 @@ public class DiscordEvents extends ListenerAdapter
                 } else
                 {
                     ServerLifecycleHooks.getCurrentServer().getCommandManager().handleCommand(commandSource, event.getMessage().getContentDisplay());
-                    if (event.getMessage().getContentRaw().startsWith("/say"))
-                    {
-                        Utils.sendMessage(event.getTextChannel(), event.getMessage().getContentRaw().substring(5));
-                    }
                 }
             } else if (event.getMessage().getContentRaw().startsWith("/")
                 && Config.SERVER.allowedCommandForEveryone.get().stream().noneMatch(s -> event.getMessage().getContentDisplay().substring(1).startsWith(s)))
@@ -135,7 +132,7 @@ public class DiscordEvents extends ListenerAdapter
                     Utils.sendMessage(event.getTextChannel(), Config.SERVER.commandMissingPermissionsMessage.get());
             } else
             {
-                ServerLifecycleHooks.getCurrentServer().getPlayerList().sendMessage(new StringTextComponent("<Discord - " + event.getAuthor().getName() + "> " + event.getMessage().getContentDisplay()));
+                ServerLifecycleHooks.getCurrentServer().getPlayerList().sendMessage(new StringTextComponent(EmojiParser.parseToAliases("<Discord - " + event.getAuthor().getName() + "> " + event.getMessage().getContentDisplay())));
             }
         }
     }

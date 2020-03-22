@@ -2,12 +2,16 @@ package ml.denis3d.minecraft2discord.events;
 
 import club.minnced.discord.webhook.WebhookClient;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import ml.denis3d.minecraft2discord.Config;
 import ml.denis3d.minecraft2discord.Minecraft2Discord;
 import ml.denis3d.minecraft2discord.Utils;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Webhook;
+import net.minecraft.command.arguments.MessageArgument;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -36,7 +40,7 @@ public class ServerEvents
     @SubscribeEvent
     public static void onPlayerLeft(PlayerEvent.PlayerLoggedOutEvent event)
     {
-        if (Config.SERVER.sendJoinLeftMessages.get())
+        if (Minecraft2Discord.getDiscordBot() != null && Minecraft2Discord.getDiscordBot().getStatus() == JDA.Status.CONNECTED && Config.SERVER.sendJoinLeftMessages.get())
             Utils.sendInfoMessage(Config.SERVER.leftMessage.get()
                 .replace("$1", event.getPlayer().getName().getUnformattedComponentText()));
     }
@@ -79,7 +83,7 @@ public class ServerEvents
     @SubscribeEvent
     public static void onAdvancement(AdvancementEvent event)
     {
-        if (event.getEntityLiving() instanceof PlayerEntity && !event.getAdvancement().getId().getPath().startsWith("recipes"))
+        if (event.getEntityLiving() instanceof PlayerEntity && event.getAdvancement().getDisplay() != null)
         {
             if (Config.SERVER.hideAdvancementList.get().stream().anyMatch(s -> s.startsWith(event.getAdvancement().getId().toString())))
                 return;
@@ -90,12 +94,22 @@ public class ServerEvents
                 String message = Config.SERVER.advancementMessage.get()
                     .replace("$1", player.getName().getUnformattedComponentText())
                     .replace("$2", event.getAdvancement().getDisplayText().getString());
-                message = event.getAdvancement().getDisplay() != null ?
-                    message.replace("$3", event.getAdvancement().getDisplay().getDescription().getUnformattedComponentText()) :
-                    message.replace("$3", "");
+                message = message.replace("$3", event.getAdvancement().getDisplay().getDescription().getUnformattedComponentText());
 
                 Utils.sendInfoMessage(message);
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onCommand(CommandEvent event) throws CommandSyntaxException
+    {
+        if (event.getParseResults().getContext().getCommand() != null && event.getParseResults().getContext().getNodes().get(0).getNode().getName().equals("say"))
+        {
+            Utils.sendInfoMessage(Config.SERVER.noneWebhookChatMessageFormat.get()
+                .replace("$1", event.getParseResults().getContext().getSource().getDisplayName().getFormattedText())
+                .replace("$2", ((MessageArgument.Message) event.getParseResults().getContext().getArguments().get("message").getResult())
+                    .toComponent(event.getParseResults().getContext().getSource(), true).getFormattedText()));
         }
     }
 

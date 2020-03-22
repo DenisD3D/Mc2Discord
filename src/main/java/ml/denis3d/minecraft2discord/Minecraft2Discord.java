@@ -3,7 +3,6 @@ package ml.denis3d.minecraft2discord;
 import ml.denis3d.minecraft2discord.events.DiscordEvents;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.ExtensionPoint;
@@ -63,9 +62,7 @@ public class Minecraft2Discord {
             if (getDiscordBot() == null)
                 return;
 
-            TextChannel infoChannel = DISCORD_BOT.getTextChannelById(Config.SERVER.infoChannel.get());
-            if (infoChannel != null)
-                infoChannel.sendMessage(Config.SERVER.serverStopMessage.get()).queue();
+            Utils.sendInfoMessage(Config.SERVER.serverStopMessage.get());
         }
 
         DISCORD_BOT.shutdown();
@@ -73,7 +70,7 @@ public class Minecraft2Discord {
 
     public void onServerStopped(FMLServerStoppedEvent event)
     {
-        if (DISCORD_BOT.getStatus() != JDA.Status.SHUTDOWN)
+        if (DISCORD_BOT != null && DISCORD_BOT.getStatus() != JDA.Status.SHUTDOWN)
             DISCORD_BOT.shutdownNow();
     }
 }

@@ -16,7 +16,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.15.2-1.1.3'
+version = '1.15.2-1.1.4'
 group = 'ml.denis3d.minecraft2discord' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'minecraft2discord'
 
@@ -89,6 +89,7 @@ dependencies {
 
     shadow("org.slf4j:slf4j-simple:1.7.28")
     shadow("club.minnced:discord-webhooks:0.1.7")
+    shadow('com.vdurmont:emoji-java:5.1.1')
 }
 
 
@@ -106,6 +107,8 @@ shadowJar {
     relocate "org.slf4j", "ml.denis3d.repack.org.slf4j"
     relocate "com.fasterxml.jackson", "ml.denis3d.repack.com.fasterxml.jackson"
     relocate "club.minnced.discord", "ml.denis3d.repack.club.minnced.discord"
+
+    relocate "com.vdurmont.emoji", "ml.denis3d.repack.com.vdurmont.emoji"
 
     classifier ''
     configurations = [project.configurations.shadow]
