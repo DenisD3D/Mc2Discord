@@ -34,7 +34,7 @@ public class ServerEvents
     {
         if (Config.SERVER.sendJoinLeftMessages.get())
             Utils.sendInfoMessage(Config.SERVER.joinMessage.get()
-                .replace("$1", event.getPlayer().getName().getUnformattedComponentText()));
+                .replace("$1", event.getPlayer().getName().getFormattedText()));
     }
 
     @SubscribeEvent
@@ -42,7 +42,7 @@ public class ServerEvents
     {
         if (Minecraft2Discord.getDiscordBot() != null && Minecraft2Discord.getDiscordBot().getStatus() == JDA.Status.CONNECTED && Config.SERVER.sendJoinLeftMessages.get())
             Utils.sendInfoMessage(Config.SERVER.leftMessage.get()
-                .replace("$1", event.getPlayer().getName().getUnformattedComponentText()));
+                .replace("$1", event.getPlayer().getName().getFormattedText()));
     }
 
     @SubscribeEvent
@@ -74,8 +74,8 @@ public class ServerEvents
             {
                 PlayerEntity player = (PlayerEntity) event.getEntityLiving();
                 Utils.sendInfoMessage(Config.SERVER.deathMessage.get()
-                    .replace("$1", player.getName().getUnformattedComponentText())
-                    .replace("$2", player.getCombatTracker().getDeathMessage().getUnformattedComponentText()));
+                    .replace("$1", player.getName().getFormattedText())
+                    .replace("$2", player.getCombatTracker().getDeathMessage().getFormattedText()));
             }
         }
     }
@@ -92,7 +92,7 @@ public class ServerEvents
             {
                 PlayerEntity player = (PlayerEntity) event.getEntityLiving();
                 String message = Config.SERVER.advancementMessage.get()
-                    .replace("$1", player.getName().getUnformattedComponentText())
+                    .replace("$1", player.getName().getFormattedText())
                     .replace("$2", event.getAdvancement().getDisplayText().getString());
                 message = message.replace("$3", event.getAdvancement().getDisplay().getDescription().getUnformattedComponentText());
 
