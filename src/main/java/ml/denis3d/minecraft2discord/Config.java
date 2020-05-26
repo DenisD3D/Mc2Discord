@@ -36,6 +36,7 @@ public class Config {
         public final ForgeConfigSpec.BooleanValue enabledDiscordCommand;
         public final ForgeConfigSpec.BooleanValue enableDiscordPresence;
         public final ForgeConfigSpec.BooleanValue enableEditableChannelTopicUpdate;
+        public final ForgeConfigSpec.BooleanValue useNickname;
         public final ForgeConfigSpec.BooleanValue useDiscordWebhooks;
         public final ForgeConfigSpec.BooleanValue allowBotSendMessage;
 
@@ -136,6 +137,10 @@ public class Config {
                 .comment(" Enable or disable discord channel topic update (description of the channel that can be but next to his name)")
                 .define("enableEditableChannelTopicUpdate", false);
 
+            useNickname = builder
+                .comment(" Enable or disable the use of nickname (name specific to a guild). If false it will use the username for everyone")
+                .define("useNickname", true);
+
             useDiscordWebhooks = builder
                 .comment(" Enable or disable the use of webhooks (custom profile picture and name in discord). If false message will be send with the bot account in the form : player_name : message")
                 .define("useDiscordWebhooks", true);
@@ -164,7 +169,7 @@ public class Config {
                     .define("advancementMessage", "$1 has made the advancement $2. $3");
 
             deathMessage = builder
-                .comment(" $1 = player_name, $2 = death message")
+                .comment(" $1 = formatted death message, $2 = player_name, $3 unformatted death message, $4 death   ")
                     .define("deathMessage", "$1 $2.");
 
             serverStartMessage = builder

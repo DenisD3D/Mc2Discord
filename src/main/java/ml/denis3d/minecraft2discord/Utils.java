@@ -74,7 +74,14 @@ public class Utils
             return false;
         if (global_variable_replacement)
             message = globalVariableReplacement(message);
-        channel.sendMessage(message).submit();
+
+        try
+        {
+            channel.sendMessage(message).submit();
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
 
         return true;
     }

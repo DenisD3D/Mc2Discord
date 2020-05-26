@@ -74,8 +74,11 @@ public class ServerEvents
             {
                 PlayerEntity player = (PlayerEntity) event.getEntityLiving();
                 Utils.sendInfoMessage(Config.SERVER.deathMessage.get()
-                    .replace("$1", player.getName().getFormattedText())
-                    .replace("$2", player.getCombatTracker().getDeathMessage().getFormattedText()));
+                    .replace("$1", player.getCombatTracker().getDeathMessage().getFormattedText())
+                    .replace("$2", player.getName().getFormattedText())
+                    .replace("$3", player.getCombatTracker().getDeathMessage().getUnformattedComponentText())
+                    .replace("$4", "death.attack." + event.getSource().damageType)
+                );
             }
         }
     }

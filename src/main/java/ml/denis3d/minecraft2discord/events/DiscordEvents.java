@@ -30,8 +30,6 @@ public class DiscordEvents extends ListenerAdapter
     public void onReady(ReadyEvent event)
     {
         System.out.println("Discord bot logged as " + event.getJDA().getSelfUser().getName());
-        if (Config.SERVER.sendServerStartStopMessages.get())
-            Utils.sendInfoMessage(Utils.globalVariableReplacement(Config.SERVER.serverStartMessage.get()));
 
         Utils.global_variables.put("online_players", () -> String.valueOf(ServerLifecycleHooks.getCurrentServer().getCurrentPlayerCount()));
         Utils.global_variables.put("max_players", () -> String.valueOf(ServerLifecycleHooks.getCurrentServer().getMaxPlayers()));
@@ -43,6 +41,9 @@ public class DiscordEvents extends ListenerAdapter
         Utils.global_variables.put("date", () -> DateTimeFormatter.ofPattern("dd/MM/yyyy").format(LocalDateTime.now()));
         Utils.global_variables.put("time", () -> DateTimeFormatter.ofPattern("HH:mm:ss").format(LocalDateTime.now()));
         Utils.global_variables.put("uptime", () -> Utils.uptimeDateFormater.format(new Date().getTime() - Utils.started_time));
+
+        if (Config.SERVER.sendServerStartStopMessages.get())
+            Utils.sendInfoMessage(Config.SERVER.serverStartMessage.get());
 
         if (Config.SERVER.enableDiscordPresence.get())
         {
@@ -132,7 +133,7 @@ public class DiscordEvents extends ListenerAdapter
                     Utils.sendMessage(event.getTextChannel(), Config.SERVER.commandMissingPermissionsMessage.get());
             } else
             {
-                ServerLifecycleHooks.getCurrentServer().getPlayerList().sendMessage(new StringTextComponent(EmojiParser.parseToAliases("<Discord - " + event.getAuthor().getName() + "> " + event.getMessage().getContentDisplay())));
+                ServerLifecycleHooks.getCurrentServer().getPlayerList().sendMessage(new StringTextComponent(EmojiParser.parseToAliases("<Discord - " + (Config.SERVER.useNickname.get() ? event.getMember().getEffectiveName() : event.getAuthor().getName()) + "> " + event.getMessage().getContentDisplay())));
             }
         }
     }

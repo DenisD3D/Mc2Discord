@@ -1,6 +1,7 @@
 package ml.denis3d.minecraft2discord;
 
 import ml.denis3d.minecraft2discord.events.DiscordEvents;
+import ml.denis3d.minecraft2discord.events.ServerEvents;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.minecraftforge.common.MinecraftForge;
@@ -14,6 +15,7 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
+import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,13 +73,14 @@ public class Minecraft2Discord {
 
             Utils.sendInfoMessage(Config.SERVER.serverStopMessage.get());
         }
-
-        DISCORD_BOT.shutdown();
     }
 
     public void onServerStopped(FMLServerStoppedEvent event)
     {
-        if (DISCORD_BOT != null && DISCORD_BOT.getStatus() != JDA.Status.SHUTDOWN)
-            DISCORD_BOT.shutdownNow();
+        ServerEvents.discordWebhookClient.close();
+        DISCORD_BOT.shutdown();
+        OkHttpClient client = DISCORD_BOT.getHttpClient();
+        client.connectionPool().evictAll();
+        client.dispatcher().executorService().shutdown();
     }
 }

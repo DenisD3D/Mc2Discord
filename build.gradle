@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
-        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.4'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
     }
 }
 
@@ -16,7 +16,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '1.15.2-1.1.5'
+version = '1.14.4-1.1.6'
 group = 'ml.denis3d.minecraft2discord' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'minecraft2discord'
 
@@ -77,19 +77,16 @@ minecraft {
 
 
 dependencies {
-    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
-    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
-    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.15.2-31.1.0'
+    minecraft 'net.minecraftforge:forge:1.15.2-31.1.48'
 
     // Java Discord library
-    shadow ('net.dv8tion:JDA:4.0.0_52') {
+    compile(shadow('net.dv8tion:JDA:4.1.1_101')) {
         exclude module: 'opus-java'
     }
 
-    shadow("org.slf4j:slf4j-simple:1.7.28")
-    shadow("club.minnced:discord-webhooks:0.1.7")
-    shadow('com.vdurmont:emoji-java:5.1.1')
+    compile(shadow("org.slf4j:slf4j-simple:1.7.28"))
+    compile(shadow("club.minnced:discord-webhooks:0.3.0"))
+    compile(shadow('com.vdurmont:emoji-java:5.1.1'))
 }
 
 
