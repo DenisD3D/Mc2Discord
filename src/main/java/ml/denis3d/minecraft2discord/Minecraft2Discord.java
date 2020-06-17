@@ -77,6 +77,8 @@ public class Minecraft2Discord {
 
     public void onServerStopped(FMLServerStoppedEvent event)
     {
+        Utils.updateOfflineVoiceChannel();
+        Utils.updateOfflineChannelTopic();
         ServerEvents.discordWebhookClient.close();
         DISCORD_BOT.shutdown();
         OkHttpClient client = DISCORD_BOT.getHttpClient();
