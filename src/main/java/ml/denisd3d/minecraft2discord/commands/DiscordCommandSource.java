@@ -1,22 +1,19 @@
-package ml.denis3d.minecraft2discord;
+package ml.denisd3d.minecraft2discord.commands;
 
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.minecraft.command.ICommandSource;
 import net.minecraft.util.text.ITextComponent;
 
 public class DiscordCommandSource implements ICommandSource {
 
-    private MessageChannel channel;
+    public static String answer = ""; // This is a hack to have only one string as result for the command. We need to clear it after each use and get the result by our self
 
-    public DiscordCommandSource(MessageChannel channel) {
-        this.channel = channel;
+    public DiscordCommandSource()
+    {
     }
 
     @Override
     public void sendMessage(ITextComponent component) {
-        if (channel != null) {
-            channel.sendMessage(component.getString()).submit();
-        }
+        answer += component.getString() + "\n";
     }
 
     @Override
@@ -31,7 +28,7 @@ public class DiscordCommandSource implements ICommandSource {
 
     @Override
     public boolean allowLogging() {
-        return false;
+        return true;
     }
 
 

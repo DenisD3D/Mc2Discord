@@ -1,10 +1,10 @@
-package ml.denis3d.minecraft2discord;
+package ml.denisd3d.minecraft2discord.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import ml.denisd3d.minecraft2discord.Config;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.InterModComms;
 
 public class DiscordCommand {
     public static void register(CommandDispatcher<CommandSource> dispatcher) {
@@ -12,7 +12,7 @@ public class DiscordCommand {
                 LiteralArgumentBuilder.<CommandSource>literal("discord")
                         .executes(ctx ->
                         {
-                            ctx.getSource().sendFeedback(new StringTextComponent(Config.SERVER.discordInviteLink.get()), true);
+                            ctx.getSource().sendFeedback(new StringTextComponent(Config.SERVER.inviteLink.get()), false);
                             return 1;
                         }));
     }

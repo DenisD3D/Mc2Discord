@@ -13,11 +13,9 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
 
-version = '1.14.4-1.1.6'
-group = 'ml.denis3d.minecraft2discord' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+version = "${mc_version}-${mod_version}"
+group = 'ml.denisd3d'
 archivesBaseName = 'minecraft2discord'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
@@ -27,22 +25,11 @@ repositories {
 }
 
 minecraft {
-    // The mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   Snapshot are built nightly.
-    // stable_#            Stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'snapshot', version: '20191217-1.14.3'
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+    mappings channel: 'snapshot', version: '20200514-1.16' // '20200625-1.15.1'
 
-    // accessTransformer = file('build/resources/main/META-INF/accesstransformer.cfg')
-
-    // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
-    //noinspection GroovyAssignabilityCheck
     runs {
         client {
-            workingDirectory project.file('run')
+            workingDirectory project.file('run_client')
 
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
@@ -58,7 +45,7 @@ minecraft {
         }
 
         server {
-            workingDirectory project.file('run')
+            workingDirectory project.file('run_server')
 
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
@@ -77,35 +64,32 @@ minecraft {
 
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.2-31.1.48'
+    minecraft ("net.minecraftforge:forge:${mc_version}-${forge_version}")
 
     // Java Discord library
-    compile(shadow('net.dv8tion:JDA:4.1.1_101')) {
+    compile shadow('net.dv8tion:JDA:4.1.1_162') {
         exclude module: 'opus-java'
     }
 
-    compile(shadow("org.slf4j:slf4j-simple:1.7.28"))
-    compile(shadow("club.minnced:discord-webhooks:0.3.0"))
-    compile(shadow('com.vdurmont:emoji-java:5.1.1'))
+    compile shadow ("org.slf4j:slf4j-simple:1.7.28")
+    compile shadow ("club.minnced:discord-webhooks:0.3.1")
+    compile shadow ('com.vdurmont:emoji-java:5.1.1')
 }
 
-
-
 shadowJar {
-    relocate 'org.apache.commons.collections4', 'ml.denis3d.repack.org.apache.commons.collections4'
-    relocate 'gnu.trove', 'ml.denis3d.repack.gnu.trove'
-    relocate "com.neovisionaries.ws.client", "ml.denis3d.repack.com.neovisionaries.ws.client"
-    relocate "com.iwebpp.crypto", "ml.denis3d.repack.com.iwebpp.crypto"
-    relocate "net.dv8tion.jda", "ml.denis3d.repack.net.dv8tion.jda"
-    relocate "org.json", "ml.denis3d.repack.org.json"
-    relocate "okio", "ml.denis3d.repack.okio"
-    relocate "okhttp3", "ml.denis3d.repack.okhttp3"
-    relocate "okhttp3", "ml.denis3d.repack.okhttp3"
-    relocate "org.slf4j", "ml.denis3d.repack.org.slf4j"
-    relocate "com.fasterxml.jackson", "ml.denis3d.repack.com.fasterxml.jackson"
-    relocate "club.minnced.discord", "ml.denis3d.repack.club.minnced.discord"
+    relocate 'org.apache.commons.collections4', 'ml.denisd3d.repack.org.apache.commons.collections4'
+    relocate 'gnu.trove', 'ml.denisd3d.repack.gnu.trove'
+    relocate "com.neovisionaries.ws.client", "ml.denisd3d.repack.com.neovisionaries.ws.client"
+    relocate "com.iwebpp.crypto", "ml.denisd3d.repack.com.iwebpp.crypto"
+    relocate "net.dv8tion.jda", "ml.denisd3d.repack.net.dv8tion.jda"
+    relocate "org.json", "ml.denisd3d.repack.org.json"
+    relocate "okio", "ml.denisd3d.repack.okio"
+    relocate "okhttp3", "ml.denisd3d.repack.okhttp3"
+    relocate "org.slf4j", "ml.denisd3d.repack.org.slf4j"
+    relocate "com.fasterxml.jackson", "ml.denisd3d.repack.com.fasterxml.jackson"
+    relocate "club.minnced.discord", "ml.denisd3d.repack.club.minnced.discord"
 
-    relocate "com.vdurmont.emoji", "ml.denis3d.repack.com.vdurmont.emoji"
+    relocate "com.vdurmont.emoji", "ml.denisd3d.repack.com.vdurmont.emoji"
 
     classifier ''
     configurations = [project.configurations.shadow]
@@ -122,11 +106,6 @@ reobf {
     }
 }
 
-artifacts {
-    archives shadowJar
-}
-
-// Example for how to get properties into the manifest for reading by the runtime..
 jar {
     classifier "slim"
     manifest {
@@ -142,4 +121,4 @@ jar {
     }
 }
 
-build.dependsOn(shadowJar)
+tasks.build.dependsOn tasks.shadowJar
