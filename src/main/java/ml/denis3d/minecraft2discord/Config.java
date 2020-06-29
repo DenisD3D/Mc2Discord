@@ -27,6 +27,7 @@ public class Config {
         public final ForgeConfigSpec.LongValue chatChannel;
         public final ForgeConfigSpec.LongValue infoChannel;
         public final ForgeConfigSpec.LongValue editableTopicChannel;
+        public final ForgeConfigSpec.LongValue editableVoiceChannel;
 
         //Features on/off
         public final ForgeConfigSpec.BooleanValue sendJoinLeftMessages;
@@ -36,6 +37,7 @@ public class Config {
         public final ForgeConfigSpec.BooleanValue enabledDiscordCommand;
         public final ForgeConfigSpec.BooleanValue enableDiscordPresence;
         public final ForgeConfigSpec.BooleanValue enableEditableChannelTopicUpdate;
+        public final ForgeConfigSpec.BooleanValue enableEditableVoiceChannelUpdate;
         public final ForgeConfigSpec.BooleanValue useNickname;
         public final ForgeConfigSpec.BooleanValue useDiscordWebhooks;
         public final ForgeConfigSpec.BooleanValue allowBotSendMessage;
@@ -49,6 +51,9 @@ public class Config {
         public final ForgeConfigSpec.ConfigValue<String> serverStopMessage;
         public final ForgeConfigSpec.ConfigValue<String> discordPresence;
         public final ForgeConfigSpec.ConfigValue<String> editableChannelTopicUpdateMessage;
+        public final ForgeConfigSpec.ConfigValue<String> editableChannelTopicOfflineMessage;
+        public final ForgeConfigSpec.ConfigValue<String> editableVoiceChannelUpdateMessage;
+        public final ForgeConfigSpec.ConfigValue<String> editableVoiceChannelOfflineMessage;
         public final ForgeConfigSpec.ConfigValue<String> commandMissingPermissionsMessage;
         public final ForgeConfigSpec.ConfigValue<String> noneWebhookChatMessageFormat;
 
@@ -57,6 +62,7 @@ public class Config {
         public final ForgeConfigSpec.ConfigValue<String> discordPictureAPI;
         public final ForgeConfigSpec.LongValue discordBotPresenceUpdatePeriod;
         public final ForgeConfigSpec.LongValue editableChannelTopicUpdatePeriod;
+        public final ForgeConfigSpec.LongValue editableVoiceChannelUpdatePeriod;
         public final ForgeConfigSpec.BooleanValue allowInterModComms;
         public final ForgeConfigSpec.ConfigValue<List<? extends String>> hideAdvancementList;
 
@@ -99,6 +105,10 @@ public class Config {
                 .comment(" EditableTopic : id of the channel of which the topic can be updated periodically (see enableEditableChannelTopicUpdate, editableChannelTopicUpdateMessage, editableChannelTopicUpdatePeriod")
                 .defineInRange("editableTopic", 0, 0, Long.MAX_VALUE);
 
+            editableVoiceChannel = builder
+                    .comment(" EditableVoiceChannel : id of the voice channel of which the name can be updated periodically (see enableEditableVoiceChannelUpdate, editableVoiceChannelUpdateMessage, editableVoiceChannelUpdatePeriod")
+                    .defineInRange("editableVoiceChannel", 0, 0, Long.MAX_VALUE);
+
             ////END Channels ids config
             builder.pop();
 
@@ -136,6 +146,10 @@ public class Config {
             enableEditableChannelTopicUpdate = builder
                 .comment(" Enable or disable discord channel topic update (description of the channel that can be but next to his name)")
                 .define("enableEditableChannelTopicUpdate", false);
+
+            enableEditableVoiceChannelUpdate = builder
+                    .comment(" Enable or disable discord voice channel update (title of the channel)")
+                    .define("enableEditableVoiceChannelUpdate", false);
 
             useNickname = builder
                 .comment(" Enable or disable the use of nickname (name specific to a guild). If false it will use the username for everyone")
@@ -188,6 +202,18 @@ public class Config {
                 .comment("Global variable only")
                 .define("editableChannelTopicUpdateMessage", "$online_players$ / $max_players$ players");
 
+            editableChannelTopicOfflineMessage = builder
+                    .comment("Global variable only")
+                    .define("editableChannelTopicOfflineMessage", "OFFLINE");
+
+            editableVoiceChannelUpdateMessage = builder
+                    .comment("Global variable only")
+                    .define("editableVoiceChannelUpdateMessage", "$online_players$ / $max_players$ players");
+
+            editableVoiceChannelOfflineMessage = builder
+                    .comment("Global variable only")
+                    .define("editableVoiceChannelOfflineMessage", "OFFLINE");
+
             commandMissingPermissionsMessage = builder
                 .comment("Message send when someone execute a command in discord without having the permission. Empty to disable. Global variable only.")
                 .define("commandMissingPermissionsMessage", "You do not have enough permission or the command doesn't exist");
@@ -218,6 +244,10 @@ public class Config {
             editableChannelTopicUpdatePeriod = builder
                 .comment(" Period between to presence update in seconds. Default 600s (10 minutes)")
                 .defineInRange("editableChannelTopicUpdatePeriod", 600, 1, Long.MAX_VALUE);
+
+            editableVoiceChannelUpdatePeriod = builder
+                    .comment(" Period between to presence update in seconds. Default 600s (10 minutes)")
+                    .defineInRange("editableVoiceChannelUpdatePeriod", 600, 1, Long.MAX_VALUE);
 
             allowInterModComms = builder
                 .comment(" Allow other mod to send message to discord using Minecraft2Discord")

@@ -78,6 +78,23 @@ public class DiscordEvents extends ListenerAdapter
             };
             channel_topic_timer.schedule(channel_topic_timer_task, 0, Config.SERVER.editableChannelTopicUpdatePeriod.get() * 1000);
         }
+
+        if (Config.SERVER.enableEditableVoiceChannelUpdate.get())
+        {
+            Timer channel_voice_timer = new Timer();
+            TimerTask channel_voice_timer_task = new TimerTask()
+            {
+                @Override
+                public void run()
+                {
+                    if (Minecraft2Discord.getDiscordBot().getStatus() == JDA.Status.CONNECTED)
+                        Utils.updateVoiceChannel();
+                    else if (Minecraft2Discord.getDiscordBot().getStatus() == JDA.Status.SHUTDOWN || Minecraft2Discord.getDiscordBot().getStatus() == JDA.Status.SHUTTING_DOWN)
+                        this.cancel();
+                }
+            };
+            channel_voice_timer.schedule(channel_voice_timer_task, 0, Config.SERVER.editableVoiceChannelUpdatePeriod.get() * 1000);
+        }
     }
 
     @Override

@@ -20,6 +20,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.server.ServerLifecycleEvent;
 
 import java.util.List;
 import java.util.stream.Collectors;

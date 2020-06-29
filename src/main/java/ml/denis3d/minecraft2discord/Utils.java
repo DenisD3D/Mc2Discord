@@ -1,9 +1,6 @@
 package ml.denis3d.minecraft2discord;
 
-import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.Webhook;
+import net.dv8tion.jda.api.entities.*;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -15,6 +12,7 @@ public class Utils
     public static TextChannel chatChannel;
     public static TextChannel infoChannel;
     public static TextChannel editableTopicChannel;
+    public static VoiceChannel editableVoiceChannel;
 
     public static Webhook discordWebhook;
 
@@ -107,6 +105,44 @@ public class Utils
         if (Config.SERVER.enableEditableChannelTopicUpdate.get() && Minecraft2Discord.getDiscordBot() != null)
         {
             Minecraft2Discord.getDiscordBot().getPresence().setActivity(Activity.playing(globalVariableReplacement(Config.SERVER.editableChannelTopicUpdateMessage.get())));
+        }
+    }
+
+    public static void updateOfflineChannelTopic()
+    {
+        if (Config.SERVER.editableTopicChannel.get() != 0L && Minecraft2Discord.getDiscordBot() != null)
+        {
+            if (editableTopicChannel == null)
+                editableTopicChannel = Minecraft2Discord.getDiscordBot().getTextChannelById(Config.SERVER.editableTopicChannel.get());
+            if (editableTopicChannel != null)
+                editableTopicChannel.getManager().setTopic(Utils.globalVariableReplacement(Config.SERVER.editableChannelTopicOfflineMessage.get())).queue();
+        }
+
+        if (Config.SERVER.enableEditableChannelTopicUpdate.get() && Minecraft2Discord.getDiscordBot() != null)
+        {
+            Minecraft2Discord.getDiscordBot().getPresence().setActivity(Activity.playing(globalVariableReplacement(Config.SERVER.editableChannelTopicOfflineMessage.get())));
+        }
+    }
+
+    public static void updateVoiceChannel()
+    {
+        if (Config.SERVER.editableVoiceChannel.get() != 0L && Minecraft2Discord.getDiscordBot() != null)
+        {
+            if (editableVoiceChannel == null)
+                editableVoiceChannel = Minecraft2Discord.getDiscordBot().getVoiceChannelById(Config.SERVER.editableVoiceChannel.get());
+            if (editableVoiceChannel != null)
+                editableVoiceChannel.getManager().setName(Utils.globalVariableReplacement(Config.SERVER.editableVoiceChannelUpdateMessage.get())).queue();
+        }
+    }
+
+    public static void updateOfflineVoiceChannel()
+    {
+        if (Config.SERVER.editableVoiceChannel.get() != 0L && Minecraft2Discord.getDiscordBot() != null)
+        {
+            if (editableVoiceChannel == null)
+                editableVoiceChannel = Minecraft2Discord.getDiscordBot().getVoiceChannelById(Config.SERVER.editableVoiceChannel.get());
+            if (editableVoiceChannel != null)
+                editableVoiceChannel.getManager().setName(Utils.globalVariableReplacement(Config.SERVER.editableVoiceChannelOfflineMessage.get())).queue();
         }
     }
 
