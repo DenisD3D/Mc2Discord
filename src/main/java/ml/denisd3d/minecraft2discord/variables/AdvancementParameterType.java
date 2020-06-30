@@ -1,5 +1,6 @@
 package ml.denisd3d.minecraft2discord.variables;
 
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 
 import java.util.HashMap;
@@ -11,7 +12,7 @@ public class AdvancementParameterType implements IParameterType<AdvancementEvent
 
     public AdvancementParameterType()
     {
-        parameters.put("advancement_title", advancementEvent -> advancementEvent.getAdvancement().getDisplay() != null ? advancementEvent.getAdvancement().getDisplay().getTitle().getFormattedText() : "");
+        parameters.put("advancement_title", advancementEvent -> advancementEvent.getAdvancement().getDisplay() != null ? advancementEvent.getAdvancement().getDisplay().getTitle().getString() : "");
         parameters.put("advancement_description", advancementEvent -> advancementEvent.getAdvancement().getDisplay() != null ? advancementEvent.getAdvancement().getDisplay().getDescription().getUnformattedComponentText() : "");
     }
 

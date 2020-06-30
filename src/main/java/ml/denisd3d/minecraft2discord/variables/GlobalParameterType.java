@@ -2,11 +2,15 @@ package ml.denisd3d.minecraft2discord.variables;
 
 import ml.denisd3d.minecraft2discord.Config;
 import ml.denisd3d.minecraft2discord.Minecraft2Discord;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.storage.SaveFormat;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.function.Function;
@@ -14,12 +18,24 @@ import java.util.function.Function;
 public class GlobalParameterType implements IParameterType<Void>
 {
     private final HashMap<String, Function<Void, String>> parameters = new HashMap<>();
+    private static SaveFormat.LevelSave anvilConverterForAnvilFile;
 
     public GlobalParameterType()
     {
+        try
+        {
+            Field f = MinecraftServer.class.getDeclaredField("anvilConverterForAnvilFile");
+            f.setAccessible(true);
+            anvilConverterForAnvilFile = (SaveFormat.LevelSave) f.get(ServerLifecycleHooks.getCurrentServer());
+
+        } catch (NoSuchFieldException | IllegalAccessException e)
+        {
+            e.printStackTrace();
+        }
+
         parameters.put("global_online_players", aVoid -> String.valueOf(ServerLifecycleHooks.getCurrentServer().getCurrentPlayerCount()));
         parameters.put("global_max_players", aVoid -> String.valueOf(ServerLifecycleHooks.getCurrentServer().getMaxPlayers()));
-        parameters.put("global_unique_player", aVoid -> String.valueOf(Optional.ofNullable(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getPlayerFolder().list()).map(list -> list.length).orElse(0)));
+        parameters.put("global_unique_player", aVoid -> String.valueOf(Optional.ofNullable(anvilConverterForAnvilFile.func_237292_b_().getPlayerDataFolder().list((dir, name) -> name.endsWith(".dat"))).map(list -> list.length).orElse(0)));
         parameters.put("global_motd", aVoid -> ServerLifecycleHooks.getCurrentServer().getMOTD());
         parameters.put("global_mc_version", aVoid -> ServerLifecycleHooks.getCurrentServer().getMinecraftVersion());
         parameters.put("global_server_hostname", aVoid -> ServerLifecycleHooks.getCurrentServer().getServerHostname());

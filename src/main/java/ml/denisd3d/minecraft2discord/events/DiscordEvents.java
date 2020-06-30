@@ -12,19 +12,20 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.minecraft.command.CommandSource;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.Util;
+import net.minecraft.util.math.vector.Vector2f;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 public class DiscordEvents extends ListenerAdapter
 {
     CommandSource commandSource = new CommandSource(new DiscordCommandSource(),
-        Vec3d.ZERO,
-        Vec2f.ZERO,
-        ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD),
+        Vector3d.ZERO,
+        Vector2f.ZERO,
+        ServerLifecycleHooks.getCurrentServer().func_241755_D_(),
         4,
         "Discord",
         new StringTextComponent("Discord"),
@@ -101,7 +102,7 @@ public class DiscordEvents extends ListenerAdapter
                     }
 
                     //If the message haven't already be processed
-                    ServerLifecycleHooks.getCurrentServer().getPlayerList().sendMessage(new StringTextComponent(EmojiParser.parseToAliases("<Discord - " + (Config.SERVER.nicknameEnabled.get() ? event.getMember().getEffectiveName() : event.getAuthor().getName()) + "> " + event.getMessage().getContentDisplay())));
+                    ServerLifecycleHooks.getCurrentServer().getPlayerList().func_232641_a_(new StringTextComponent(EmojiParser.parseToAliases("<Discord - " + (Config.SERVER.nicknameEnabled.get() ? event.getMember().getEffectiveName() : event.getAuthor().getName()) + "> " + event.getMessage().getContentDisplay())), ChatType.CHAT, Util.field_240973_b_);
                 }
             }
         }
