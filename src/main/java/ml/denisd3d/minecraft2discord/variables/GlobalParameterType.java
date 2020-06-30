@@ -19,7 +19,7 @@ public class GlobalParameterType implements IParameterType<Void>
     {
         parameters.put("global_online_players", aVoid -> String.valueOf(ServerLifecycleHooks.getCurrentServer().getCurrentPlayerCount()));
         parameters.put("global_max_players", aVoid -> String.valueOf(ServerLifecycleHooks.getCurrentServer().getMaxPlayers()));
-        parameters.put("global_unique_player", aVoid -> String.valueOf(Optional.ofNullable(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getPlayerFolder().list()).map(list -> list.length).orElse(0)));
+        parameters.put("global_unique_player", aVoid -> String.valueOf(Optional.ofNullable(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getPlayerFolder().list((dir, name) -> name.endsWith(".dat"))).map(list -> list.length).orElse(0)));
         parameters.put("global_motd", aVoid -> ServerLifecycleHooks.getCurrentServer().getMOTD());
         parameters.put("global_mc_version", aVoid -> ServerLifecycleHooks.getCurrentServer().getMinecraftVersion());
         parameters.put("global_server_hostname", aVoid -> ServerLifecycleHooks.getCurrentServer().getServerHostname());
