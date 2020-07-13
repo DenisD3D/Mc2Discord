@@ -43,7 +43,7 @@ public class MessageManager
 
             if (currentBeginIndex < message.length() - 1)
             {
-                sendTheMessage(channel, (useQuotesBlocks ? "```" : "") + message.substring(currentBeginIndex, message.length() - 1) + (useQuotesBlocks ? "```" : ""), success, failure);
+                sendTheMessage(channel, (useQuotesBlocks ? "```" : "") + message.substring(currentBeginIndex) + (useQuotesBlocks ? "```" : ""), success, failure);
             }
         } else
         {
