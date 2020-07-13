@@ -13,7 +13,7 @@ public class AdvancementParameterType implements IParameterType<AdvancementEvent
     public AdvancementParameterType()
     {
         parameters.put("advancement_title", advancementEvent -> advancementEvent.getAdvancement().getDisplay() != null ? advancementEvent.getAdvancement().getDisplay().getTitle().getString() : "");
-        parameters.put("advancement_description", advancementEvent -> advancementEvent.getAdvancement().getDisplay() != null ? advancementEvent.getAdvancement().getDisplay().getDescription().getUnformattedComponentText() : "");
+        parameters.put("advancement_description", advancementEvent -> advancementEvent.getAdvancement().getDisplay() != null ? advancementEvent.getAdvancement().getDisplay().getDescription().getString() : "");
     }
 
     @Override
