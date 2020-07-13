@@ -96,7 +96,7 @@ public class DiscordEvents extends ListenerAdapter
                                 return; // We have processed the message. If missingPermissionsMessage is empty process like a chat message
                             }
                         }
-                        MessageManager.sendMessage(event.getTextChannel(), DiscordCommandSource.answer);
+                        MessageManager.sendQuotesMessage(event.getTextChannel(), DiscordCommandSource.answer);
                         DiscordCommandSource.answer = "";
                         return; // We have processed the message
                     }
