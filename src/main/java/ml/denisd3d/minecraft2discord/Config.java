@@ -80,6 +80,8 @@ public class Config
         public final ForgeConfigSpec.ConfigValue<String> dateFormat;
         public final ForgeConfigSpec.ConfigValue<String> uptimeFormat;
 
+        public final ForgeConfigSpec.BooleanValue mentionsEnabled;
+
         public Server(ForgeConfigSpec.Builder builder)
         {
             builder.comment(" Configuration file for Minecraft2Discord\n" +
@@ -345,6 +347,10 @@ public class Config
                 enableBotMessagesRelay = builder
                     .comment(" Should bots messages be sent to Minecraft chat")
                     .define("botMessageRelayEnabled", false);
+
+                mentionsEnabled = builder
+                    .comment(" Enable @everyone, @here and role mention")
+                    .define("mentionsEnabled", false);
             }
             builder.pop();
 

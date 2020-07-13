@@ -1,5 +1,6 @@
 package ml.denisd3d.minecraft2discord.events;
 
+import club.minnced.discord.webhook.send.AllowedMentions;
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -9,6 +10,7 @@ import ml.denisd3d.minecraft2discord.managers.ChannelManager;
 import ml.denisd3d.minecraft2discord.managers.MessageManager;
 import ml.denisd3d.minecraft2discord.managers.VariableManager;
 import ml.denisd3d.minecraft2discord.managers.WebhookManager;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.minecraft.command.arguments.MessageArgument;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.event.CommandEvent;
@@ -104,11 +106,12 @@ public class MinecraftEvents
                 builder.setContent(VariableManager.messageVariables.get("message", event.getMessage()))
                     .setUsername(VariableManager.replace(Config.SERVER.nameFormat.get(), ImmutableMap.of(VariableManager.playerVariables, event.getPlayer())))
                     .setAvatarUrl(VariableManager.replace(Config.SERVER.avatarAPI.get(), ImmutableMap.of(VariableManager.playerVariables, event.getPlayer())));
+                builder.setAllowedMentions(new AllowedMentions().withParseEveryone(Config.SERVER.mentionsEnabled.get()).withParseUsers(true).withParseRoles(true));
                 WebhookManager.getWebhookClient(Config.SERVER.chatChannel.get()).send(builder.build());
             }
         } else
         {
-            MessageManager.sendFormattedMessage(ChannelManager.getChatChannel(), Config.SERVER.messageFormat.get(), ImmutableMap.of(VariableManager.playerVariables, event.getPlayer(), VariableManager.messageVariables, event.getMessage()));
+            ChannelManager.getChatChannel().sendMessage(new MessageBuilder(VariableManager.replace(Config.SERVER.messageFormat.get(), ImmutableMap.of(VariableManager.playerVariables, event.getPlayer(), VariableManager.messageVariables, event.getMessage()))).stripMentions(ChannelManager.getChatChannel().getJDA()).build()).queue();
         }
     }
 }

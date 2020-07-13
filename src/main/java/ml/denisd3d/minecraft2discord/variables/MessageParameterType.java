@@ -9,7 +9,7 @@ public class MessageParameterType implements IParameterType<String>
 
     public MessageParameterType()
     {
-        parameters.put("message", s -> s.replace("@everyone", "`@everyone`").replace("@here", "`@here`"));
+        parameters.put("message", s -> s);
     }
 
     @Override
