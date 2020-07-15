@@ -79,7 +79,7 @@ public class DiscordEvents extends ListenerAdapter
                             || event.getMember().getRoles().stream().map(Role::getIdLong).anyMatch(Config.SERVER.commandAllowedRolesIds.get()::contains)) // One role of the user is allowed
                         {
                             ServerLifecycleHooks.getCurrentServer().getCommandManager().handleCommand(commandSource, event.getMessage().getContentDisplay().substring(Config.SERVER.commandPrefix.get().length()));
-                        } else if (Config.SERVER.allowedCommandForEveryone.get().stream().anyMatch(s -> event.getMessage().getContentDisplay().substring(1).startsWith(s))) // The command to process is allowed for everyone
+                        } else if (Config.SERVER.allowedCommandForEveryone.get().stream().anyMatch(s -> event.getMessage().getContentDisplay().substring(Config.SERVER.commandPrefix.get().length()).startsWith(s))) // The command to process is allowed for everyone
                         {
                             if (event.getMessage().getContentRaw().startsWith(Config.SERVER.commandPrefix.get() + "help"))
                             {
