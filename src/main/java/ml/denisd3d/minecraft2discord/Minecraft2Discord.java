@@ -8,13 +8,13 @@ import ml.denisd3d.minecraft2discord.managers.ShutdownManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import org.apache.commons.lang3.tuple.Pair;
@@ -38,7 +38,7 @@ public class Minecraft2Discord
     public Minecraft2Discord()
     {
         MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onServerReady);
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onServerStarting);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onRegisterCommands);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onServerStop);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SERVER_SPECS, "minecraft2discord.toml");
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (in, net) -> true));
@@ -92,11 +92,11 @@ public class Minecraft2Discord
         }
     }
 
-    public void onServerStarting(FMLServerStartingEvent event)
+    public void onRegisterCommands(RegisterCommandsEvent event)
     {
         if (Config.SERVER.discordCommandEnabled.get())
         {
-            DiscordCommand.register(event.getCommandDispatcher());
+            DiscordCommand.register(event.getDispatcher());
         }
     }
 
