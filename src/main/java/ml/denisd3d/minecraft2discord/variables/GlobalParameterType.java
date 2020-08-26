@@ -20,20 +20,9 @@ public class GlobalParameterType implements IParameterType<Void>
 
     public GlobalParameterType()
     {
-        try
-        {
-            Field f = MinecraftServer.class.getDeclaredField("anvilConverterForAnvilFile");
-            f.setAccessible(true);
-            anvilConverterForAnvilFile = (SaveFormat.LevelSave) f.get(ServerLifecycleHooks.getCurrentServer());
-
-        } catch (NoSuchFieldException | IllegalAccessException e)
-        {
-            e.printStackTrace();
-        }
-
         parameters.put("global_online_players", aVoid -> String.valueOf(ServerLifecycleHooks.getCurrentServer().getCurrentPlayerCount()));
         parameters.put("global_max_players", aVoid -> String.valueOf(ServerLifecycleHooks.getCurrentServer().getMaxPlayers()));
-        parameters.put("global_unique_player", aVoid -> String.valueOf(Optional.ofNullable(anvilConverterForAnvilFile.func_237292_b_().getPlayerDataFolder().list((dir, name) -> name.endsWith(".dat"))).map(list -> list.length).orElse(0)));
+        parameters.put("global_unique_player", aVoid -> String.valueOf(Optional.ofNullable(ServerLifecycleHooks.getCurrentServer().field_240766_e_.getPlayerDataFolder().list((dir, name) -> name.endsWith(".dat"))).map(list -> list.length).orElse(0)));
         parameters.put("global_motd", aVoid -> ServerLifecycleHooks.getCurrentServer().getMOTD());
         parameters.put("global_mc_version", aVoid -> ServerLifecycleHooks.getCurrentServer().getMinecraftVersion());
         parameters.put("global_server_hostname", aVoid -> ServerLifecycleHooks.getCurrentServer().getServerHostname());
