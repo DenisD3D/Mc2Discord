@@ -1,19 +1,16 @@
 package ml.denisd3d.minecraft2discord.managers;
 
 import club.minnced.discord.webhook.send.WebhookMessageBuilder;
-import com.google.common.base.Splitter;
 import ml.denisd3d.minecraft2discord.Config;
 import ml.denisd3d.minecraft2discord.Minecraft2Discord;
 import ml.denisd3d.minecraft2discord.variables.IParameterType;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
-import sun.misc.MessageUtils;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Consumer;
 
 public class MessageManager

@@ -81,6 +81,7 @@ public class Config
         public final ForgeConfigSpec.ConfigValue<String> uptimeFormat;
 
         public final ForgeConfigSpec.BooleanValue mentionsEnabled;
+        public final ForgeConfigSpec.BooleanValue codeblocksEnabled;
 
         public Server(ForgeConfigSpec.Builder builder)
         {
@@ -301,6 +302,10 @@ public class Config
                     commandPrefix = builder
                         .comment(" Prefix to execute Minecraft command on discord")
                         .define("prefix", "/");
+
+                    codeblocksEnabled = builder
+                            .comment(" Enable the use of codeblocks in commands reply")
+                            .define("codeblocksEnabled", true);
                 }
                 builder.pop();
             }

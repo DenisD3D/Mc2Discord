@@ -1,5 +1,6 @@
 package ml.denisd3d.minecraft2discord.commands;
 
+import ml.denisd3d.minecraft2discord.Config;
 import ml.denisd3d.minecraft2discord.managers.ChannelManager;
 import ml.denisd3d.minecraft2discord.managers.MessageManager;
 import net.minecraft.command.ICommandSource;
@@ -41,7 +42,16 @@ public class DiscordCommandSource implements ICommandSource {
             messageScheduler = new Thread(() -> {
                 while (true) {
                     if (System.currentTimeMillis() - time > 100) {
-                        MessageManager.sendQuotesMessage(ChannelManager.getChatChannel(), answer);
+
+                        if (Config.SERVER.codeblocksEnabled.get())
+                        {
+                            MessageManager.sendQuotesMessage(ChannelManager.getChatChannel(), answer);
+                        }
+                        else
+                        {
+                            MessageManager.sendMessage(ChannelManager.getChatChannel(), answer);
+                        }
+
                         answer = "";
                         break;
                     }
