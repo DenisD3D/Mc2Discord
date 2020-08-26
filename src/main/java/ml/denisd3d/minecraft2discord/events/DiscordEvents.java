@@ -100,7 +100,7 @@ public class DiscordEvents extends ListenerAdapter
                     }
 
                     //If the message haven't already be processed
-                    ServerLifecycleHooks.getCurrentServer().getPlayerList().func_232641_a_(new StringTextComponent(EmojiParser.parseToAliases("<Discord - " + (Config.SERVER.nicknameEnabled.get() ? event.getMember().getEffectiveName() : event.getAuthor().getName()) + "> " + event.getMessage().getContentDisplay())), ChatType.CHAT, Util.field_240973_b_);
+                    ServerLifecycleHooks.getCurrentServer().getPlayerList().func_232641_a_(new StringTextComponent(EmojiParser.parseToAliases("<Discord - " + (Config.SERVER.nicknameEnabled.get() ? event.getMember().getEffectiveName() : event.getAuthor().getName()) + "> " + event.getMessage().getContentDisplay())), ChatType.CHAT, Util.DUMMY_UUID);
                 }
             }
         }

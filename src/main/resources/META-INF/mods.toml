@@ -6,7 +6,10 @@
 # The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml" #mandatory
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
-loaderVersion="[32,)" #mandatory (26 is current forge version)
+loaderVersion="[33,)" #mandatory (26 is current forge version)
+# The license for you mod. This is mandatory metadata and allows for easier comprehension of your redistributive properties.
+# Review your options at https://choosealicense.com/. All rights reserved is the default copyright stance, and is thus the default here.
+license="MIT License"
 # A URL to refer people to when problems occur with this mod
 #issueTrackerURL="http://my.issue.tracker/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
@@ -39,7 +42,7 @@ A simple Server side only mod to link your Discord Server to the Minecraft chat.
     # Does this dependency have to exist - if not, ordering below must be specified
     mandatory=true #mandatory
     # The version range of the dependency
-    versionRange="[32.0.67,)" #mandatory
+    versionRange="[33,)" #mandatory
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
