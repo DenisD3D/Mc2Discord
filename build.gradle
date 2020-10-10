@@ -14,7 +14,7 @@ apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'com.github.johnrengelman.shadow'
 
-version = "${mc_version}-${mod_version}"
+version = "forge-${mc_version}-${mod_version}"
 group = 'ml.denisd3d'
 archivesBaseName = 'minecraft2discord'
 
