@@ -14,7 +14,7 @@ apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'com.github.johnrengelman.shadow'
 
-version = "${mc_version}-${mod_version}"
+version = "forge-${mc_version}-${mod_version}"
 group = 'ml.denisd3d'
 archivesBaseName = 'minecraft2discord'
 
@@ -22,10 +22,14 @@ sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = co
 
 repositories {
     jcenter()
+    maven {
+        url 'https://www.dogforce-games.com/maven/'
+    }
 }
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200625-1.15.1'
+    mappings channel: 'snapshot', version: '20200820-1.16.1'
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
         client {
@@ -67,12 +71,12 @@ dependencies {
     minecraft ("net.minecraftforge:forge:${mc_version}-${forge_version}")
 
     // Java Discord library
-    compile shadow('net.dv8tion:JDA:4.1.1_162') {
+    compile shadow('net.dv8tion:JDA:4.2.0_204') {
         exclude module: 'opus-java'
     }
 
     compile shadow ("org.slf4j:slf4j-simple:1.7.28")
-    compile shadow ("club.minnced:discord-webhooks:0.3.1")
+    compile shadow ("club.minnced:discord-webhooks:0.4.1")
     compile shadow ('com.vdurmont:emoji-java:5.1.1')
 }
 
@@ -110,13 +114,13 @@ jar {
     classifier "slim"
     manifest {
         attributes([
-            "Specification-Title": "Minecraft2Discord",
-            "Specification-Vendor": "Denis3D",
-            "Specification-Version": "${version}",
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"Denis3D",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Specification-Title": "Minecraft2Discord",
+                "Specification-Vendor": "Denis3D",
+                "Specification-Version": "${version}",
+                "Implementation-Title": project.name,
+                "Implementation-Version": "${version}",
+                "Implementation-Vendor" :"Denis3D",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
