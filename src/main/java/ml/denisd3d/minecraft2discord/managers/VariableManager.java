@@ -14,6 +14,7 @@ public class VariableManager
     public static DeathParameterType deathVariables = new DeathParameterType();
     public static AdvancementParameterType advancementVariables = new AdvancementParameterType();
     public static MessageParameterType messageVariables = new MessageParameterType();
+    public static DiscordUserType discordUserVariables = new DiscordUserType();
 
 
     public static String replace(String message)

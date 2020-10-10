@@ -88,7 +88,7 @@ public class MinecraftEvents
 
         if (event.getParseResults().getContext().getCommand() != null && event.getParseResults().getContext().getNodes().get(0).getNode().getName().equals("say"))
         {
-            MessageManager.sendMessage(ChannelManager.getInfoChannel(), ((MessageArgument.Message) event.getParseResults().getContext().getArguments().get("message").getResult()).toComponent(event.getParseResults().getContext().getSource(), true).getFormattedText());
+            MessageManager.sendMessage(ChannelManager.getInfoChannel(), ((MessageArgument.Message) event.getParseResults().getContext().getArguments().get("message").getResult()).toComponent(event.getParseResults().getContext().getSource(), true).getString());
         }
     }
 

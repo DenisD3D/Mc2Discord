@@ -41,7 +41,6 @@ public class Config
         public final ForgeConfigSpec.BooleanValue deathEnabled;
         public final ForgeConfigSpec.ConfigValue<String> deathMessage;
 
-
         public final ForgeConfigSpec.BooleanValue presenceEnabled;
         public final ForgeConfigSpec.ConfigValue<String> presenceMessage;
         public final ForgeConfigSpec.LongValue presenceUpdatePeriod;
@@ -49,13 +48,11 @@ public class Config
         public final ForgeConfigSpec.BooleanValue topicEnabled;
         public final ForgeConfigSpec.LongValue topicChannel;
         public final ForgeConfigSpec.ConfigValue<String> topicMessage;
-        public final ForgeConfigSpec.ConfigValue<String> topicOfflineMessage;
         public final ForgeConfigSpec.LongValue topicUpdatePeriod;
 
         public final ForgeConfigSpec.BooleanValue nameEnabled;
         public final ForgeConfigSpec.LongValue nameChannel;
         public final ForgeConfigSpec.ConfigValue<String> nameMessage;
-        public final ForgeConfigSpec.ConfigValue<String> nameOfflineMessage;
         public final ForgeConfigSpec.LongValue nameUpdatePeriod;
 
         public final ForgeConfigSpec.BooleanValue discordCommandEnabled;
@@ -79,8 +76,10 @@ public class Config
 
         public final ForgeConfigSpec.ConfigValue<String> dateFormat;
         public final ForgeConfigSpec.ConfigValue<String> uptimeFormat;
+        public final ForgeConfigSpec.ConfigValue<String> chatFormat;
 
         public final ForgeConfigSpec.BooleanValue mentionsEnabled;
+        public final ForgeConfigSpec.BooleanValue codeblocksEnabled;
 
         public Server(ForgeConfigSpec.Builder builder)
         {
@@ -100,7 +99,8 @@ public class Config
                 "   - Death : death_message, death_unformatted_message, death_attacker_name, death_attacker_health, death_key\n" +
                 "   - Advancement : advancement_title, advancement_description\n" +
                 "   - Message : message\n" +
-                " You can found tutorials on the wiki").push("Discord");
+                "   - Discord User : discord_user_name, discord_user_tag, discord_user_discriminator\n\n" +
+                " You don't know how do edit this file ? You can found tutorials on the github wiki. You can also join the discord to get some help").push("Discord");
             {
                 token = builder
                     .comment(" Token of the discord bot")
@@ -227,10 +227,6 @@ public class Config
                         .comment(" Text set as topic of the channel")
                         .define("message", "${global_online_players} / ${global_max_players} players");
 
-                    topicOfflineMessage = builder
-                        .comment(" Message set when server stop\n Disabled when updatePeriod is less than 10 minutes (600s)")
-                        .define("offlineMessage", "Server is offline");
-
                     topicUpdatePeriod = builder
                         .comment(" Period between two topic updates in seconds\n Due to discord limitation, minimum is 5 minutes (310s)")
                         .defineInRange("updatePeriod", 610, 310, Long.MAX_VALUE);
@@ -251,10 +247,6 @@ public class Config
                     nameMessage = builder
                         .comment(" Text set as name of the channel\n If it is a text channel, space and special character will be replaced by '-'")
                         .define("message", "Players : ${global_online_players} / ${global_max_players}");
-
-                    nameOfflineMessage = builder
-                        .comment(" Message set when server stop\n Disabled when updatePeriod is less than 10 minutes (600s)")
-                        .define("offlineMessage", "Server is offline");
 
                     nameUpdatePeriod = builder
                         .comment(" Period between two topic updates in seconds\n Due to discord limitation, minimum is 5 minutes (300s)")
@@ -301,6 +293,10 @@ public class Config
                     commandPrefix = builder
                         .comment(" Prefix to execute Minecraft command on discord")
                         .define("prefix", "/");
+
+                    codeblocksEnabled = builder
+                            .comment(" Enable the use of codeblocks in commands reply")
+                            .define("codeblocksEnabled", true);
                 }
                 builder.pop();
             }
@@ -361,8 +357,12 @@ public class Config
                     .define("dateFormat", "yyyy-MM-dd HH:mm:ss");
 
                 uptimeFormat = builder
-                    .comment(" Change the format for the ${global_uptime} variable\n See available options \"Date and Time Patterns\" on https://github.com/Denis3d/Minecraft2Discord/wiki/Date-&-Time-Formatting")
+                    .comment(" Change the format for ${global_uptime} variable\n See available options \"Date and Time Patterns\" on https://github.com/Denis3d/Minecraft2Discord/wiki/Date-&-Time-Formatting")
                     .define("uptimeFormat", "HH:mm");
+
+                chatFormat = builder
+                        .comment(" Change the format for the prefix of message relayed from discord to minecraft\n  Variables : DiscordUser")
+                        .define("chatFormat", "<Discord - ${discord_user_name}> ");
             }
             builder.pop();
         }

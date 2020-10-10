@@ -1,5 +1,6 @@
 package ml.denisd3d.minecraft2discord;
 
+import com.neovisionaries.ws.client.WebSocketFactory;
 import ml.denisd3d.minecraft2discord.api.M2DExtension;
 import ml.denisd3d.minecraft2discord.api.M2DUtils;
 import ml.denisd3d.minecraft2discord.commands.DiscordCommand;
@@ -15,9 +16,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
+import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,7 +33,6 @@ public class Minecraft2Discord
 {
     private static final Logger LOGGER = LogManager.getLogger();
     public static ArrayList<M2DExtension> extensions = new ArrayList<>();
-    public static boolean isRunning = false;
     private static JDA DISCORD_BOT;
     private static long startedTime;
     private static String username;
@@ -38,8 +41,9 @@ public class Minecraft2Discord
     public Minecraft2Discord()
     {
         MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onServerReady);
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onServerStarting);
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onServerStop);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onRegisterCommands);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onServerStopping);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onServerStopped);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, Config.SERVER_SPECS, "minecraft2discord.toml");
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (in, net) -> true));
     }
@@ -85,14 +89,16 @@ public class Minecraft2Discord
 
         try
         {
-            DISCORD_BOT = JDABuilder.createDefault(Config.SERVER.token.get()).addEventListeners(new DiscordEvents()).addEventListeners(M2DUtils.eListeners.toArray()).build();
+            DISCORD_BOT = JDABuilder.createDefault(Config.SERVER.token.get())
+                    .addEventListeners(new DiscordEvents())
+                    .addEventListeners(M2DUtils.eListeners.toArray()).build();
         } catch (LoginException e)
         {
             LOGGER.error(e.getMessage());
         }
     }
 
-    public void onServerStarting(FMLServerStartingEvent event)
+    public void onRegisterCommands(FMLServerStartingEvent event)
     {
         if (Config.SERVER.discordCommandEnabled.get())
         {
@@ -100,9 +106,14 @@ public class Minecraft2Discord
         }
     }
 
-    public void onServerStop(FMLServerStoppingEvent event)
+    public void onServerStopping(FMLServerStoppingEvent event)
     {
         Minecraft2Discord.extensions.forEach(m2DExtension -> m2DExtension.onStop(event));
-        ShutdownManager.onStop();
+        ShutdownManager.stopping();
+    }
+
+    public void onServerStopped(FMLServerStoppedEvent event)
+    {
+        ShutdownManager.stopped();
     }
 }

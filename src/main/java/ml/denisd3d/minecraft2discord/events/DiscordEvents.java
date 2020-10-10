@@ -1,5 +1,6 @@
 package ml.denisd3d.minecraft2discord.events;
 
+import com.google.common.collect.ImmutableMap;
 import com.vdurmont.emoji.EmojiParser;
 import ml.denisd3d.minecraft2discord.Config;
 import ml.denisd3d.minecraft2discord.ExtensionUtils;
@@ -12,8 +13,10 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.minecraft.command.CommandSource;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.MinecraftForge;
@@ -46,12 +49,9 @@ public class DiscordEvents extends ListenerAdapter
         Minecraft2Discord.setUsername(Config.SERVER.serverName.get().isEmpty() ? event.getJDA().getSelfUser().getName() : Config.SERVER.serverName.get());
         Minecraft2Discord.setAvatarURL(Config.SERVER.serverAvatarURL.get().isEmpty() ? event.getJDA().getSelfUser().getAvatarUrl() : Config.SERVER.serverAvatarURL.get());
 
-        Minecraft2Discord.isRunning = true;
-
         MinecraftForge.EVENT_BUS.register(MinecraftEvents.class);
 
-        WebhookManager.addWebhookClient(Config.SERVER.infoChannel.get(), DiscordEvents::sendStartMessage);
-        WebhookManager.addWebhookClient(Config.SERVER.chatChannel.get(), null);
+        WebhookManager.addWebhookClient(Config.SERVER.chatChannel.get(), () -> WebhookManager.addWebhookClient(Config.SERVER.infoChannel.get(), DiscordEvents::sendStartMessage)); // Register Webhooks one after one to prevent the webhook being created two times
 
         ShutdownManager.registerShutdownHook();
         StatusManager.register();
@@ -95,13 +95,23 @@ public class DiscordEvents extends ListenerAdapter
                                 return; // We have processed the message. If missingPermissionsMessage is empty process like a chat message
                             }
                         }
-                        MessageManager.sendQuotesMessage(event.getTextChannel(), DiscordCommandSource.answer);
-                        DiscordCommandSource.answer = "";
                         return; // We have processed the message
                     }
 
                     //If the message haven't already be processed
-                    ServerLifecycleHooks.getCurrentServer().getPlayerList().sendMessage(new StringTextComponent(EmojiParser.parseToAliases("<Discord - " + (Config.SERVER.nicknameEnabled.get() ? event.getMember().getEffectiveName() : event.getAuthor().getName()) + "> " + event.getMessage().getContentDisplay())));
+                    ServerLifecycleHooks.getCurrentServer().getPlayerList().sendMessage(
+                            new StringTextComponent(
+                                    EmojiParser.parseToAliases(
+                                            VariableManager.replace(
+                                                    Config.SERVER.chatFormat.get(),
+                                                    ImmutableMap.of(
+                                                            VariableManager.discordUserVariables,
+                                                            event.getMember()
+                                                    )
+                                            ) + event.getMessage().getContentDisplay()
+                                    )
+                            )
+                    );
                 }
             }
         }

@@ -10,20 +10,22 @@ public class ShutdownManager
 {
     static boolean isStop = false;
 
-    public static void onStop()
+    public static void stopping()
     {
-        if (isStop || !Minecraft2Discord.isRunning)
-            return;
-
-        isStop = true;
         StatusManager.shutdown();
+
         if (Config.SERVER.startStopEnabled.get())
         {
-            MessageManager.sendMessage(ChannelManager.getInfoChannel(), Config.SERVER.stopMessage.get(), true, new HashMap<>(), message -> ShutdownManager.shutdown(), throwable -> ShutdownManager.shutdown());
-        } else
-        {
-            ShutdownManager.shutdown();
+            MessageManager.sendMessage(ChannelManager.getInfoChannel(), Config.SERVER.stopMessage.get(), true, new HashMap<>());
         }
+    }
+
+    public static void stopped()
+    {
+        if (isStop)
+            return;
+        isStop = true;
+        ShutdownManager.shutdown();
     }
 
     public static void registerShutdownHook()
@@ -31,8 +33,9 @@ public class ShutdownManager
 
         Runtime.getRuntime().addShutdownHook(new Thread(() ->
         {
+
             System.out.println("Shutdown hook called");
-            if (isStop || !Minecraft2Discord.isRunning)
+            if (isStop)
                 return;
 
             isStop = true;
@@ -51,16 +54,16 @@ public class ShutdownManager
     {
         try
         {
-            Thread.sleep(1000); // Let previous action be executed => TODO : found a not blocking way
-            Minecraft2Discord.isRunning = false;
             for (WebhookClient webhookClient : WebhookManager.getWebhookClients().values())
             {
                 webhookClient.close();
             }
-            Minecraft2Discord.getDiscordBot().shutdownNow();
+            WebhookManager.ses.shutdown();
+
+            Minecraft2Discord.getDiscordBot().shutdown();
         } catch (Exception e)
         {
-            Minecraft2Discord.getLogger().warn("Shutdown forced");
+            Minecraft2Discord.getLogger().warn("Shutdown Error");
         }
     }
 }

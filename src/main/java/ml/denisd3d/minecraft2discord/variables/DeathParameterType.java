@@ -11,10 +11,10 @@ public class DeathParameterType implements IParameterType<LivingDeathEvent>
 
     public DeathParameterType()
     {
-        parameters.put("death_message", livingDeathEvent -> livingDeathEvent.getEntityLiving().getCombatTracker().getDeathMessage().getFormattedText());
+        parameters.put("death_message", livingDeathEvent -> livingDeathEvent.getEntityLiving().getCombatTracker().getDeathMessage().getString());
         parameters.put("death_unformatted_message", livingDeathEvent -> livingDeathEvent.getEntityLiving().getCombatTracker().getDeathMessage().getUnformattedComponentText());
         parameters.put("death_key", livingDeathEvent -> "death.attack." + livingDeathEvent.getSource().getDamageType());
-        parameters.put("death_attacker_name", livingDeathEvent -> livingDeathEvent.getEntityLiving().getAttackingEntity() != null ? livingDeathEvent.getEntityLiving().getAttackingEntity().getDisplayName().getFormattedText() : "");
+        parameters.put("death_attacker_name", livingDeathEvent -> livingDeathEvent.getEntityLiving().getAttackingEntity() != null ? livingDeathEvent.getEntityLiving().getAttackingEntity().getDisplayName().getString() : "");
         parameters.put("death_attacker_health", livingDeathEvent -> livingDeathEvent.getEntityLiving().getAttackingEntity() != null ? String.format("%d", (long) livingDeathEvent.getEntityLiving().getAttackingEntity().getHealth()) : "");
 
     }

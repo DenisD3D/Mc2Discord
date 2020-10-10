@@ -5,17 +5,23 @@ import club.minnced.discord.webhook.WebhookClientBuilder;
 import ml.denisd3d.minecraft2discord.Minecraft2Discord;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.Webhook;
+import okhttp3.OkHttpClient;
 
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class WebhookManager
 {
     private static final HashMap<Long, WebhookClient> webhookClients = new HashMap<>();
+    public static ScheduledExecutorService ses = Executors.newScheduledThreadPool(0);
 
     public static void addWebhookClient(long channelId, Runnable whenDone)
     {
         if (webhookClients.containsKey(channelId))
         {
+            whenDone.run();
             return;
         }
 
@@ -29,7 +35,12 @@ public class WebhookManager
                 {
                     channel.createWebhook("Minecraft2Discord").queue(createdWebhook ->
                     {
-                        webhookClients.put(channelId, new WebhookClientBuilder(createdWebhook.getUrl()).setDaemon(true).build());
+                        webhookClients.put(channelId, new WebhookClientBuilder(createdWebhook.getUrl()).setThreadFactory((job) -> {
+                            Thread thread = new Thread(job);
+                            thread.setName("M2D Webhook");
+                            thread.setDaemon(true);
+                            return thread;
+                        }).setExecutorService(ses).setHttpClient(Minecraft2Discord.getDiscordBot().getHttpClient()).setDaemon(true).build());
                         if (whenDone != null)
                         {
                             whenDone.run();
@@ -37,7 +48,12 @@ public class WebhookManager
                     });
                 } else
                 {
-                    webhookClients.put(channelId, new WebhookClientBuilder(webhook.getUrl()).setDaemon(true).build());
+                    webhookClients.put(channelId, new WebhookClientBuilder(webhook.getUrl()).setThreadFactory((job) -> {
+                        Thread thread = new Thread(job);
+                        thread.setName("M2D Webhook");
+                        thread.setDaemon(true);
+                        return thread;
+                    }).setExecutorService(ses).setHttpClient(Minecraft2Discord.getDiscordBot().getHttpClient()).setDaemon(true).build());
                     if (whenDone != null)
                     {
                         whenDone.run();

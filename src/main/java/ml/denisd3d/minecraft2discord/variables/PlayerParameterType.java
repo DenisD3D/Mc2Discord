@@ -11,7 +11,7 @@ public class PlayerParameterType implements IParameterType<PlayerEntity>
 
     public PlayerParameterType()
     {
-        parameters.put("player_name", playerEntity -> playerEntity.getDisplayName().getFormattedText());
+        parameters.put("player_name", playerEntity -> playerEntity.getDisplayName().getString());
         parameters.put("player_uuid", playerEntity -> playerEntity.getGameProfile().getId().toString());
         parameters.put("player_health", playerEntity -> String.format("%d", (long) playerEntity.getHealth()));
     }

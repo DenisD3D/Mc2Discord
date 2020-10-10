@@ -2,11 +2,14 @@ package ml.denisd3d.minecraft2discord.variables;
 
 import ml.denisd3d.minecraft2discord.Config;
 import ml.denisd3d.minecraft2discord.Minecraft2Discord;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.storage.SaveFormat;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.function.Function;
