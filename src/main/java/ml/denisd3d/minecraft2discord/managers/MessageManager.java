@@ -7,6 +7,7 @@ import ml.denisd3d.minecraft2discord.variables.IParameterType;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.minecraft.client.renderer.entity.ShulkerRenderer;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -17,7 +18,7 @@ public class MessageManager
 {
     public static void sendMessage(TextChannel channel, String message, Boolean format, Map<IParameterType<?>, Object> parameters, Consumer<Message> success, Consumer<Throwable> failure, boolean useQuotesBlocks)
     {
-        if (Minecraft2Discord.isRunning && channel != null)
+        if (channel != null && !ShutdownManager.isStop)
         {
             if (format)
             {
@@ -61,22 +62,16 @@ public class MessageManager
                 builder.setContent(VariableManager.messageVariables.get("message", m))
                     .setUsername(Minecraft2Discord.getUsername())
                     .setAvatarUrl(Minecraft2Discord.getAvatarURL());
-                if (ShutdownManager.isStop) // It is the shutdown message
-                {
-                    if (WebhookManager.getWebhookClient(channel.getIdLong()) != null)
-                        WebhookManager.getWebhookClient(channel.getIdLong()).send(builder.build()).join();
-                } else
-                {
-                    if (WebhookManager.getWebhookClient(channel.getIdLong()) != null)
-                        WebhookManager.getWebhookClient(channel.getIdLong()).send(builder.build());
-                }
+
+                if (WebhookManager.getWebhookClient(channel.getIdLong()) != null)
+                    WebhookManager.getWebhookClient(channel.getIdLong()).send(builder.build());
+
                 if (success != null)
                 {
                     success.accept(null);
                 }
             } else
             {
-
                 channel.sendMessage(new MessageBuilder(m).stripMentions(channel.getJDA()).build()).queue(success, failure);
             }
         } catch (Exception e)

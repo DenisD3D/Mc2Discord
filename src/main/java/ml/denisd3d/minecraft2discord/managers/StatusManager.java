@@ -6,14 +6,11 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.ChannelType;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class StatusManager
 {
-    public static ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
+    public static ScheduledExecutorService ses = Executors.newScheduledThreadPool(0);
     public static ScheduledFuture<?> scheduledFuturePresence;
     public static ScheduledFuture<?> scheduledFutureTopic;
     public static ScheduledFuture<?> scheduledFutureChannelName;
@@ -70,17 +67,6 @@ public class StatusManager
         if (ses != null)
         {
             ses.shutdownNow();
-        }
-
-        if (Config.SERVER.topicEnabled.get() && Config.SERVER.topicUpdatePeriod.get() >= 600)
-        {
-            if (ChannelManager.getTopicChannel() != null && Minecraft2Discord.getDiscordBot().getStatus() != JDA.Status.SHUTDOWN || Minecraft2Discord.getDiscordBot().getStatus() != JDA.Status.SHUTTING_DOWN)
-                ChannelManager.getTopicChannel().getManager().setTopic(VariableManager.replace(Config.SERVER.topicOfflineMessage.get())).queue();
-        }
-        if (Config.SERVER.nameEnabled.get() && Config.SERVER.nameUpdatePeriod.get() >= 600)
-        {
-            if (ChannelManager.getNameChannel() != null && Minecraft2Discord.getDiscordBot().getStatus() == JDA.Status.SHUTDOWN || Minecraft2Discord.getDiscordBot().getStatus() != JDA.Status.SHUTTING_DOWN)
-                ChannelManager.getNameChannel().getManager().setName(ChannelManager.getNameChannel().getType() == ChannelType.TEXT ? VariableManager.replace(Config.SERVER.nameOfflineMessage.get()).replace(" ", "-") : VariableManager.replace(Config.SERVER.nameOfflineMessage.get())).queue();
         }
     }
 }
