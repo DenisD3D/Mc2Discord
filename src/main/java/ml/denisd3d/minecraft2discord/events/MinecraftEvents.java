@@ -20,98 +20,89 @@ import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-public class MinecraftEvents
-{
+public class MinecraftEvents {
+
     @SubscribeEvent
-    public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event)
-    {
+    public static void onPlayerJoin(PlayerEvent.PlayerLoggedInEvent event) {
         if (ExtensionUtils.executeExtensions(m2DExtension -> m2DExtension.onPlayerJoin(event))) // Execute extensions
             return;
 
         if (Config.SERVER.joinLeaveEnabled.get())
             MessageManager.sendFormattedMessage(ChannelManager.getInfoChannel(), Config.SERVER.joinMessage.get(),
-                ImmutableMap.of(VariableManager.playerVariables, event.getPlayer()));
+                    ImmutableMap.of(VariableManager.playerVariables, event.getPlayer()));
     }
 
     @SubscribeEvent
-    public static void onPlayerLeft(PlayerEvent.PlayerLoggedOutEvent event)
-    {
+    public static void onPlayerLeft(PlayerEvent.PlayerLoggedOutEvent event) {
         if (ExtensionUtils.executeExtensions(m2DExtension -> m2DExtension.onPlayerLeft(event))) // Execute extensions
             return;
 
         if (Config.SERVER.joinLeaveEnabled.get())
             MessageManager.sendFormattedMessage(ChannelManager.getInfoChannel(), Config.SERVER.leaveMessage.get(),
-                ImmutableMap.of(VariableManager.playerVariables, event.getPlayer()));
+                    ImmutableMap.of(VariableManager.playerVariables, event.getPlayer()));
     }
 
     @SubscribeEvent
-    public static void onLivingDeath(LivingDeathEvent event)
-    {
-        if (event.getEntityLiving() instanceof PlayerEntity)
-        {
+    public static void onLivingDeath(LivingDeathEvent event) {
+        if (event.getEntityLiving() instanceof PlayerEntity) {
             if (ExtensionUtils.executeExtensions(m2DExtension -> m2DExtension.onDeath(event))) // Execute extensions
                 return;
 
-            if (Config.SERVER.deathEnabled.get())
-            {
+            if (Config.SERVER.deathEnabled.get()) {
                 PlayerEntity player = (PlayerEntity) event.getEntityLiving();
                 MessageManager.sendFormattedMessage(ChannelManager.getInfoChannel(), Config.SERVER.deathMessage.get(),
-                    ImmutableMap.of(VariableManager.playerVariables, player, VariableManager.deathVariables, event));
+                        ImmutableMap.of(VariableManager.playerVariables, player, VariableManager.deathVariables, event));
             }
         }
     }
 
     @SubscribeEvent
-    public static void onAdvancement(AdvancementEvent event)
-    {
+    public static void onAdvancement(AdvancementEvent event) {
         if (ExtensionUtils.executeExtensions(m2DExtension -> m2DExtension.onAdvancement(event))) // Execute extensions
             return;
 
-        if (event.getAdvancement().getDisplay() != null && event.getAdvancement().getDisplay().shouldAnnounceToChat())
-        {
+        if (event.getAdvancement().getDisplay() != null && event.getAdvancement().getDisplay().shouldAnnounceToChat()) {
             if (Config.SERVER.hiddenAdvancementsList.get().stream().anyMatch(s -> s.startsWith(event.getAdvancement().getId().toString())))
                 return;
 
-            if (Config.SERVER.advancementEnabled.get())
-            {
+            if (Config.SERVER.advancementEnabled.get()) {
                 MessageManager.sendFormattedMessage(ChannelManager.getInfoChannel(), Config.SERVER.advancementMessage.get(),
-                    ImmutableMap.of(VariableManager.playerVariables, event.getPlayer(), VariableManager.advancementVariables, event));
+                        ImmutableMap.of(VariableManager.playerVariables, event.getPlayer(), VariableManager.advancementVariables, event));
             }
         }
     }
 
     @SubscribeEvent
-    public static void onCommand(CommandEvent event) throws CommandSyntaxException
-    {
+    public static void onCommand(CommandEvent event) throws CommandSyntaxException {
         if (ExtensionUtils.executeExtensions(m2DExtension -> m2DExtension.onCommand(event))) // Execute extensions
             return;
 
-        if (event.getParseResults().getContext().getCommand() != null && event.getParseResults().getContext().getNodes().get(0).getNode().getName().equals("say"))
-        {
+        if (event.getParseResults().getContext().getCommand() != null && event.getParseResults().getContext().getNodes().get(0).getNode().getName().equals("say")) {
             MessageManager.sendMessage(ChannelManager.getInfoChannel(), ((MessageArgument.Message) event.getParseResults().getContext().getArguments().get("message").getResult()).toComponent(event.getParseResults().getContext().getSource(), true).getString());
         }
     }
 
     @SubscribeEvent
-    public static void onServerChat(final ServerChatEvent event)
-    {
+    public static void onServerChat(final ServerChatEvent event) {
         if (ExtensionUtils.executeExtensions(m2DExtension -> m2DExtension.onMinecraftMessage(event))) // Execute extensions
             return;
 
-        if (Config.SERVER.webhooksEnabled.get())
-        {
-            if (WebhookManager.getWebhookClient(Config.SERVER.chatChannel.get()) != null)
-            {
+        if (Config.SERVER.chatChannel.get() != null) {
+            if (Config.SERVER.webhooksEnabled.get()) {
                 WebhookMessageBuilder builder = new WebhookMessageBuilder();
                 builder.setContent(VariableManager.messageVariables.get("message", event.getMessage()))
-                    .setUsername(VariableManager.replace(Config.SERVER.nameFormat.get(), ImmutableMap.of(VariableManager.playerVariables, event.getPlayer())))
-                    .setAvatarUrl(VariableManager.replace(Config.SERVER.avatarAPI.get(), ImmutableMap.of(VariableManager.playerVariables, event.getPlayer())));
+                        .setUsername(VariableManager.replace(Config.SERVER.nameFormat.get(), ImmutableMap.of(VariableManager.playerVariables, event.getPlayer())))
+                        .setAvatarUrl(VariableManager.replace(Config.SERVER.avatarAPI.get(), ImmutableMap.of(VariableManager.playerVariables, event.getPlayer())));
                 builder.setAllowedMentions(new AllowedMentions().withParseEveryone(Config.SERVER.mentionsEnabled.get()).withParseUsers(true).withParseRoles(true));
-                WebhookManager.getWebhookClient(Config.SERVER.chatChannel.get()).send(builder.build());
+
+                if (WebhookManager.getWebhookClient(Config.SERVER.chatChannel.get()) != null) {
+                    WebhookManager.getWebhookClient(Config.SERVER.chatChannel.get()).send(builder.build());
+                } else {
+                    WebhookManager.initChatWebhook(() -> WebhookManager.getWebhookClient(Config.SERVER.chatChannel.get()).send(builder.build()));
+                }
+            } else {
+                ChannelManager.getChatChannel().sendMessage(new MessageBuilder(VariableManager.replace(Config.SERVER.messageFormat.get(), ImmutableMap.of(VariableManager.playerVariables, event.getPlayer(), VariableManager.messageVariables, event.getMessage()))).stripMentions(ChannelManager.getChatChannel().getJDA()).build()).queue();
             }
-        } else
-        {
-            ChannelManager.getChatChannel().sendMessage(new MessageBuilder(VariableManager.replace(Config.SERVER.messageFormat.get(), ImmutableMap.of(VariableManager.playerVariables, event.getPlayer(), VariableManager.messageVariables, event.getMessage()))).stripMentions(ChannelManager.getChatChannel().getJDA()).build()).queue();
         }
     }
 }

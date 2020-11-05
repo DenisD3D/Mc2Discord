@@ -5,9 +5,6 @@ import ml.denisd3d.minecraft2discord.managers.ChannelManager;
 import ml.denisd3d.minecraft2discord.managers.MessageManager;
 import net.minecraft.command.ICommandSource;
 import net.minecraft.util.text.ITextComponent;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.UUID;
 
 public class DiscordCommandSource implements ICommandSource {
     private Thread messageScheduler;
@@ -15,8 +12,7 @@ public class DiscordCommandSource implements ICommandSource {
     public static String answer = ""; // This is a hack to have only one string as result for the command. We need to clear it after each use and get the result by our self
 
     @Override
-    public void sendMessage(ITextComponent component)
-    {
+    public void sendMessage(ITextComponent component) {
         answer += component.getString() + "\n";
         scheduleMessage();
     }
@@ -43,12 +39,9 @@ public class DiscordCommandSource implements ICommandSource {
                 while (true) {
                     if (System.currentTimeMillis() - time > 100) {
 
-                        if (Config.SERVER.codeblocksEnabled.get())
-                        {
+                        if (Config.SERVER.codeblocksEnabled.get()) {
                             MessageManager.sendQuotesMessage(ChannelManager.getChatChannel(), answer);
-                        }
-                        else
-                        {
+                        } else {
                             MessageManager.sendMessage(ChannelManager.getChatChannel(), answer);
                         }
 

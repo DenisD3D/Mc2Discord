@@ -71,12 +71,12 @@ dependencies {
     minecraft ("net.minecraftforge:forge:${mc_version}-${forge_version}")
 
     // Java Discord library
-    compile shadow('net.dv8tion:JDA:4.2.0_204') {
+    compile shadow('net.dv8tion:JDA:4.2.0_212') {
         exclude module: 'opus-java'
     }
 
     compile shadow ("org.slf4j:slf4j-simple:1.7.28")
-    compile shadow ("club.minnced:discord-webhooks:0.4.1")
+    compile shadow ("club.minnced:discord-webhooks:0.5.0")
     compile shadow ('com.vdurmont:emoji-java:5.1.1')
 }
 

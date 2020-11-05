@@ -10,17 +10,14 @@ import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.Map;
 
-public class CustomHelpCommand
-{
-    public static void execute(CommandSource commandSource)
-    {
+public class CustomHelpCommand {
+    public static void execute(CommandSource commandSource) {
 
         Commands commandsManager = ServerLifecycleHooks.getCurrentServer().getCommandManager();
 
         RootCommandNode<CommandSource> commandRoot = new RootCommandNode<>();
 
-        for (String command : Config.SERVER.allowedCommandForEveryone.get())
-        {
+        for (String command : Config.SERVER.allowedCommandForEveryone.get()) {
             CommandNode<CommandSource> node = commandsManager.getDispatcher().getRoot().getChild(command.split(" ")[0]);
 
             commandRoot.addChild(node);
@@ -28,8 +25,7 @@ public class CustomHelpCommand
 
         Map<CommandNode<CommandSource>, String> lvt_2_1_ = commandsManager.getDispatcher().getSmartUsage(commandRoot, commandSource);
 
-        for (String lvt_4_1_ : lvt_2_1_.values())
-        {
+        for (String lvt_4_1_ : lvt_2_1_.values()) {
             commandSource.sendFeedback(new StringTextComponent(Config.SERVER.commandPrefix.get() + lvt_4_1_), false);
         }
     }

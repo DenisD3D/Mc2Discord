@@ -5,12 +5,10 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import java.util.HashMap;
 import java.util.function.Function;
 
-public class DeathParameterType implements IParameterType<LivingDeathEvent>
-{
+public class DeathParameterType implements IParameterType<LivingDeathEvent> {
     private final HashMap<String, Function<LivingDeathEvent, String>> parameters = new HashMap<>();
 
-    public DeathParameterType()
-    {
+    public DeathParameterType() {
         parameters.put("death_message", livingDeathEvent -> livingDeathEvent.getEntityLiving().getCombatTracker().getDeathMessage().getString());
         parameters.put("death_unformatted_message", livingDeathEvent -> livingDeathEvent.getEntityLiving().getCombatTracker().getDeathMessage().getUnformattedComponentText());
         parameters.put("death_key", livingDeathEvent -> "death.attack." + livingDeathEvent.getSource().getDamageType());
@@ -20,20 +18,17 @@ public class DeathParameterType implements IParameterType<LivingDeathEvent>
     }
 
     @Override
-    public String get(String key, Object variable)
-    {
+    public String get(String key, Object variable) {
         return parameters.get(key).apply((LivingDeathEvent) variable);
     }
 
     @Override
-    public void set(String key, Function<LivingDeathEvent, String> value)
-    {
+    public void set(String key, Function<LivingDeathEvent, String> value) {
         parameters.put(key, value);
     }
 
     @Override
-    public boolean containsKey(String key)
-    {
+    public boolean containsKey(String key) {
         return parameters.containsKey(key);
     }
 }

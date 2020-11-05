@@ -2,24 +2,19 @@ package ml.denisd3d.minecraft2discord.variables;
 
 import ml.denisd3d.minecraft2discord.Config;
 import ml.denisd3d.minecraft2discord.Minecraft2Discord;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.storage.SaveFormat;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class GlobalParameterType implements IParameterType<Void>
-{
+public class GlobalParameterType implements IParameterType<Void> {
     private final HashMap<String, Function<Void, String>> parameters = new HashMap<>();
 
-    public GlobalParameterType()
-    {
+    public GlobalParameterType() {
         parameters.put("global_online_players", aVoid -> String.valueOf(ServerLifecycleHooks.getCurrentServer().getCurrentPlayerCount()));
         parameters.put("global_max_players", aVoid -> String.valueOf(ServerLifecycleHooks.getCurrentServer().getMaxPlayers()));
         parameters.put("global_unique_player", aVoid -> String.valueOf(Optional.ofNullable(ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD).getSaveHandler().getPlayerFolder().list((dir, name) -> name.endsWith(".dat"))).map(list -> list.length).orElse(0)));
@@ -32,20 +27,17 @@ public class GlobalParameterType implements IParameterType<Void>
     }
 
     @Override
-    public String get(String key, Object aVoid)
-    {
+    public String get(String key, Object aVoid) {
         return parameters.get(key).apply(null);
     }
 
     @Override
-    public void set(String key, Function<Void, String> value)
-    {
+    public void set(String key, Function<Void, String> value) {
         parameters.put(key, value);
     }
 
     @Override
-    public boolean containsKey(String key)
-    {
+    public boolean containsKey(String key) {
         return parameters.containsKey(key);
     }
 

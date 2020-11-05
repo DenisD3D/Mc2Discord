@@ -7,31 +7,24 @@ import ml.denisd3d.minecraft2discord.variables.IParameterType;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.minecraft.client.renderer.entity.ShulkerRenderer;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class MessageManager
-{
-    public static void sendMessage(TextChannel channel, String message, Boolean format, Map<IParameterType<?>, Object> parameters, Consumer<Message> success, Consumer<Throwable> failure, boolean useQuotesBlocks)
-    {
-        if (channel != null && !ShutdownManager.isStop)
-        {
-            if (format)
-            {
+public class MessageManager {
+    public static void sendMessage(TextChannel channel, String message, Boolean format, Map<IParameterType<?>, Object> parameters, Consumer<Message> success, Consumer<Throwable> failure, boolean useQuotesBlocks) {
+        if (channel != null && !ShutdownManager.isStop) {
+            if (format) {
                 message = VariableManager.replace(message, parameters);
             }
 
             int currentBeginIndex = 0;
 
-            while (currentBeginIndex < message.length() - 2001 - (useQuotesBlocks ? 6 : 0))
-            {
+            while (currentBeginIndex < message.length() - 2001 - (useQuotesBlocks ? 6 : 0)) {
                 int currentEndIndex = getMessageEndIndex(message, currentBeginIndex, useQuotesBlocks);
-                if (currentEndIndex != -1)
-                {
+                if (currentEndIndex != -1) {
                     String m = message.substring(currentBeginIndex, currentEndIndex);
 
                     sendTheMessage(channel, (useQuotesBlocks ? "```" : "") + m + (useQuotesBlocks ? "```" : ""), null, null);
@@ -39,98 +32,99 @@ public class MessageManager
                 }
             }
 
-            if (currentBeginIndex < message.length() - 1)
-            {
+            if (currentBeginIndex < message.length() - 1) {
                 sendTheMessage(channel, (useQuotesBlocks ? "```" : "") + message.substring(currentBeginIndex) + (useQuotesBlocks ? "```" : ""), success, failure);
             }
-        } else
-        {
-            if (failure != null)
-            {
+        } else {
+            if (failure != null) {
                 failure.accept(null);
             }
         }
     }
 
-    private static void sendTheMessage(TextChannel channel, String m, Consumer<Message> success, Consumer<Throwable> failure)
-    {
-        try
-        {
-            if (Config.SERVER.webhooksEnabled.get())
-            {
+    private static void sendTheMessage(TextChannel channel, String m, Consumer<Message> success, Consumer<Throwable> failure) {
+        try {
+            if (Config.SERVER.webhooksEnabled.get()) {
                 WebhookMessageBuilder builder = new WebhookMessageBuilder();
                 builder.setContent(VariableManager.messageVariables.get("message", m))
-                    .setUsername(Minecraft2Discord.getUsername())
-                    .setAvatarUrl(Minecraft2Discord.getAvatarURL());
+                        .setUsername(Minecraft2Discord.getUsername())
+                        .setAvatarUrl(Minecraft2Discord.getAvatarURL());
 
-                if (WebhookManager.getWebhookClient(channel.getIdLong()) != null)
+                if (WebhookManager.getWebhookClient(channel.getIdLong()) != null) {
                     WebhookManager.getWebhookClient(channel.getIdLong()).send(builder.build());
-
-                if (success != null)
-                {
-                    success.accept(null);
+                    if (success != null) {
+                        success.accept(null);
+                    }
+                } else {
+                    if (channel.getIdLong() == Config.SERVER.chatChannel.get()) {
+                        WebhookManager.initChatWebhook(() -> {
+                            WebhookManager.getWebhookClient(channel.getIdLong()).send(builder.build());
+                            if (success != null) {
+                                success.accept(null);
+                            }
+                        });
+                    } else if (channel.getIdLong() == Config.SERVER.infoChannel.get()) {
+                        WebhookManager.initInfoWebhook(() -> {
+                            WebhookManager.getWebhookClient(channel.getIdLong()).send(builder.build());
+                            if (success != null) {
+                                success.accept(null);
+                            }
+                        });
+                    } else {
+                        channel.sendMessage(new MessageBuilder(m).stripMentions(channel.getJDA()).build()).queue(success, failure);
+                    }
                 }
-            } else
-            {
+            } else {
                 channel.sendMessage(new MessageBuilder(m).stripMentions(channel.getJDA()).build()).queue(success, failure);
             }
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             Minecraft2Discord.getLogger().error(e);
             failure.accept(null);
         }
     }
 
-    public static void sendMessage(TextChannel channel, String message, Boolean format, Map<IParameterType<?>, Object> parameters, Consumer<Message> success, Consumer<Throwable> failure)
-    {
+    public static void sendMessage(TextChannel channel, String message, Boolean format, Map<IParameterType<?>, Object> parameters, Consumer<Message> success, Consumer<Throwable> failure) {
         sendMessage(channel, message, format, parameters, success, failure, false);
     }
 
-    public static void sendQuotesMessage(TextChannel channel, String message, Boolean format, Map<IParameterType<?>, Object> parameters, Consumer<Message> success, Consumer<Throwable> failure)
-    {
+    public static void sendQuotesMessage(TextChannel channel, String message, Boolean format, Map<IParameterType<?>, Object> parameters, Consumer<Message> success, Consumer<Throwable> failure) {
         sendMessage(channel, message, format, parameters, success, failure, true);
     }
 
-    public static void sendMessage(TextChannel channel, String message, boolean format, Map<IParameterType<?>, Object> parameters)
-    {
+    public static void sendMessage(TextChannel channel, String message, boolean format, Map<IParameterType<?>, Object> parameters) {
         sendMessage(channel, message, format, parameters, null, null);
     }
 
-    public static void sendMessage(TextChannel channel, String message)
-    {
+    public static void sendMessage(TextChannel channel, String message) {
         sendMessage(channel, message, false, null, null, null);
     }
 
-    public static void sendQuotesMessage(TextChannel channel, String message)
-    {
+    public static void sendQuotesMessage(TextChannel channel, String message) {
         sendQuotesMessage(channel, message, false, null, null, null);
     }
 
-    public static void sendFormattedMessage(TextChannel channel, String message)
-    {
+    public static void sendFormattedMessage(TextChannel channel, String message) {
         sendMessage(channel, message, true, new HashMap<>(), null, null);
     }
 
-    public static void sendFormattedMessage(TextChannel channel, String message, Map<IParameterType<?>, Object> parameters)
-    {
+    public static void sendFormattedMessage(TextChannel channel, String message, Consumer<Message> success, Consumer<Throwable> failure) {
+        sendMessage(channel, message, true, new HashMap<>(), success, failure);
+    }
+
+    public static void sendFormattedMessage(TextChannel channel, String message, Map<IParameterType<?>, Object> parameters) {
         sendMessage(channel, message, true, parameters, null, null);
     }
 
-    public static int getMessageEndIndex(final String message, final int currentBeginIndex, boolean useQuotesBlocks)
-    {
+    public static int getMessageEndIndex(final String message, final int currentBeginIndex, boolean useQuotesBlocks) {
         int currentEndIndex = lastIndexOf("\n", currentBeginIndex, currentBeginIndex + 2000 - (useQuotesBlocks ? 6 : 0) - "\n".length(), message);
-        if (currentEndIndex < 0)
-        {
+        if (currentEndIndex < 0) {
             return -1;
-        }
-        else
-        {
+        } else {
             return currentEndIndex + "\n".length();
         }
     }
 
-    public static int lastIndexOf(@Nonnull CharSequence target, int fromIndex, int endIndex, String message)
-    {
+    public static int lastIndexOf(@Nonnull CharSequence target, int fromIndex, int endIndex, String message) {
         if (fromIndex < 0)
             throw new IndexOutOfBoundsException("index out of range: " + fromIndex);
         if (endIndex < 0)
@@ -140,21 +134,18 @@ public class MessageManager
         if (fromIndex > endIndex)
             throw new IndexOutOfBoundsException("fromIndex > endIndex");
 
-        if (endIndex >= message.length())
-        {
+        if (endIndex >= message.length()) {
             endIndex = message.length() - 1;
         }
 
         int targetCount = target.length();
-        if (targetCount == 0)
-        {
+        if (targetCount == 0) {
             return endIndex;
         }
 
         int rightIndex = endIndex - targetCount;
 
-        if (fromIndex > rightIndex)
-        {
+        if (fromIndex > rightIndex) {
             fromIndex = rightIndex;
         }
 
@@ -164,14 +155,10 @@ public class MessageManager
         int min = fromIndex + targetCount - 1;
 
         lastCharSearch:
-        for (int i = endIndex; i >= min; i--)
-        {
-            if (message.charAt(i) == strLastChar)
-            {
-                for (int j = strLastIndex - 1, k = 1; j >= 0; j--, k++)
-                {
-                    if (message.charAt(i - k) != target.charAt(j))
-                    {
+        for (int i = endIndex; i >= min; i--) {
+            if (message.charAt(i) == strLastChar) {
+                for (int j = strLastIndex - 1, k = 1; j >= 0; j--, k++) {
+                    if (message.charAt(i - k) != target.charAt(j)) {
                         continue lastCharSearch;
                     }
                 }

@@ -6,64 +6,54 @@ import ml.denisd3d.minecraft2discord.Minecraft2Discord;
 
 import java.util.HashMap;
 
-public class ShutdownManager
-{
+public class ShutdownManager {
     static boolean isStop = false;
 
-    public static void stopping()
-    {
+    public static void stopping() {
         StatusManager.shutdown();
 
-        if (Config.SERVER.startStopEnabled.get())
-        {
+        if (Config.SERVER.startStopEnabled.get()) {
             MessageManager.sendMessage(ChannelManager.getInfoChannel(), Config.SERVER.stopMessage.get(), true, new HashMap<>());
         }
     }
 
-    public static void stopped()
-    {
+    public static void stopped() {
         if (isStop)
             return;
         isStop = true;
         ShutdownManager.shutdown();
     }
 
-    public static void registerShutdownHook()
-    {
+    public static void registerShutdownHook() {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() ->
         {
-
-            System.out.println("Shutdown hook called");
             if (isStop)
                 return;
 
+            System.out.println("Shutdown hook used");
+
             isStop = true;
             StatusManager.shutdown();
-            if (Config.SERVER.startStopEnabled.get())
-            {
+            if (Config.SERVER.startStopEnabled.get()) {
                 MessageManager.sendMessage(ChannelManager.getInfoChannel(), Config.SERVER.crashMessage.get(), true, new HashMap<>(), message -> ShutdownManager.shutdown(), throwable -> ShutdownManager.shutdown());
-            } else
-            {
+            } else {
                 ShutdownManager.shutdown();
             }
         }));
     }
 
-    public static void shutdown()
-    {
-        try
-        {
-            for (WebhookClient webhookClient : WebhookManager.getWebhookClients().values())
-            {
+    public static void shutdown() {
+        try {
+            for (WebhookClient webhookClient : WebhookManager.getWebhookClients().values()) {
                 webhookClient.close();
             }
             WebhookManager.ses.shutdown();
 
             Minecraft2Discord.getDiscordBot().shutdown();
-        } catch (Exception e)
-        {
-            Minecraft2Discord.getLogger().warn("Shutdown Error");
+        } catch (Exception e) {
+            Minecraft2Discord.getLogger().error("Shutdown Error");
+            e.printStackTrace();
         }
     }
 }
