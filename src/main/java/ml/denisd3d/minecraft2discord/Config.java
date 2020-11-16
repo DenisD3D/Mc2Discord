@@ -319,7 +319,7 @@ public class Config {
 
                 avatarAPI = builder
                         .comment(" API url for webhook profile picture\n Variables : Player")
-                        .define("avatarAPI", "https://mc-heads.net/head/${player_name}");
+                        .define("avatarAPI", "https://mc-heads.net/head/${player_name}/right");
 
                 builder.comment(" Server Account").push("Server");
                 {

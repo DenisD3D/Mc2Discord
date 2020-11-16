@@ -42,6 +42,7 @@ public class DiscordEvents extends ListenerAdapter {
                         .setAvatarUrl(Minecraft2Discord.getAvatarURL());
 
                 WebhookManager.getWebhookClient(Config.SERVER.infoChannel.get()).send(builder.build());
+
             }
         });
     }
