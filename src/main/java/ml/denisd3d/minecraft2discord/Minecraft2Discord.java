@@ -108,12 +108,16 @@ public class Minecraft2Discord
 
     public void onServerStopping(FMLServerStoppingEvent event)
     {
-        Minecraft2Discord.extensions.forEach(m2DExtension -> m2DExtension.onStop(event));
-        ShutdownManager.stopping();
+        if (DISCORD_BOT != null) {
+            Minecraft2Discord.extensions.forEach(m2DExtension -> m2DExtension.onStop(event));
+            ShutdownManager.stopping();
+        }
     }
 
     public void onServerStopped(FMLServerStoppedEvent event)
     {
-        ShutdownManager.stopped();
+        if (DISCORD_BOT != null) {
+            ShutdownManager.stopped();
+        }
     }
 }

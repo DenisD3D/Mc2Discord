@@ -10,7 +10,7 @@ import java.util.concurrent.*;
 
 public class StatusManager
 {
-    public static ScheduledExecutorService ses = Executors.newScheduledThreadPool(0);
+    public static ScheduledExecutorService ses = Executors.newScheduledThreadPool(1);
     public static ScheduledFuture<?> scheduledFuturePresence;
     public static ScheduledFuture<?> scheduledFutureTopic;
     public static ScheduledFuture<?> scheduledFutureChannelName;

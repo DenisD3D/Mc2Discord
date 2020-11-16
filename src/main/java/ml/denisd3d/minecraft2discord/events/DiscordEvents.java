@@ -1,5 +1,6 @@
 package ml.denisd3d.minecraft2discord.events;
 
+import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.vdurmont.emoji.EmojiParser;
 import ml.denisd3d.minecraft2discord.Config;
@@ -33,12 +34,18 @@ public class DiscordEvents extends ListenerAdapter
         ServerLifecycleHooks.getCurrentServer(),
         null);
 
-    public static void sendStartMessage()
-    {
-        if (Config.SERVER.startStopEnabled.get())
-        {
-            MessageManager.sendFormattedMessage(ChannelManager.getInfoChannel(), Config.SERVER.startMessage.get());
-        }
+    public static void sendStartMessage() {
+        ServerLifecycleHooks.getCurrentServer().runImmediately(() -> {
+            if (Config.SERVER.startStopEnabled.get()) {
+                WebhookMessageBuilder builder = new WebhookMessageBuilder();
+                builder.setContent(VariableManager.replace(Config.SERVER.startMessage.get()))
+                        .setUsername(Minecraft2Discord.getUsername())
+                        .setAvatarUrl(Minecraft2Discord.getAvatarURL());
+
+                WebhookManager.getWebhookClient(Config.SERVER.infoChannel.get()).send(builder.build());
+
+            }
+        });
     }
 
     @Override
@@ -50,7 +57,7 @@ public class DiscordEvents extends ListenerAdapter
 
         MinecraftForge.EVENT_BUS.register(MinecraftEvents.class);
 
-        WebhookManager.addWebhookClient(Config.SERVER.chatChannel.get(), () -> WebhookManager.addWebhookClient(Config.SERVER.infoChannel.get(), DiscordEvents::sendStartMessage)); // Register Webhooks one after one to prevent the webhook being created two times
+        WebhookManager.initInfoWebhook(DiscordEvents::sendStartMessage);
 
         ShutdownManager.registerShutdownHook();
         StatusManager.register();

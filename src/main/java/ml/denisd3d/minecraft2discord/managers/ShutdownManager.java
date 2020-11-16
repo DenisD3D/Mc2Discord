@@ -33,10 +33,10 @@ public class ShutdownManager
 
         Runtime.getRuntime().addShutdownHook(new Thread(() ->
         {
-
-            System.out.println("Shutdown hook called");
             if (isStop)
                 return;
+
+            System.out.println("Shutdown hook used");
 
             isStop = true;
             StatusManager.shutdown();
@@ -63,7 +63,7 @@ public class ShutdownManager
             Minecraft2Discord.getDiscordBot().shutdown();
         } catch (Exception e)
         {
-            Minecraft2Discord.getLogger().warn("Shutdown Error");
+            Minecraft2Discord.getLogger().error("Shutdown Error");
         }
     }
 }

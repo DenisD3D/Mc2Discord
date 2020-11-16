@@ -54,28 +54,41 @@ public class MessageManager
 
     private static void sendTheMessage(TextChannel channel, String m, Consumer<Message> success, Consumer<Throwable> failure)
     {
-        try
-        {
-            if (Config.SERVER.webhooksEnabled.get())
-            {
+        try {
+            if (Config.SERVER.webhooksEnabled.get()) {
                 WebhookMessageBuilder builder = new WebhookMessageBuilder();
                 builder.setContent(VariableManager.messageVariables.get("message", m))
-                    .setUsername(Minecraft2Discord.getUsername())
-                    .setAvatarUrl(Minecraft2Discord.getAvatarURL());
+                        .setUsername(Minecraft2Discord.getUsername())
+                        .setAvatarUrl(Minecraft2Discord.getAvatarURL());
 
-                if (WebhookManager.getWebhookClient(channel.getIdLong()) != null)
+                if (WebhookManager.getWebhookClient(channel.getIdLong()) != null) {
                     WebhookManager.getWebhookClient(channel.getIdLong()).send(builder.build());
-
-                if (success != null)
-                {
-                    success.accept(null);
+                    if (success != null) {
+                        success.accept(null);
+                    }
+                } else {
+                    if (channel.getIdLong() == Config.SERVER.chatChannel.get()) {
+                        WebhookManager.initChatWebhook(() -> {
+                            WebhookManager.getWebhookClient(channel.getIdLong()).send(builder.build());
+                            if (success != null) {
+                                success.accept(null);
+                            }
+                        });
+                    } else if (channel.getIdLong() == Config.SERVER.infoChannel.get()) {
+                        WebhookManager.initInfoWebhook(() -> {
+                            WebhookManager.getWebhookClient(channel.getIdLong()).send(builder.build());
+                            if (success != null) {
+                                success.accept(null);
+                            }
+                        });
+                    } else {
+                        channel.sendMessage(new MessageBuilder(m).stripMentions(channel.getJDA()).build()).queue(success, failure);
+                    }
                 }
-            } else
-            {
+            } else {
                 channel.sendMessage(new MessageBuilder(m).stripMentions(channel.getJDA()).build()).queue(success, failure);
             }
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             Minecraft2Discord.getLogger().error(e);
             failure.accept(null);
         }
@@ -109,6 +122,10 @@ public class MessageManager
     public static void sendFormattedMessage(TextChannel channel, String message)
     {
         sendMessage(channel, message, true, new HashMap<>(), null, null);
+    }
+
+    public static void sendFormattedMessage(TextChannel channel, String message, Consumer<Message> success, Consumer<Throwable> failure) {
+        sendMessage(channel, message, true, new HashMap<>(), success, failure);
     }
 
     public static void sendFormattedMessage(TextChannel channel, String message, Map<IParameterType<?>, Object> parameters)

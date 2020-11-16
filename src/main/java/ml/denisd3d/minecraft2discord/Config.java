@@ -81,6 +81,9 @@ public class Config
         public final ForgeConfigSpec.BooleanValue mentionsEnabled;
         public final ForgeConfigSpec.BooleanValue codeblocksEnabled;
 
+        public final ForgeConfigSpec.LongValue chatWebhookId;
+        public final ForgeConfigSpec.LongValue infoWebhookId;
+
         public Server(ForgeConfigSpec.Builder builder)
         {
             builder.comment(" Configuration file for Minecraft2Discord\n" +
@@ -318,7 +321,7 @@ public class Config
 
                 avatarAPI = builder
                     .comment(" API url for webhook profile picture\n Variables : Player")
-                    .define("avatarAPI", "https://mc-heads.net/head/${player_name}");
+                    .define("avatarAPI", "https://mc-heads.net/head/${player_name}/right");
 
                 builder.comment(" Server Account").push("Server");
                 {
@@ -363,6 +366,17 @@ public class Config
                 chatFormat = builder
                         .comment(" Change the format for the prefix of message relayed from discord to minecraft\n  Variables : DiscordUser")
                         .define("chatFormat", "<Discord - ${discord_user_name}> ");
+            }
+            builder.pop();
+
+            builder.comment(" Please do ne edit this part of the config even if you know what you are doing there.\n This part is used by the mod to save some data returned by discord needed for a future launch.\n").push("Minecraft2Discord data storage");
+            {
+                chatWebhookId = builder
+                        .defineInRange("chatWebhookId", 0, 0, Long.MAX_VALUE);
+
+                infoWebhookId = builder
+                        .defineInRange("infoWebhookId", 0, 0, Long.MAX_VALUE);
+
             }
             builder.pop();
         }
