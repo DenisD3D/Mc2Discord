@@ -103,19 +103,7 @@ public class MinecraftEvents
         if (ExtensionUtils.executeExtensions(m2DExtension -> m2DExtension.onMinecraftMessage(event))) // Execute extensions
             return;
 
-        if (Config.SERVER.webhooksEnabled.get()) {
-            if (WebhookManager.getWebhookClient(Config.SERVER.chatChannel.get()) != null) {
-                WebhookMessageBuilder builder = new WebhookMessageBuilder();
-                builder.setContent(VariableManager.messageVariables.get("message", event.getMessage()))
-                        .setUsername(VariableManager.replace(Config.SERVER.nameFormat.get(), ImmutableMap.of(VariableManager.playerVariables, event.getPlayer())))
-                        .setAvatarUrl(VariableManager.replace(Config.SERVER.avatarAPI.get(), ImmutableMap.of(VariableManager.playerVariables, event.getPlayer())));
-                builder.setAllowedMentions(new AllowedMentions().withParseEveryone(Config.SERVER.mentionsEnabled.get()).withParseUsers(true).withParseRoles(true));
-                WebhookManager.getWebhookClient(Config.SERVER.chatChannel.get()).send(builder.build());
-            }
-        } else {
-            sendChatMessage(event.getMessage(), event.getPlayer());
-            ChannelManager.getChatChannel().sendMessage(new MessageBuilder(VariableManager.replace(Config.SERVER.messageFormat.get(), ImmutableMap.of(VariableManager.playerVariables, event.getPlayer(), VariableManager.messageVariables, event.getMessage()))).stripMentions(ChannelManager.getChatChannel().getJDA()).build()).queue();
-        }
+        sendChatMessage(event.getMessage(), event.getPlayer());
     }
 
     private static void sendChatMessage(String message, PlayerEntity playerEntity) {
