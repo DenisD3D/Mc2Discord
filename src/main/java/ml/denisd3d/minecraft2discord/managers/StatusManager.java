@@ -21,12 +21,20 @@ public class StatusManager {
             scheduledFuturePresence = ses.scheduleAtFixedRate(() -> updatePresence(VariableManager.replace(Config.SERVER.presenceMessage.get())), 0, Config.SERVER.presenceUpdatePeriod.get(), TimeUnit.SECONDS);
         }
 
-        if (Config.SERVER.topicEnabled.get()) {
-            scheduledFutureTopic = ses.scheduleAtFixedRate(() -> updateTopic(VariableManager.replace(Config.SERVER.topicMessage.get())), 0, Config.SERVER.topicUpdatePeriod.get(), TimeUnit.SECONDS);
-        }
+        if (ChannelManager.getNameChannel() != null && ChannelManager.getTopicChannel() != null && ChannelManager.getNameChannel().getIdLong() == ChannelManager.getTopicChannel().getIdLong() && Config.SERVER.topicEnabled.get() && Config.SERVER.nameEnabled.get()) {
+            scheduledFutureChannelName = ses.scheduleAtFixedRate(
+                    () -> updateBoth(VariableManager.replace(Config.SERVER.nameMessage.get()), VariableManager.replace(Config.SERVER.topicMessage.get())),
+                    0,
+                    Config.SERVER.nameUpdatePeriod.get(),
+                    TimeUnit.SECONDS);
+        } else {
+            if (Config.SERVER.topicEnabled.get()) {
+                scheduledFutureTopic = ses.scheduleAtFixedRate(() -> updateTopic(VariableManager.replace(Config.SERVER.topicMessage.get())), 0, Config.SERVER.topicUpdatePeriod.get(), TimeUnit.SECONDS);
+            }
 
-        if (Config.SERVER.nameEnabled.get()) {
-            scheduledFutureChannelName = ses.scheduleAtFixedRate(() -> updateName(VariableManager.replace(Config.SERVER.nameMessage.get())), 0, Config.SERVER.nameUpdatePeriod.get(), TimeUnit.SECONDS);
+            if (Config.SERVER.nameEnabled.get()) {
+                scheduledFutureChannelName = ses.scheduleAtFixedRate(() -> updateName(VariableManager.replace(Config.SERVER.nameMessage.get())), 0, Config.SERVER.nameUpdatePeriod.get(), TimeUnit.SECONDS);
+            }
         }
     }
 
@@ -42,6 +50,13 @@ public class StatusManager {
     public static void updateName(String message) {
         if (ChannelManager.getNameChannel() != null)
             ChannelManager.getNameChannel().getManager().setName(ChannelManager.getNameChannel().getType() == ChannelType.TEXT ? message.replace(" ", "-") : message).queue();
+    }
+
+    public static void updateBoth(String name, String topic) {
+        if (ChannelManager.getNameChannel() != null)
+            ChannelManager.getNameChannel().getManager()
+                    .setName(ChannelManager.getNameChannel().getType() == ChannelType.TEXT ? name.replace(" ", "-") : name)
+                    .setTopic(topic).queue();
     }
 
     public static void shutdown() {
