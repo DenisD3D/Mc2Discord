@@ -21,7 +21,7 @@ public class StatusManager {
             scheduledFuturePresence = ses.scheduleAtFixedRate(() -> updatePresence(VariableManager.replace(Config.SERVER.presenceMessage.get())), 0, Config.SERVER.presenceUpdatePeriod.get(), TimeUnit.SECONDS);
         }
 
-        if (ChannelManager.getNameChannel() != null && ChannelManager.getTopicChannel() != null && ChannelManager.getNameChannel().getIdLong() == ChannelManager.getTopicChannel().getIdLong() && Config.SERVER.topicEnabled.get() && Config.SERVER.nameEnabled.get()) {
+        if (ChannelManager.getNameChannel().getIdLong() == ChannelManager.getTopicChannel().getIdLong() && Config.SERVER.topicEnabled.get() && Config.SERVER.nameEnabled.get()) {
             scheduledFutureChannelName = ses.scheduleAtFixedRate(
                     () -> updateBoth(VariableManager.replace(Config.SERVER.nameMessage.get()), VariableManager.replace(Config.SERVER.topicMessage.get())),
                     0,
