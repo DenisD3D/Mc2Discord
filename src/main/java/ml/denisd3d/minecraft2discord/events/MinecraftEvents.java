@@ -22,6 +22,9 @@ import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
 public class MinecraftEvents
 {
     @SubscribeEvent
@@ -104,6 +107,9 @@ public class MinecraftEvents
             return;
 
         sendChatMessage(event.getMessage(), event.getPlayer());
+
+
+
     }
 
     private static void sendChatMessage(String message, PlayerEntity playerEntity) {

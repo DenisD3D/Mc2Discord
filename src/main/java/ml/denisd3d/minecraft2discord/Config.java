@@ -1,6 +1,7 @@
 package ml.denisd3d.minecraft2discord;
 
 import com.google.common.collect.Lists;
+import ml.denisd3d.minecraft2discord.variables.AdvancementParameterType;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -24,6 +25,7 @@ public class Config
         public final ForgeConfigSpec.ConfigValue<String> token;
         public final ForgeConfigSpec.LongValue chatChannel;
         public final ForgeConfigSpec.LongValue infoChannel;
+        public final ForgeConfigSpec.LongValue consoleChannel;
 
         public final ForgeConfigSpec.BooleanValue joinLeaveEnabled;
         public final ForgeConfigSpec.ConfigValue<String> joinMessage;
@@ -119,6 +121,10 @@ public class Config
                     infoChannel = builder
                         .comment(" All system messages (e.g. Death, Advancement, Join/Leave, Server Start/Stop)")
                         .defineInRange("info", 0, 0, Long.MAX_VALUE);
+
+                    consoleChannel = builder
+                            .comment(" Leave empty to disable. All the console output of the serer will be forwarded here")
+                            .defineInRange("console", 0, 0, Long.MAX_VALUE);
                 }
                 builder.pop();
             }

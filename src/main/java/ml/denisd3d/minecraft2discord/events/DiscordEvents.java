@@ -4,6 +4,7 @@ import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.vdurmont.emoji.EmojiParser;
 import ml.denisd3d.minecraft2discord.Config;
+import ml.denisd3d.minecraft2discord.DiscordAppender;
 import ml.denisd3d.minecraft2discord.ExtensionUtils;
 import ml.denisd3d.minecraft2discord.Minecraft2Discord;
 import ml.denisd3d.minecraft2discord.commands.CustomHelpCommand;
@@ -63,6 +64,8 @@ public class DiscordEvents extends ListenerAdapter
         StatusManager.register();
 
         Minecraft2Discord.extensions.forEach(m2DExtension -> m2DExtension.onReady(event));
+
+        DiscordAppender.logs = "";
     }
 
     @Override
