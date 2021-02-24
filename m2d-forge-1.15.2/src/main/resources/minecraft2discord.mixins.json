@@ -1,0 +1,12 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "ml.denisd3d.minecraft2discord.forge.mixin",
+    "refmap": "minecraft2discord.refmap.json",
+    "target": "@env(DEFAULT)",
+    "compatibilityLevel": "JAVA_8",
+    "mixins": [
+        "MixinMeCommand",
+        "MixinSayCommand"
+    ]
+}

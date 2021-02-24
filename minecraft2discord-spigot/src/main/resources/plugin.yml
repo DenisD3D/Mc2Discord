@@ -1,0 +1,8 @@
+name: Minecraft2discord
+version: @version@
+main: ml.denisd3d.minecraft2discord.Minecraft2discordSpigot
+api-version: 1.16
+prefix: Minecraft2Discord
+authors: [ DenisD3D ]
+description: Link your Minecraft chat with your Discord server
+website: https://m2d.denisd3d.ml

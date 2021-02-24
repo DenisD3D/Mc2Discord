@@ -1,127 +1,76 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
-        mavenCentral()
     }
+
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
         classpath 'com.github.jengelman.gradle.plugins:shadow:5.2.0'
     }
 }
 
-apply plugin: 'net.minecraftforge.gradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'com.github.johnrengelman.shadow'
-
-version = "forge-${mc_version}-${mod_version}"
 group = 'ml.denisd3d'
-archivesBaseName = 'minecraft2discord'
+version = '3.0.0'
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: "com.github.johnrengelman.shadow"
 
-repositories {
-    jcenter()
-    maven {
-        url 'https://www.dogforce-games.com/maven/'
-    }
-}
+    group = project.group
+    version = project.version
 
-minecraft {
-    mappings channel: 'snapshot', version: '20200625-1.15.1'
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
 
-    runs {
-        client {
-            workingDirectory project.file('run_client')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'info'
-
-            mods {
-                minecraft2discord {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('run_server')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'info'
-
-            mods {
-                minecraft2discord {
-                    source sourceSets.main
-                }
-            }
-        }
-    }
-}
-
-
-dependencies {
-    minecraft ("net.minecraftforge:forge:${mc_version}-${forge_version}")
-
-    // Java Discord library
-    compile shadow('net.dv8tion:JDA:4.2.0_212') {
-        exclude module: 'opus-java'
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven { url 'https://jitpack.io' }
+        maven { url "https://libraries.minecraft.net" }
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+        maven { url 'https://repo.spring.io/milestone' }
     }
 
-    compile shadow ("org.slf4j:slf4j-simple:1.7.28")
-    compile shadow ("club.minnced:discord-webhooks:0.5.0")
-    compile shadow ('com.vdurmont:emoji-java:5.1.1')
-}
+    dependencies {
+        shadow (group: 'com.discord4j', name:'discord4j-core', version: '3.2.0-SNAPSHOT')
+        shadow ("org.slf4j:slf4j-simple:1.7.28")
+        shadow (group: 'com.vdurmont', name: 'emoji-java', version: '5.1.1')
+        shadow (group: 'commons-lang', name: 'commons-lang', version: '2.6')
+        shadow (group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.3.3')
+        compile (group:'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.2')
 
-shadowJar {
-    relocate 'org.apache.commons.collections4', 'ml.denisd3d.repack.org.apache.commons.collections4'
-    relocate 'gnu.trove', 'ml.denisd3d.repack.gnu.trove'
-    relocate "com.neovisionaries.ws.client", "ml.denisd3d.repack.com.neovisionaries.ws.client"
-    relocate "com.iwebpp.crypto", "ml.denisd3d.repack.com.iwebpp.crypto"
-    relocate "net.dv8tion.jda", "ml.denisd3d.repack.net.dv8tion.jda"
-    relocate "org.json", "ml.denisd3d.repack.org.json"
-    relocate "okio", "ml.denisd3d.repack.okio"
-    relocate "okhttp3", "ml.denisd3d.repack.okhttp3"
-    relocate "org.slf4j", "ml.denisd3d.repack.org.slf4j"
-    relocate "com.fasterxml.jackson", "ml.denisd3d.repack.com.fasterxml.jackson"
-    relocate "club.minnced.discord", "ml.denisd3d.repack.club.minnced.discord"
 
-    relocate "com.vdurmont.emoji", "ml.denisd3d.repack.com.vdurmont.emoji"
+        //compile (group: 'com.google.guava', name: 'guava', version: '21.0')
+        //compile group: 'commons-io', name: 'commons-io', version: '2.5'
+        compile (group: 'io.netty', name: 'netty-all', version: '4.1.56.Final') {
+            force = true
+        } // To provide compatibility in dev mode
 
-    classifier ''
-    configurations = [project.configurations.shadow]
-    dependencies{
-        exclude(dependency('org.jetbrains:annotations'))
-        exclude(dependency('com.google.code.findbugs:jsr305'))
+        compile (group: 'com.electronwill.night-config', name: 'toml', version: '3.6.0') // Included in forge
+
+        configurations.runtime.extendsFrom(configurations.shadow)
     }
-}
 
-reobf {
+    jar {
+        archiveClassifier.set('slim')
+
+        from project(":m2d-core").sourceSets.main.output
+    }
+
     shadowJar {
-        dependsOn createMcpToSrg
-        mappings = createMcpToSrg.output
-    }
-}
+        configurations = [project.configurations.shadow]
+        archiveClassifier.set('')
 
-jar {
-    classifier "slim"
-    manifest {
-        attributes([
-                "Specification-Title": "Minecraft2Discord",
-                "Specification-Vendor": "Denis3D",
-                "Specification-Version": "${version}",
-                "Implementation-Title": project.name,
-                "Implementation-Version": "${version}",
-                "Implementation-Vendor" :"Denis3D",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
+        from project(":m2d-core").sourceSets.main.output
     }
-}
 
-tasks.build.dependsOn tasks.shadowJar
+    task relocateShadowJar(type: ConfigureShadowRelocation) {
+        target = tasks.shadowJar
+        prefix = "ml.denisd3d.repack"
+    }
+
+    tasks.shadowJar.dependsOn tasks.relocateShadowJar
+    tasks.build.dependsOn tasks.shadowJar
+}
