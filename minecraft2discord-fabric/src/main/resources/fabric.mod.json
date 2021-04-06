@@ -1,6 +1,6 @@
 {
     "schemaVersion": 1,
-    "id": "minecraft2discord-fabric",
+    "id": "minecraft2discord",
     "version": "${version}",
     "name": "Minecraft2discord",
     "description": "Link your Minecraft chat with your Discord server",
@@ -12,14 +12,10 @@
         "repo": "https://github.com/DenisD3D/Minecraft2Discord"
     },
     "license": "Apache-2.0",
-    "icon": "assets/minecraft2discord-fabric/icon.png",
     "environment": "*",
     "entrypoints": {
-        "client": [
-            "ml.denisd3d.minecraft2discord.client.Minecraft2discordFabricClient"
-        ],
-        "main": [
-            "ml.denisd3d.minecraft2discord.Minecraft2discordFabric"
+        "server": [
+            "ml.denisd3d.minecraft2discord.fabric.Minecraft2discordFabric"
         ]
     },
     "mixins": [

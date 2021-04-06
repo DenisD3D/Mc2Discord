@@ -1,6 +1,5 @@
 package ml.denisd3d.minecraft2discord.core;
 
-import ml.denisd3d.minecraft2discord.core.config.M2DConfig;
 import ml.denisd3d.minecraft2discord.core.entities.Entity;
 import ml.denisd3d.minecraft2discord.core.entities.Log;
 import org.apache.logging.log4j.Level;
@@ -46,8 +45,8 @@ public class DiscordLogging extends AbstractAppender {
 
     @Override
     public void append(LogEvent event) {
-        if (M2DUtils.canHandleEvent() && event.getLevel().intLevel() <= Level.getLevel("INFO").intLevel()) { // TODO: log level in config
-            logs += Entity.replace(M2DConfig.logs_format, Collections.singletonList(new Log(event.getLoggerName(), event.getThreadName(), event.getInstant().getEpochMillisecond(), event.getLevel(), event.getMessage()))) + "\n";
+        if (M2DUtils.canHandleEvent() && event.getLevel().intLevel() <= Level.getLevel(Minecraft2Discord.INSTANCE.config.logs_level).intLevel()) {
+            logs += Entity.replace(Minecraft2Discord.INSTANCE.config.logs_format, Collections.singletonList(new Log(event.getLoggerName(), event.getThreadName(), event.getInstant().getEpochMillisecond(), event.getLevel(), event.getMessage()))) + "\n";
             scheduleMessage();
         }
     }
@@ -57,8 +56,11 @@ public class DiscordLogging extends AbstractAppender {
         if (messageScheduler == null || !messageScheduler.isAlive()) {
             messageScheduler = new Thread(() -> {
                 while (true) {
+                    if (Minecraft2Discord.INSTANCE.is_stopping)
+                        return;
                     if (System.currentTimeMillis() - time > 50) {
-                        Minecraft2Discord.INSTANCE.messageManager.sendMessageOfType("log", logs, "", Minecraft2Discord.INSTANCE.botDisplayName, Minecraft2Discord.INSTANCE.botAvatar, null);
+                        if (M2DUtils.canHandleEvent())
+                            Minecraft2Discord.INSTANCE.messageManager.sendMessageOfType("log", logs, "", Minecraft2Discord.INSTANCE.botDisplayName, Minecraft2Discord.INSTANCE.botAvatar, null);
 
                         logs = "";
                         break;

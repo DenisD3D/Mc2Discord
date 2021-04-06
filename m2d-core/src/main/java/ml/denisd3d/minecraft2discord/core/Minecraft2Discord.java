@@ -1,5 +1,6 @@
 package ml.denisd3d.minecraft2discord.core;
 
+import com.electronwill.nightconfig.core.io.ParsingException;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.EventDispatcher;
@@ -23,7 +24,8 @@ public class Minecraft2Discord {
     public static final Logger logger = LogManager.getLogger("minecraft2discord");
     public static Minecraft2Discord INSTANCE;
     public static File CONFIG_FILE = new File("config", "minecraft2discord.toml");
-    public final M2DConfig config;
+    public boolean is_stopping;
+    public M2DConfig config;
     public List<String> errors = new ArrayList<>();
     public GatewayDiscordClient client;
     public long botId = -1;
@@ -41,7 +43,15 @@ public class Minecraft2Discord {
         this.isMinecraftStarted = minecraftReady;
         this.iMinecraft = iMinecraft;
 
-        this.config = M2DConfig.load(CONFIG_FILE);
+        try {
+            this.config = M2DConfig.load(CONFIG_FILE);
+        } catch (ParsingException parsingException) {
+            this.errors.add("Config parsing error");
+            parsingException.printStackTrace();
+            this.config = null;
+            return;
+        }
+
         if (!M2DUtils.isTokenValid(this.config.token)) {
             logger.error("Invalid Discord bot token");
             this.errors.add("Invalid Discord bot token");

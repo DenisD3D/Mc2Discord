@@ -12,15 +12,11 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ExtensionPoint;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
-import net.minecraftforge.fml.network.FMLNetworkConstants;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
-import org.apache.commons.lang3.tuple.Pair;
 
 @Mod("minecraft2discord")
 @Mod.EventBusSubscriber(Dist.DEDICATED_SERVER)
@@ -34,10 +30,6 @@ public class Minecraft2DiscordForge {
             new StringTextComponent("Discord"),
             ServerLifecycleHooks.getCurrentServer(),
             null);
-
-    public Minecraft2DiscordForge() {
-        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (in, net) -> true));
-    }
 
     @SubscribeEvent
     public static void onServerStarting(FMLServerStartingEvent event) {

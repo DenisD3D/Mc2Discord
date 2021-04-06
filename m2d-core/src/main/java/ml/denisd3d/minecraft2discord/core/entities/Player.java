@@ -12,7 +12,7 @@ public class Player extends Entity {
 
     public Player(String name, String displayName, UUID uuid) {
         this.name = name;
-        this.displayName = displayName;
+        this.displayName = displayName.replaceAll("§.", "");
         this.uuid = uuid;
     }
 

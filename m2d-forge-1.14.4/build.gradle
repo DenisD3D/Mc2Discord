@@ -11,14 +11,14 @@ buildscript {
 
 apply plugin: 'net.minecraftforge.gradle'
 
-version = rootProject.version
+version = '3.0.0-pre1'
 group = 'ml.denisd3d.minecraft2discord'
-archivesBaseName = 'minecraft2discord-forge-1.15.x'
+archivesBaseName = 'minecraft2discord-forge-1.14.x'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    mappings channel: 'snapshot', version: '20210223-1.15.1'
+    mappings channel: 'snapshot', version: '20200119-1.14.3'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
@@ -39,7 +39,7 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.2-31.2.0'
+    minecraft 'net.minecraftforge:forge:1.14.4-28.2.23'
 
     compile project(path: ':m2d-core')
 }

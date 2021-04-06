@@ -2,6 +2,7 @@ package ml.denisd3d.minecraft2discord.core;
 
 import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.channel.TextChannel;
+import discord4j.rest.util.AllowedMentions;
 import ml.denisd3d.minecraft2discord.core.config.M2DConfig;
 import reactor.core.publisher.Mono;
 
@@ -54,11 +55,20 @@ public class MessageManager {
                         textChannel.createWebhook(webhookCreateSpec ->
                                 webhookCreateSpec.setName("Minecraft2Discord")))))
                 .next()
-                .subscribe(webhook -> M2DUtils.breakStringToLines(content, 2000, useCodeblocks).forEach(s -> webhook.execute(webhookExecuteSpec -> webhookExecuteSpec.setContent(s).setUsername(username).setAvatarUrl(avatarUrl)).subscribe(unused -> successConsumer.run(), throwable -> DiscordLogging.logs = "", null)));
+                .subscribe(webhook -> M2DUtils.breakStringToLines(content, 2000, useCodeblocks).forEach(s ->
+                        webhook.execute(webhookExecuteSpec -> webhookExecuteSpec
+                                .setContent(s).setUsername(username).setAvatarUrl(avatarUrl)
+                                .setAllowedMentions(AllowedMentions.builder().parseType(Minecraft2Discord.INSTANCE.config.allowed_mention.stream().map(AllowedMentions.Type::valueOf).toArray(AllowedMentions.Type[]::new)).build()))
+                                .doOnError(Minecraft2Discord.logger::error)
+                                .subscribe(unused -> successConsumer.run(), throwable -> DiscordLogging.logs = "", null)));
     }
 
     private void sendChannelMessage(long channelId, String content, boolean useCodeblocks, Runnable successConsumer) {
         this.instance.client.getChannelById(Snowflake.of(channelId)).ofType(TextChannel.class)
-                .subscribe(textChannel -> M2DUtils.breakStringToLines(content, 2000, useCodeblocks).forEach(s -> textChannel.createMessage(messageCreateSpec -> messageCreateSpec.setContent(s)).subscribe(unused -> successConsumer.run(), throwable -> DiscordLogging.logs = "", null)));
+                .subscribe(textChannel -> M2DUtils.breakStringToLines(content, 2000, useCodeblocks).forEach(s -> textChannel
+                        .createMessage(messageCreateSpec -> messageCreateSpec.setContent(s)
+                                .setAllowedMentions(AllowedMentions.builder().parseType(Minecraft2Discord.INSTANCE.config.allowed_mention.stream().map(AllowedMentions.Type::valueOf).toArray(AllowedMentions.Type[]::new)).build()))
+                        .doOnError(Minecraft2Discord.logger::error)
+                        .subscribe(unused -> successConsumer.run(), throwable -> DiscordLogging.logs = "", null)));
     }
 }

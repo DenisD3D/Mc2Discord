@@ -1,7 +1,6 @@
 package ml.denisd3d.minecraft2discord.core;
 
 import discord4j.common.util.TokenUtil;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -25,6 +24,15 @@ public class M2DCommands {
         response.add("Bot name: " + Minecraft2Discord.INSTANCE.botName + "#" + Minecraft2Discord.INSTANCE.botDiscriminator);
         response.add("Bot id: " + Minecraft2Discord.INSTANCE.getBotId());
         response.add("Status: " + Minecraft2Discord.INSTANCE.getState());
+        for (int shard_id = 0; shard_id <= Minecraft2Discord.INSTANCE.client.getGatewayClientGroup().getShardCount(); shard_id++) {
+            if (Minecraft2Discord.INSTANCE.client.getGatewayClientGroup().find(shard_id).isPresent()) {
+                response.add("Response time shard " + shard_id + ": " + Minecraft2Discord.INSTANCE.client.getGatewayClientGroup().find(shard_id).get().getResponseTime().toString()
+                        .substring(2)
+                        .replaceAll("(\\d[HMS])(?!$)", "$1 ")
+                        .toLowerCase());
+            }
+
+        }
 
         String newVersion = Minecraft2Discord.INSTANCE.iMinecraft.getNewVersion();
         if (!newVersion.isEmpty()) {
@@ -60,7 +68,7 @@ public class M2DCommands {
 
             // add request parameter, form parameters
             List<NameValuePair> urlParameters = new ArrayList<>();
-            urlParameters.add(new BasicNameValuePair("config", StringEscapeUtils.escapeJavaScript(configWithoutToken)));
+            urlParameters.add(new BasicNameValuePair("config", configWithoutToken));
             urlParameters.add(new BasicNameValuePair("errors", Minecraft2Discord.INSTANCE.errors.isEmpty() ? "None" : String.join("\n", Minecraft2Discord.INSTANCE.errors)));
             urlParameters.add(new BasicNameValuePair("env", Minecraft2Discord.INSTANCE.iMinecraft.getEnvInfo()));
 

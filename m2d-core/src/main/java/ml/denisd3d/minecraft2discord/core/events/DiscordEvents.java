@@ -3,6 +3,7 @@ package ml.denisd3d.minecraft2discord.core.events;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Attachment;
 import discord4j.core.object.entity.User;
+import ml.denisd3d.minecraft2discord.api.M2DPluginHelper;
 import ml.denisd3d.minecraft2discord.core.Minecraft2Discord;
 import ml.denisd3d.minecraft2discord.core.entities.Entity;
 import ml.denisd3d.minecraft2discord.core.entities.Member;
@@ -14,6 +15,9 @@ public class DiscordEvents {
     private static boolean isAddedCommand = false;
 
     public static void onDiscordMessageReceived(MessageCreateEvent messageCreateEvent) {
+        if (M2DPluginHelper.execute(plugin -> plugin.onDiscordMessageReceived(messageCreateEvent)))
+            return;
+
         if (!messageCreateEvent.getMessage().getAuthor().isPresent()) // It's a webhook
             return;
 
@@ -32,12 +36,12 @@ public class DiscordEvents {
                         .map(role -> role.getId().asLong())
                         .filter(roleId -> Minecraft2Discord.INSTANCE.config.command_rules_map.containsKey(roleId)).collectList().subscribe(longs -> {
                     List<String> allowedCommands = new ArrayList<>();
-
+                    isAddedCommand = false;
                     int result = Minecraft2Discord.INSTANCE.config.command_rules_map.entrySet().stream()
                             .filter(longCommandRuleEntry -> longCommandRuleEntry.getKey() == 0L || longCommandRuleEntry.getKey() == author.getId().asLong() || longs.contains(longCommandRuleEntry.getKey()))
                             .map(Map.Entry::getValue)
                             .map(commandRule -> {
-                                if (commandRule.commands.contains(messageCreateEvent.getMessage().getContent().substring(Minecraft2Discord.INSTANCE.config.command_prefix.length()).split(" ", 2)[0])) {
+                                if (commandRule.commands.stream().anyMatch(s -> messageCreateEvent.getMessage().getContent().substring(Minecraft2Discord.INSTANCE.config.command_prefix.length()).startsWith(s))) {
                                     allowedCommands.addAll(commandRule.commands);
                                     isAddedCommand = true;
                                 }
@@ -49,7 +53,7 @@ public class DiscordEvents {
                         if (command.equals("help")) {
                             Minecraft2Discord.INSTANCE.messageManager.sendMessageInChannel(messageCreateEvent.getMessage().getChannelId().asLong(), Minecraft2Discord.INSTANCE.iMinecraft.executeHelpCommand(result, allowedCommands), Minecraft2Discord.INSTANCE.config.channels_map.containsKey(messageCreateEvent.getMessage().getChannelId().asLong()) && Minecraft2Discord.INSTANCE.config.channels_map.get(messageCreateEvent.getMessage().getChannelId().asLong()).use_webhook, Minecraft2Discord.INSTANCE.config.use_codeblocks, null);
                         } else {
-                            Minecraft2Discord.INSTANCE.iMinecraft.executeCommand(command, result, messageCreateEvent.getMessage().getChannelId().asLong(), Minecraft2Discord.INSTANCE.config.channels_map.containsKey(messageCreateEvent.getMessage().getChannelId().asLong()) && Minecraft2Discord.INSTANCE.config.channels_map.get(messageCreateEvent.getMessage().getChannelId().asLong()).use_webhook);
+                            Minecraft2Discord.INSTANCE.iMinecraft.executeCommand(command, isAddedCommand ? Integer.MAX_VALUE : result, messageCreateEvent.getMessage().getChannelId().asLong(), Minecraft2Discord.INSTANCE.config.channels_map.containsKey(messageCreateEvent.getMessage().getChannelId().asLong()) && Minecraft2Discord.INSTANCE.config.channels_map.get(messageCreateEvent.getMessage().getChannelId().asLong()).use_webhook);
                         }
                     } else {
                         Minecraft2Discord.INSTANCE.messageManager.sendMessageInChannel(messageCreateEvent.getMessage().getChannelId().asLong(), Minecraft2Discord.INSTANCE.config.command_error_message, Minecraft2Discord.INSTANCE.config.channels_map.containsKey(messageCreateEvent.getMessage().getChannelId().asLong()) && Minecraft2Discord.INSTANCE.config.channels_map.get(messageCreateEvent.getMessage().getChannelId().asLong()).use_webhook, Minecraft2Discord.INSTANCE.config.use_codeblocks, null);
@@ -63,7 +67,8 @@ public class DiscordEvents {
         if (Minecraft2Discord.INSTANCE.config.channels.stream().noneMatch(channel -> channel.channel_id == messageCreateEvent.getMessage().getChannelId().asLong() && channel.subscriptions.contains("chat"))) // The message isn't in a chat channel
             return;
 
-        Member member = new Member(author.getUsername(), author.getDiscriminator(), author.getAvatarUrl());
+        Member member = new Member(author.getUsername(), messageCreateEvent.getMember().map(discord4j.core.object.entity.Member::getDisplayName).orElse(author.getUsername()),
+                author.getDiscriminator(), author.getAvatarUrl());
         Message message = new Message(messageCreateEvent.getMessage().getContent());
         HashMap<String, String> attachments = new HashMap<>();
         for (Attachment attachment : messageCreateEvent.getMessage().getAttachments()) {

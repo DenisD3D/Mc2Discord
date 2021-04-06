@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
-        maven { url='https://dist.creeper.host/Sponge/maven' }
+        maven { url='https://repo.spongepowered.org/maven' }
         jcenter()
         mavenCentral()
     }
@@ -14,7 +14,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
-version = '3.0.0-pre1'
+version = rootProject.version
 group = 'ml.denisd3d.minecraft2discord'
 archivesBaseName = 'minecraft2discord-forge-1.16.x'
 

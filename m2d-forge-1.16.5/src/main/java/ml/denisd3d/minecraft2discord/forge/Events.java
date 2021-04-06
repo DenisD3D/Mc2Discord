@@ -44,11 +44,11 @@ public class Events {
 
     @SubscribeEvent
     public static void onAdvancementEvent(AdvancementEvent event) {
-        if (event.getAdvancement().getDisplay() == null || event.getAdvancement().getDisplay().isHidden())
-            return;
-        MinecraftEvents.onAdvancementEvent(
-                new Player(event.getPlayer().getGameProfile().getName(), event.getPlayer().getDisplayName().getString(), Optional.ofNullable(event.getPlayer().getGameProfile().getId()).orElse(null)),
-                new Advancement(event.getAdvancement().getId().getPath(), event.getAdvancement().getDisplayText().getString(), event.getAdvancement().getDisplay().getTitle().getString(), event.getAdvancement().getDisplay().getDescription().getString())
-        );
+        if (event.getAdvancement().getDisplay() != null && event.getAdvancement().getDisplay().shouldAnnounceToChat()) {
+            MinecraftEvents.onAdvancementEvent(
+                    new Player(event.getPlayer().getGameProfile().getName(), event.getPlayer().getDisplayName().getString(), Optional.ofNullable(event.getPlayer().getGameProfile().getId()).orElse(null)),
+                    new Advancement(event.getAdvancement().getId().getPath(), event.getAdvancement().getDisplayText().getString(), event.getAdvancement().getDisplay().getTitle().getString(), event.getAdvancement().getDisplay().getDescription().getString())
+            );
+        }
     }
 }

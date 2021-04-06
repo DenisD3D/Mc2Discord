@@ -11,7 +11,7 @@ buildscript {
 }
 
 group = 'ml.denisd3d'
-version = '3.0.0'
+version = '3.0.8'
 
 subprojects {
     apply plugin: 'java'
@@ -34,21 +34,18 @@ subprojects {
     }
 
     dependencies {
-        shadow (group: 'com.discord4j', name:'discord4j-core', version: '3.2.0-SNAPSHOT')
-        shadow ("org.slf4j:slf4j-simple:1.7.28")
-        shadow (group: 'com.vdurmont', name: 'emoji-java', version: '5.1.1')
-        shadow (group: 'commons-lang', name: 'commons-lang', version: '2.6')
-        shadow (group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.3.3')
-        compile (group:'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.2')
+        shadow group: 'com.discord4j', name: 'discord4j-core', version: '3.2.0-SNAPSHOT'
+        shadow group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.28'
+        shadow group: 'com.vdurmont', name: 'emoji-java', version: '5.1.1'
+        shadow group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.3.3'
+        compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
 
-
-        //compile (group: 'com.google.guava', name: 'guava', version: '21.0')
-        //compile group: 'commons-io', name: 'commons-io', version: '2.5'
-        compile (group: 'io.netty', name: 'netty-all', version: '4.1.56.Final') {
+        compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.2'
+        compile(group: 'io.netty', name: 'netty-all', version: '4.1.56.Final') {
             force = true
         } // To provide compatibility in dev mode
 
-        compile (group: 'com.electronwill.night-config', name: 'toml', version: '3.6.0') // Included in forge
+        compile group: 'com.electronwill.night-config', name: 'toml', version: '3.6.0' // Included in forge
 
         configurations.runtime.extendsFrom(configurations.shadow)
     }

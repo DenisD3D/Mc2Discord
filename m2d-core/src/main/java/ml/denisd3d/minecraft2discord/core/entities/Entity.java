@@ -1,8 +1,8 @@
 package ml.denisd3d.minecraft2discord.core.entities;
 
 import ml.denisd3d.minecraft2discord.core.Minecraft2Discord;
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.commons.lang.time.DurationFormatUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import reactor.util.annotation.Nullable;
 
 import java.util.List;

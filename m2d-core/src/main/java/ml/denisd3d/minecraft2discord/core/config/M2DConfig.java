@@ -14,15 +14,13 @@ import java.util.List;
 
 public class M2DConfig {
 
-    @Path("Misc.logs_format")
-    @PreserveNotNull
-    public static String logs_format = "[${log_time!HH:mm:ss}] [${log_thread_name}/${log_level}] [${log_logger_name}]: ${log_message}";
-    //End General
     //General
     @Path("General.token")
     @Comment(" Token for the bot. This is a secret string that can be generated on discord website. More info here : https://github.com/DenisD3D/Minecraft2Discord/wiki/Discord-token")
     @PreserveNotNull
     public String token = "";
+    //End General
+
     //Channels
     @Path("Channels.Channel")
     @Comment(" Channels configuration. You may duplicate this block. Each one correspond to one channel\n" +
@@ -84,13 +82,14 @@ public class M2DConfig {
     @Path("Commands.error")
     @Comment(" Response when the user isn't allowed to use the command")
     @PreserveNotNull
-    public String command_error_message = "Sorry, your not allowed to use that command!";
+    public String command_error_message = "Sorry, you're not allowed to use that command!";
 
     @Path("Commands.Command")
     @Comment(" Commands permissions configuration. You may duplicate the block. Each block correspond to one rule\n" +
             " id is an user id or a role id. The rule (current block) will apply for this user or users with this role\n" +
             " commands is a list of the commands that are allowed in addition of the permission level\n" +
             " permission_level allow all the commands with this permission or under level. -1 mean only the commands in the list commands above and 0 mean all non op commands\n" +
+            " command not used by the mod. You can use it to remember what the rule is for\n" +
             " see https://minecraft.gamepedia.com/Server.properties#op-permission-level")
     @PreserveNotNull
     public List<CommandRule> command_rules = new ArrayList<>();
@@ -101,7 +100,7 @@ public class M2DConfig {
     @Path("Status.Presence.message")
     @Comment(" Message to display under the bot in the member list")
     @PreserveNotNull
-    public String presence_message = "${player_count} / ${max_player}";
+    public String presence_message = "${online_players} / ${max_players}";
 
     @Path("Status.Presence.update")
     @Comment(" Update frequency of the presence message (in seconds). A too low number might result in limitation from Discord")
@@ -139,10 +138,17 @@ public class M2DConfig {
     @PreserveNotNull
     public boolean relay_bot_messages = false;
 
+    @Path("Misc.allowed_mention")
+    @Comment(" List of allowed mention type. Supported value : \"everyone\", \"roles\", \"users\"\n" +
+            " Eg : [\"roles\", \"users\"] to allow all mention except @everyone & @here\n" +
+            " Roles and mentions from the mc chat should use the <@id> or <@&id> form")
+    @PreserveNotNull
+    public List<String> allowed_mention = new ArrayList<>();
+
     @Path("Misc.minecraft_chat_format")
     @Comment(" Format for the messages sent in the minecraft chat. You may use Global variables, Member variables and Message variable here")
     @PreserveNotNull
-    public String minecraft_chat_format = "<Discord - ${member_name}> ${message}";
+    public String minecraft_chat_format = "<Discord - ${member_nickname}> ${message}";
 
     @Path("Misc.discord_chat_format")
     @Comment(" Format for chat messages sent in discord when webhook mode is turned to false. You may use Global variables, Player variables and Message variable here")
@@ -158,6 +164,16 @@ public class M2DConfig {
     @Comment(" Link for the /discord command")
     @PreserveNotNull
     public String discord_link = "https://discord.gg/";
+
+    @Path("Misc.logs_format")
+    @Comment(" Format for forwarding the log on discord")
+    @PreserveNotNull
+    public String logs_format = "[${log_time!HH:mm:ss}] [${log_thread_name}/${log_level}] [${log_logger_name}]: ${log_message}";
+
+    @Path("Misc.logs_level")
+    @Comment(" Level for the log on discord")
+    @PreserveNotNull
+    public String logs_level = "INFO";
     //End Misc
 
     public static M2DConfig load(File file) {
@@ -218,6 +234,8 @@ public class M2DConfig {
         config.setComment("Messages", "Customize here the message that are sent on discord. To disable one, set an empty value (\"\")\n" +
                 "For the list of available variables see : https://github.com/DenisD3D/Minecraft2Discord/wiki/Variables");
 
+        config.setComment("Misc", "The rest of the settings");
+
         for (Field field : m2dConfig.getClass().getDeclaredFields()) {
             if (field.isAnnotationPresent(Comment.class) && field.isAnnotationPresent(Path.class)) {
                 config.setComment(field.getAnnotation(Path.class).value(), field.getAnnotation(Comment.class).value());
@@ -255,6 +273,10 @@ public class M2DConfig {
         @Path("permission_level")
         @PreserveNotNull
         public Integer permission_level = -1;
+
+        @Path("comment")
+        @PreserveNotNull
+        public String comment = "";
     }
 
     public static class StatusChannel {

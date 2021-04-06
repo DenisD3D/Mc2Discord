@@ -1,8 +1,8 @@
 package ml.denisd3d.minecraft2discord.core;
 
 import discord4j.common.util.Snowflake;
-import discord4j.core.object.presence.Activity;
-import discord4j.core.object.presence.Presence;
+import discord4j.core.object.presence.ClientActivity;
+import discord4j.core.object.presence.ClientPresence;
 import discord4j.discordjson.json.ChannelModifyRequest;
 import discord4j.discordjson.possible.Possible;
 import ml.denisd3d.minecraft2discord.core.config.M2DConfig;
@@ -81,7 +81,7 @@ public class StatusManager {
         public void run() {
             try {
                 if (M2DUtils.canHandleEvent()) {
-                    Minecraft2Discord.INSTANCE.client.updatePresence(Presence.online(Activity.playing(Entity.replace(presence_message, Collections.emptyList()))))
+                    Minecraft2Discord.INSTANCE.client.updatePresence(ClientPresence.online(ClientActivity.playing(Entity.replace(presence_message, Collections.emptyList()))))
                             .timeout(Duration.ofSeconds(3))
                             .doOnError(throwable -> {
                                 if (throwable instanceof TimeoutException) {

@@ -5,14 +5,11 @@ import ml.denisd3d.minecraft2discord.core.IMinecraft;
 import ml.denisd3d.minecraft2discord.core.Minecraft2Discord;
 import ml.denisd3d.minecraft2discord.core.entities.Global;
 import ml.denisd3d.minecraft2discord.forge.commands.DiscordCommandSource;
-import ml.denisd3d.minecraft2discord.forge.commands.DiscordHelpCommandImpl;
+import ml.denisd3d.minecraft2discord.forge.commands.HelpCommandImpl;
 import ml.denisd3d.minecraft2discord.forge.storage.HiddenPlayerList;
-import net.minecraft.command.CommandSource;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraftforge.fml.ModList;
@@ -26,15 +23,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class MinecraftImpl implements IMinecraft {
-    public static final CommandSource commandSource = new CommandSource(new DiscordCommandSource(),
-            Vector3d.ZERO,
-            Vector2f.ZERO,
-            ServerLifecycleHooks.getCurrentServer().func_241755_D_(),
-            4,
-            "Discord",
-            new StringTextComponent("Discord"),
-            ServerLifecycleHooks.getCurrentServer(),
-            null);
 
     private static final File FILE_HIDDEN_PLAYERS = new File("hidden-players.json");
     public final HiddenPlayerList hiddenPlayerList = new HiddenPlayerList(FILE_HIDDEN_PLAYERS);
@@ -76,7 +64,7 @@ public class MinecraftImpl implements IMinecraft {
         DiscordCommandSource.messageChannelId = messageChannelId;
         DiscordCommandSource.useWebhook = useWebhook;
         ServerLifecycleHooks.getCurrentServer().getCommandManager()
-                .handleCommand(commandSource.withPermissionLevel(permissionLevel), command);
+                .handleCommand(Minecraft2DiscordForge.commandSource.withPermissionLevel(permissionLevel), command);
     }
 
     @Override
@@ -95,7 +83,7 @@ public class MinecraftImpl implements IMinecraft {
 
     @Override
     public String executeHelpCommand(int permissionLevel, List<String> commands) {
-        return DiscordHelpCommandImpl.execute(permissionLevel, commands);
+        return HelpCommandImpl.execute(permissionLevel, commands);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package ml.denisd3d.minecraft2discord.core.events;
 
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
+import ml.denisd3d.minecraft2discord.api.IM2DPlugin;
+import ml.denisd3d.minecraft2discord.api.M2DPluginHelper;
 import ml.denisd3d.minecraft2discord.core.M2DUtils;
 import ml.denisd3d.minecraft2discord.core.Minecraft2Discord;
 import ml.denisd3d.minecraft2discord.core.StatusManager;
@@ -27,13 +29,23 @@ public class LifecycleEvents {
     public static void bothReadyEvent() {
         if (!(Minecraft2Discord.INSTANCE.isDiscordRunning() && Minecraft2Discord.INSTANCE.isMinecraftStarted()))
             return; // This method is called by both when ready. When the last is ready it will execute the rest of the method
-        if (!M2DUtils.canHandleEvent()) return;
+        if (!M2DUtils.canHandleEvent())
+            return;
+        if (M2DPluginHelper.execute(IM2DPlugin::onReady))
+            return;
+
         Minecraft2Discord.INSTANCE.startTime = System.currentTimeMillis();
         Minecraft2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(Minecraft2Discord.INSTANCE.config.start_message, Collections.emptyList()));
     }
 
     public static void onShutdown() {
-        if (!M2DUtils.canHandleEvent()) return;
+        if (!M2DUtils.canHandleEvent())
+            return;
+
+        if (M2DPluginHelper.execute(IM2DPlugin::onShutdown))
+            return;
+
+        Minecraft2Discord.INSTANCE.is_stopping = true;
         Minecraft2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(Minecraft2Discord.INSTANCE.config.stop_message, Collections.emptyList()));
         StatusManager.stop();
     }
