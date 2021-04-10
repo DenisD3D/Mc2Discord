@@ -67,8 +67,10 @@ public class DiscordEvents {
         if (Minecraft2Discord.INSTANCE.config.channels.stream().noneMatch(channel -> channel.channel_id == messageCreateEvent.getMessage().getChannelId().asLong() && channel.subscriptions.contains("chat"))) // The message isn't in a chat channel
             return;
 
-        Member member = new Member(author.getUsername(), messageCreateEvent.getMember().map(discord4j.core.object.entity.Member::getDisplayName).orElse(author.getUsername()),
-                author.getDiscriminator(), author.getAvatarUrl());
+        Member member = new Member(author.getUsername(),
+                author.getDiscriminator(),
+                messageCreateEvent.getMember().map(discord4j.core.object.entity.Member::getDisplayName).orElse(author.getUsername()),
+                author.getAvatarUrl());
         Message message = new Message(messageCreateEvent.getMessage().getContent());
         HashMap<String, String> attachments = new HashMap<>();
         for (Attachment attachment : messageCreateEvent.getMessage().getAttachments()) {
