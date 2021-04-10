@@ -14,7 +14,7 @@ public class Death extends Entity {
 
     public Death(String damageType, String message, int combatDuration, String attackerName, float attackerHealth) {
         this.damageType = damageType;
-        this.message = message;
+        this.message = message.replaceAll("\u00A7", "");
         this.combatDuration = combatDuration;
         this.attackerName = attackerName;
         this.attackerHealth = attackerHealth;
