@@ -42,10 +42,11 @@ public class LifecycleEvents {
         if (!M2DUtils.canHandleEvent())
             return;
 
+        Minecraft2Discord.INSTANCE.is_stopping = true;
+
         if (M2DPluginHelper.execute(IM2DPlugin::onShutdown))
             return;
 
-        Minecraft2Discord.INSTANCE.is_stopping = true;
         Minecraft2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(Minecraft2Discord.INSTANCE.config.stop_message, Collections.emptyList()));
         StatusManager.stop();
     }

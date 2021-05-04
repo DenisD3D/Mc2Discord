@@ -23,7 +23,7 @@ public class M2DUtils {
     }
 
     public static boolean canHandleEvent() {
-        return Minecraft2Discord.INSTANCE != null && Minecraft2Discord.INSTANCE.client != null && Minecraft2Discord.INSTANCE.getState() == GatewayObserver.CONNECTED;
+        return Minecraft2Discord.INSTANCE != null && Minecraft2Discord.INSTANCE.client != null && Minecraft2Discord.INSTANCE.getState() == GatewayObserver.CONNECTED && !Minecraft2Discord.INSTANCE.is_stopping;
     }
 
     private static int lastIndexOfRegex(String str, String toFind) {

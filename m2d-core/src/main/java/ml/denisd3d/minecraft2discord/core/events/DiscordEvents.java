@@ -4,6 +4,7 @@ import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Attachment;
 import discord4j.core.object.entity.User;
 import ml.denisd3d.minecraft2discord.api.M2DPluginHelper;
+import ml.denisd3d.minecraft2discord.core.M2DUtils;
 import ml.denisd3d.minecraft2discord.core.Minecraft2Discord;
 import ml.denisd3d.minecraft2discord.core.entities.Entity;
 import ml.denisd3d.minecraft2discord.core.entities.Member;
@@ -15,6 +16,9 @@ public class DiscordEvents {
     private static boolean isAddedCommand = false;
 
     public static void onDiscordMessageReceived(MessageCreateEvent messageCreateEvent) {
+        if(!M2DUtils.canHandleEvent())
+            return;
+
         if (M2DPluginHelper.execute(plugin -> plugin.onDiscordMessageReceived(messageCreateEvent)))
             return;
 
