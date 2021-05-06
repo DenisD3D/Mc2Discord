@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(SayCommand.class)
 public class MixinSayCommand {
-
+    @SuppressWarnings("target")
     @Inject(method = {"lambda$register$1(Lcom/mojang/brigadier/context/CommandContext;)I", "func_198626_a(Lcom/mojang/brigadier/context/CommandContext;)I"}, at = @At("RETURN"), remap = false)
     private static void lambda(CommandContext<CommandSource> commandContext, CallbackInfoReturnable<Integer> ci) throws CommandSyntaxException {
         if (M2DUtils.canHandleEvent()) {

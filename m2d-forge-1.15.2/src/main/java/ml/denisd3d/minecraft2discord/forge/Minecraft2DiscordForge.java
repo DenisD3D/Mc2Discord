@@ -25,15 +25,7 @@ import org.apache.commons.lang3.tuple.Pair;
 @Mod("minecraft2discord")
 @Mod.EventBusSubscriber(Dist.DEDICATED_SERVER)
 public class Minecraft2DiscordForge {
-    public static final CommandSource commandSource = new CommandSource(new DiscordCommandSource(),
-            Vec3d.ZERO,
-            Vec2f.ZERO,
-            ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD),
-            4,
-            "Discord",
-            new StringTextComponent("Discord"),
-            ServerLifecycleHooks.getCurrentServer(),
-            null);
+    public static CommandSource commandSource = null;
 
     public Minecraft2DiscordForge() {
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (in, net) -> true));
@@ -51,6 +43,16 @@ public class Minecraft2DiscordForge {
     public static void onServerStarted(FMLServerStartedEvent event) {
         Minecraft2Discord.INSTANCE.setMinecraftStarted(true);
         LifecycleEvents.bothReadyEvent();
+
+        commandSource = new CommandSource(new DiscordCommandSource(),
+                Vec3d.ZERO,
+                Vec2f.ZERO,
+                ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.OVERWORLD),
+                4,
+                "Discord",
+                new StringTextComponent("Discord"),
+                ServerLifecycleHooks.getCurrentServer(),
+                null);
     }
 
     @SubscribeEvent
