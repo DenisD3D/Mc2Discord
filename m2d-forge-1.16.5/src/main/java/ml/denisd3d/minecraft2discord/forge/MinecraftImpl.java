@@ -21,11 +21,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MinecraftImpl implements IMinecraft {
 
     private static final File FILE_HIDDEN_PLAYERS = new File("hidden-players.json");
     public final HiddenPlayerList hiddenPlayerList = new HiddenPlayerList(FILE_HIDDEN_PLAYERS);
+    Pattern pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
 
     public MinecraftImpl() {
         this.readHiddenPlayerList();
@@ -50,13 +53,25 @@ public class MinecraftImpl implements IMinecraft {
 
     @Override
     public void sendMessage(String content, HashMap<String, String> attachments) {
-        IFormattableTextComponent textComponent = new StringTextComponent(content + (attachments.isEmpty() ? "" : " "));
+        Matcher matcher = pattern.matcher(content);
+        IFormattableTextComponent textComponent = new StringTextComponent("");
+        int previous_end = 0;
+
+        while (matcher.find()) {
+            textComponent.append(new StringTextComponent(content.substring(previous_end, matcher.start())));
+            previous_end = matcher.end();
+            textComponent.append(new StringTextComponent(matcher.group()).modifyStyle(style -> style
+                    .setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, matcher.group()))
+                    .setColor(Color.fromTextFormatting(TextFormatting.BLUE))
+                    .setUnderlined(true)));
+        }
+        textComponent.append(new StringTextComponent(content.substring(previous_end) + (attachments.isEmpty() ? "" : " ")));
+
         attachments.forEach((filename, url) -> textComponent.append(new StringTextComponent("[" + filename + "]").modifyStyle(style -> style
                 .setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url))
                 .setColor(Color.fromTextFormatting(TextFormatting.BLUE))
                 .setUnderlined(true))));
         ServerLifecycleHooks.getCurrentServer().getPlayerList().func_232641_a_(textComponent, ChatType.CHAT, Util.DUMMY_UUID);
-
     }
 
     @Override

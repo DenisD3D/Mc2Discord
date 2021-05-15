@@ -11,6 +11,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class Entity {
+    Pattern pattern = Pattern.compile("\\$\\{(.*?)}");
+
     public static String replace(String content, List<Entity> entities) {
         content = Minecraft2Discord.INSTANCE.iMinecraft.getServerData().replace(content);
         for (Entity entity : entities) {
@@ -22,7 +24,6 @@ public abstract class Entity {
     abstract String replace(String content);
 
     String replace(String content, @Nullable String prefix, Map<String, String> replacements) {
-        Pattern pattern = Pattern.compile("\\$\\{(.*?)}");
         Matcher matcher = pattern.matcher(content);
         StringBuffer buffer = new StringBuffer();
 

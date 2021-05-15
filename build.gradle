@@ -11,7 +11,7 @@ buildscript {
 }
 
 group = 'ml.denisd3d'
-version = '3.0.12'
+version = '3.0.13'
 
 subprojects {
     apply plugin: 'java'

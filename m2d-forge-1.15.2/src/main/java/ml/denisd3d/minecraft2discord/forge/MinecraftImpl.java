@@ -23,10 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MinecraftImpl implements IMinecraft {
     private static final File FILE_HIDDEN_PLAYERS = new File("hidden-players.json");
     public final HiddenPlayerList hiddenPlayerList = new HiddenPlayerList(FILE_HIDDEN_PLAYERS);
+    Pattern pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
 
     public MinecraftImpl() {
         this.readHiddenPlayerList();
@@ -51,7 +54,20 @@ public class MinecraftImpl implements IMinecraft {
 
     @Override
     public void sendMessage(String content, HashMap<String, String> attachments) {
-        StringTextComponent textComponent = new StringTextComponent(content + (attachments.isEmpty() ? "" : " "));
+        Matcher matcher = pattern.matcher(content);
+        StringTextComponent textComponent = new StringTextComponent("");
+        int previous_end = 0;
+
+        while (matcher.find()) {
+            textComponent.appendSibling(new StringTextComponent(content.substring(previous_end, matcher.start())));
+            previous_end = matcher.end();
+            textComponent.appendSibling(new StringTextComponent(matcher.group()).setStyle(new Style()
+                    .setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, matcher.group()))
+                    .setColor(TextFormatting.BLUE)
+                    .setUnderlined(true)));
+        }
+        textComponent.appendSibling(new StringTextComponent(content.substring(previous_end) + (attachments.isEmpty() ? "" : " ")));
+
         attachments.forEach((filename, url) -> textComponent.appendSibling(new StringTextComponent("[" + filename + "]").setStyle(new Style()
                 .setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url))
                 .setColor(TextFormatting.BLUE)
