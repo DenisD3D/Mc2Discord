@@ -1,0 +1,70 @@
+apply from: '../properties.gradle'
+
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+version = projectVersion
+group = projectGroup
+archivesBaseName = modid + '-core'
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    //DISCORD
+    shadow(group: 'com.discord4j', name: 'discord4j-core', version: '3.2.0-RC2')
+
+    //LOGGING
+    shadow(group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.14.1') {
+        exclude(group: 'org.apache.logging.log4j', module: 'log4j-core')
+        exclude(group: 'org.apache.logging.log4j', module: 'log4j-api')
+    }
+    implementation(group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1') // Shipped in Minecraft
+
+    //CONFIG
+    implementation(group: 'com.electronwill.night-config', name: 'toml', version: '3.6.0') // Shipped in Forge need to be shipped for other framework
+
+    //WEB (TODO : Replace by mc included dependency)
+    //shadow(group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.3.3')
+
+    //UTILS
+    implementation(group: 'org.apache.commons', name: 'commons-lang3', version: '3.11') // Shipped in Minecraft
+    implementation(group: 'commons-io', name: 'commons-io', version: '2.5') // Shipped in Minecraft
+    implementation(group: 'com.google.code.gson', name: 'gson', version: '2.8.0') // Shipped in Minecraft //TODO : Replace by jackson shipped in discord4j
+    shadow(group: 'com.vdurmont', name: 'emoji-java', version: '5.1.1')
+
+    //MISC
+    implementation(group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2') // Remove unknown enum constant warning at compilation
+
+    configurations.implementation.extendsFrom(configurations.shadow)
+}
+
+jar {
+    classifier 'slim'
+}
+
+shadowJar {
+    classifier ''
+    configurations = [project.configurations.shadow]
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+}
