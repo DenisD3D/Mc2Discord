@@ -20,17 +20,17 @@ import java.util.Optional;
 public class Events {
     @SubscribeEvent
     public static void onMinecraftChatMessageEvent(ServerChatEvent event) {
-        MinecraftEvents.onMinecraftChatMessageEvent(event.getMessage(), new Player(event.getPlayer().getGameProfile().getName(), event.getPlayer().getDisplayName().getFormattedText(), Optional.ofNullable(event.getPlayer().getGameProfile().getId()).orElse(null)));
+        MinecraftEvents.onMinecraftChatMessageEvent(event.getMessage(), new Player(event.getPlayer().getGameProfile().getName(), event.getPlayer().getDisplayName().getUnformattedText(), Optional.ofNullable(event.getPlayer().getGameProfile().getId()).orElse(null)));
     }
 
     @SubscribeEvent
     public static void onPlayerJoinEvent(PlayerEvent.PlayerLoggedInEvent event) {
-        MinecraftEvents.onPlayerJoinEvent(new Player(event.player.getGameProfile().getName(), event.player.getDisplayName().getFormattedText(), Optional.ofNullable(event.player.getGameProfile().getId()).orElse(null)));
+        MinecraftEvents.onPlayerJoinEvent(new Player(event.player.getGameProfile().getName(), event.player.getDisplayName().getUnformattedText(), Optional.ofNullable(event.player.getGameProfile().getId()).orElse(null)));
     }
 
     @SubscribeEvent
     public static void onPlayerLeaveEvent(PlayerEvent.PlayerLoggedOutEvent event) {
-        MinecraftEvents.onPlayerLeaveEvent(new Player(event.player.getGameProfile().getName(), event.player.getDisplayName().getFormattedText(), Optional.ofNullable(event.player.getGameProfile().getId()).orElse(null)));
+        MinecraftEvents.onPlayerLeaveEvent(new Player(event.player.getGameProfile().getName(), event.player.getDisplayName().getUnformattedText(), Optional.ofNullable(event.player.getGameProfile().getId()).orElse(null)));
     }
 
     @SubscribeEvent
@@ -38,8 +38,8 @@ public class Events {
         if (event.getEntityLiving() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) event.getEntityLiving();
             MinecraftEvents.onPlayerDieEvent(
-                    new Player(player.getGameProfile().getName(), player.getDisplayName().getFormattedText(), Optional.ofNullable(player.getGameProfile().getId()).orElse(null)),
-                    new Death(event.getSource().damageType, player.getCombatTracker().getDeathMessage().getFormattedText(), player.getCombatTracker().getCombatDuration(), Optional.ofNullable(player.getCombatTracker().getBestAttacker()).map(livingEntity -> livingEntity.getDisplayName().getFormattedText()).orElse(""), Optional.ofNullable(player.getCombatTracker().getBestAttacker()).map(EntityLivingBase::getHealth).orElse(0.0f)));
+                    new Player(player.getGameProfile().getName(), player.getDisplayName().getUnformattedText(), Optional.ofNullable(player.getGameProfile().getId()).orElse(null)),
+                    new Death(event.getSource().damageType, player.getCombatTracker().getDeathMessage().getUnformattedText(), player.getCombatTracker().getCombatDuration(), Optional.ofNullable(player.getCombatTracker().getBestAttacker()).map(livingEntity -> livingEntity.getDisplayName().getUnformattedText()).orElse(""), Optional.ofNullable(player.getCombatTracker().getBestAttacker()).map(EntityLivingBase::getHealth).orElse(0.0f)));
         }
     }
 
@@ -47,8 +47,8 @@ public class Events {
     public static void onAdvancementEvent(AdvancementEvent event) {
         if (event.getAdvancement().getDisplay() != null && event.getAdvancement().getDisplay().shouldAnnounceToChat()) {
             MinecraftEvents.onAdvancementEvent(
-                    new Player(event.getEntityPlayer().getGameProfile().getName(), event.getEntityPlayer().getDisplayName().getFormattedText(), Optional.ofNullable(event.getEntityPlayer().getGameProfile().getId()).orElse(null)),
-                    new Advancement(event.getAdvancement().getId().getResourcePath(), event.getAdvancement().getDisplayText().getFormattedText(), event.getAdvancement().getDisplay().getTitle().getFormattedText(), event.getAdvancement().getDisplay().getDescription().getFormattedText())
+                    new Player(event.getEntityPlayer().getGameProfile().getName(), event.getEntityPlayer().getDisplayName().getUnformattedText(), Optional.ofNullable(event.getEntityPlayer().getGameProfile().getId()).orElse(null)),
+                    new Advancement(event.getAdvancement().getId().getResourcePath(), event.getAdvancement().getDisplayText().getUnformattedText(), event.getAdvancement().getDisplay().getTitle().getUnformattedText(), event.getAdvancement().getDisplay().getDescription().getUnformattedText())
             );
         }
     }

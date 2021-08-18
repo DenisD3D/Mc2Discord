@@ -46,7 +46,7 @@ public class DiscordCommandSender implements ICommandSender {
 
     @Override
     public void sendMessage(ITextComponent component) {
-        answer += component.getFormattedText() + ((component.getStyle().getClickEvent() != null && component.getStyle().getClickEvent().getAction() == ClickEvent.Action.OPEN_URL) ? " <" + component.getStyle().getClickEvent().getValue() + ">" : "") + "\n";
+        answer += component.getUnformattedText() + ((component.getStyle().getClickEvent() != null && component.getStyle().getClickEvent().getAction() == ClickEvent.Action.OPEN_URL) ? " <" + component.getStyle().getClickEvent().getValue() + ">" : "") + "\n";
         scheduleMessage();
     }
 
