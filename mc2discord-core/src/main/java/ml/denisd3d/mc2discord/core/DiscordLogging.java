@@ -43,8 +43,8 @@ public class DiscordLogging extends AbstractAppender {
 
     @Override
     public void append(LogEvent event) {
-        if (Mc2Discord.INSTANCE != null && Mc2Discord.INSTANCE.client != null && Mc2Discord.INSTANCE.getState() == GatewayObserver.CONNECTED && !Mc2Discord.INSTANCE.is_stopping && event.getLevel().intLevel() <= Level.getLevel(Mc2Discord.INSTANCE.config.logs_level).intLevel()) {
-            logs += Entity.replace(Mc2Discord.INSTANCE.config.logs_format, Collections.singletonList(new Log(event.getLoggerName(), event.getThreadName(), event.getInstant().getEpochMillisecond(), event.getLevel(), event.getMessage()))) + "\n";
+        if (Mc2Discord.INSTANCE != null && Mc2Discord.INSTANCE.client != null && Mc2Discord.INSTANCE.getState() == GatewayObserver.CONNECTED && !Mc2Discord.INSTANCE.is_stopping && event.getLevel().intLevel() <= Level.getLevel(Mc2Discord.INSTANCE.config.misc.logs_level).intLevel()) {
+            logs += Entity.replace(Mc2Discord.INSTANCE.config.misc.logs_format, Collections.singletonList(new Log(event.getLoggerName(), event.getThreadName(), event.getInstant().getEpochMillisecond(), event.getLevel(), event.getMessage()))) + "\n";
             scheduleMessage();
         }
     }
@@ -58,7 +58,7 @@ public class DiscordLogging extends AbstractAppender {
                         return;
                     if (System.currentTimeMillis() - time > 50) {
                         if (M2DUtils.canHandleEvent())
-                            Mc2Discord.INSTANCE.messageManager.sendMessageOfType("log", logs, "", Mc2Discord.INSTANCE.botDisplayName, Mc2Discord.INSTANCE.botAvatar, null, Mc2Discord.INSTANCE.config.bot_name.isEmpty() && Mc2Discord.INSTANCE.config.bot_avatar.isEmpty());
+                            Mc2Discord.INSTANCE.messageManager.sendMessageOfType("log", logs, "", Mc2Discord.INSTANCE.botDisplayName, Mc2Discord.INSTANCE.botAvatar, null, Mc2Discord.INSTANCE.config.misc.bot_name.isEmpty() && Mc2Discord.INSTANCE.config.misc.bot_avatar.isEmpty());
 
                         logs = "";
                         break;

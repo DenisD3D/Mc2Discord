@@ -1,8 +1,8 @@
 package ml.denisd3d.mc2discord.forge;
 
-import com.mojang.authlib.GameProfile;
 import ml.denisd3d.mc2discord.core.IMinecraft;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
+import ml.denisd3d.mc2discord.core.account.IAccount;
 import ml.denisd3d.mc2discord.core.entities.Global;
 import ml.denisd3d.mc2discord.forge.commands.DiscordCommandSender;
 import ml.denisd3d.mc2discord.forge.commands.HelpCommandImpl;
@@ -92,5 +92,10 @@ public class MinecraftImpl implements IMinecraft {
     @Override
     public String getEnvInfo() {
         return new EnvGenerator("Minecraft2Discord debugger. This is not a real crash report !").getFriendlyReport();
+    }
+
+    @Override
+    public IAccount getIAccount() {
+        return null;
     }
 }

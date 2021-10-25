@@ -7,6 +7,7 @@ import discord4j.core.event.EventDispatcher;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.gateway.GatewayObserver;
+import ml.denisd3d.mc2discord.core.account.M2DAccount;
 import ml.denisd3d.mc2discord.core.config.M2DConfig;
 import ml.denisd3d.mc2discord.core.events.DiscordEvents;
 import ml.denisd3d.mc2discord.core.events.LifecycleEvents;
@@ -15,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 import reactor.netty.ConnectionObserver;
+import reactor.util.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,27 +26,35 @@ import java.util.Scanner;
 
 public class Mc2Discord {
     public static final Logger logger = LogManager.getLogger("mc2discord");
-    public static Mc2Discord INSTANCE;
     public static final File CONFIG_FILE = new File("config", "mc2discord.toml");
+    public static Mc2Discord INSTANCE;
     public final LangManager langManager;
+    public final List<String> errors = new ArrayList<>();
+    public final IMinecraft iMinecraft;
+    public final MessageManager messageManager = new MessageManager(this);
     public boolean is_stopping;
     public M2DConfig config;
-    public final List<String> errors = new ArrayList<>();
     public GatewayDiscordClient client;
     public long botId = -1;
     public String botName = "Undefined";
     public String botDiscriminator = "0000";
     public String botAvatar;
     public String botDisplayName;
-    public final IMinecraft iMinecraft;
-    public final MessageManager messageManager = new MessageManager(this);
     public long startTime;
     private ConnectionObserver.State state = GatewayObserver.DISCONNECTED;
     private boolean isMinecraftStarted;
+    @Nullable
+    public final M2DAccount m2dAccount;
 
     public Mc2Discord(boolean minecraftReady, IMinecraft iMinecraft) {
         this.isMinecraftStarted = minecraftReady;
         this.iMinecraft = iMinecraft;
+
+        if (iMinecraft.getIAccount() != null) {
+            m2dAccount = new M2DAccount(iMinecraft.getIAccount());
+        } else {
+            m2dAccount = null;
+        }
 
         String lang = "en_us";
         try {
@@ -68,28 +78,36 @@ public class Mc2Discord {
         langManager = new LangManager(lang);
 
         try {
-            this.config = M2DConfig.load(CONFIG_FILE, langManager);
+            this.config = new M2DConfig(CONFIG_FILE, translateKey -> {
+                switch (translateKey) {
+                    case "config.lang.comment":
+                        return langManager.formatMessage(translateKey, String.join(", ", M2DUtils.lang_contributors), String.join(", ", M2DUtils.available_lang));
+                    default:
+                        return langManager.formatMessage(translateKey);
+                }
+            }).loadAndCorrect();
         } catch (ParsingException parsingException) {
-            this.errors.add(langManager.formatMessage("errors.config_parsing"));
+            this.errors.add(langManager.formatMessage("errors.config_parsing", parsingException.getLocalizedMessage()));
             parsingException.printStackTrace();
             this.config = null;
             return;
         }
 
-        if (!M2DUtils.isTokenValid(this.config.token)) {
+        if (!M2DUtils.isTokenValid(this.config.general.token)) {
             logger.error("Invalid Discord bot token");
             this.errors.add(langManager.formatMessage("errors.invalid_token"));
             return;
         }
 
+
         Thread thread = new Thread(() -> {
-            this.client = DiscordClientBuilder.create(this.config.token).build().gateway().setGatewayObserver((newState, client) -> {
-                if (newState == GatewayObserver.RETRY_SUCCEEDED) {
-                    state = GatewayObserver.CONNECTED;
-                } else if (newState != GatewayObserver.SEQUENCE) {
-                    state = newState;
-                }
-            })
+            this.client = DiscordClientBuilder.create(this.config.general.token).build().gateway().setGatewayObserver((newState, client) -> {
+                        if (newState == GatewayObserver.RETRY_SUCCEEDED) {
+                            state = GatewayObserver.CONNECTED;
+                        } else if (newState != GatewayObserver.SEQUENCE) {
+                            state = newState;
+                        }
+                    })
                     .login().doOnError(throwable -> errors.add(throwable.getLocalizedMessage()))
                     .block();
 
@@ -146,9 +164,5 @@ public class Mc2Discord {
         } else {
             Mc2Discord.INSTANCE = new Mc2Discord(true, this.iMinecraft);
         }
-    }
-
-    public static void test() {
-        System.out.println("Hot reload");
     }
 }

@@ -57,7 +57,7 @@ public class DiscordCommandSender implements ICommandSender {
             messageScheduler = new Thread(() -> {
                 while (true) {
                     if (System.currentTimeMillis() - time > 50) {
-                        Mc2Discord.INSTANCE.messageManager.sendMessageInChannel(messageChannelId, answer, useWebhook, Mc2Discord.INSTANCE.config.use_codeblocks, null);
+                        Mc2Discord.INSTANCE.messageManager.sendMessageInChannel(messageChannelId, answer, useWebhook, Mc2Discord.INSTANCE.config.commands.use_codeblocks, null);
 
                         answer = "";
                         break;

@@ -30,6 +30,7 @@ import java.io.File;
 @Mod("mc2discord")
 @Mod.EventBusSubscriber(Dist.DEDICATED_SERVER)
 public class Mc2DiscordForge {
+
     private static final Logger LOGGER = LogManager.getLogger();
     public static CommandSource commandSource = null;
 
@@ -49,7 +50,7 @@ public class Mc2DiscordForge {
             LOGGER.info("Mc2Discord config file moved to new location");
         }
 
-        Mc2Discord.firstInit();
+        Mc2Discord.firstInit(true);
         Mc2Discord.INSTANCE = new Mc2Discord(false, new MinecraftImpl());
     }
 

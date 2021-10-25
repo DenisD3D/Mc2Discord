@@ -4,7 +4,7 @@ import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.channel.TextChannel;
 import discord4j.core.spec.WebhookExecuteSpec;
 import discord4j.rest.util.AllowedMentions;
-import ml.denisd3d.mc2discord.core.config.M2DConfig;
+import ml.denisd3d.mc2discord.core.config.core.Channels;
 import reactor.core.publisher.Mono;
 
 public class MessageManager {
@@ -16,7 +16,7 @@ public class MessageManager {
     }
 
     public void sendInfoMessage(String content) {
-        this.sendMessageOfType("info", content, "", this.instance.botDisplayName, this.instance.botAvatar, null, this.instance.config.bot_name.isEmpty() && this.instance.config.bot_avatar.isEmpty());
+        this.sendMessageOfType("info", content, "", this.instance.botDisplayName, this.instance.botAvatar, null, this.instance.config.misc.bot_name.isEmpty() && this.instance.config.misc.bot_avatar.isEmpty());
     }
 
     public void sendChatMessage(String content, String nonWebhookContent, String username, String avatarUrl) {
@@ -27,7 +27,7 @@ public class MessageManager {
         if (type.isEmpty() || (content.isEmpty() && nonWebhookContent.isEmpty()) || username.isEmpty() || avatarUrl.isEmpty())
             return;
 
-        for (M2DConfig.Channel channel : instance.config.channels) {
+        for (Channels.Channel channel : instance.config.channels.channels) {
             if (channel.channel_id == 0)
                 return;
 
@@ -61,7 +61,7 @@ public class MessageManager {
                                 .content(s)
                                 .username(username)
                                 .avatarUrl(avatarUrl)
-                                .allowedMentions(AllowedMentions.builder().parseType(Mc2Discord.INSTANCE.config.allowed_mention.stream().map(AllowedMentions.Type::valueOf).toArray(AllowedMentions.Type[]::new)).build())
+                                .allowedMentions(AllowedMentions.builder().parseType(Mc2Discord.INSTANCE.config.misc.allowed_mention.stream().map(AllowedMentions.Type::valueOf).toArray(AllowedMentions.Type[]::new)).build())
                                 .build())
 
                                 .doOnError(Mc2Discord.logger::error)
@@ -72,7 +72,7 @@ public class MessageManager {
         this.instance.client.getChannelById(Snowflake.of(channelId)).ofType(TextChannel.class)
                 .subscribe(textChannel -> M2DUtils.breakStringToLines(content, 2000, useCodeblocks).forEach(s -> textChannel
                         .createMessage(messageCreateSpec -> messageCreateSpec.setContent(s)
-                                .setAllowedMentions(AllowedMentions.builder().parseType(Mc2Discord.INSTANCE.config.allowed_mention.stream().map(AllowedMentions.Type::valueOf).toArray(AllowedMentions.Type[]::new)).build()))
+                                .setAllowedMentions(AllowedMentions.builder().parseType(Mc2Discord.INSTANCE.config.misc.allowed_mention.stream().map(AllowedMentions.Type::valueOf).toArray(AllowedMentions.Type[]::new)).build()))
                         .doOnError(Mc2Discord.logger::error)
                         .subscribe(unused -> successConsumer.run(), throwable -> DiscordLogging.logs = "", null)));
     }

@@ -1,5 +1,7 @@
 package ml.denisd3d.mc2discord.core.entities;
 
+import ml.denisd3d.mc2discord.core.Mc2Discord;
+
 import java.util.HashMap;
 
 public class Global extends Entity {
@@ -38,6 +40,11 @@ public class Global extends Entity {
         replacements.put("server_port", this.serverPort);
         replacements.put("now", this.now);
         replacements.put("uptime", this.uptime);
+        replacements.put("bot_name", Mc2Discord.INSTANCE.botName);
+        replacements.put("bot_discriminator", Mc2Discord.INSTANCE.botDiscriminator);
+        replacements.put("bot_display_name", Mc2Discord.INSTANCE.botDisplayName);
+        replacements.put("bot_id", String.valueOf(Mc2Discord.INSTANCE.botId));
+        replacements.put("bot_avatar_url", Mc2Discord.INSTANCE.botAvatar);
         return replace(content, null, replacements);
     }
 }

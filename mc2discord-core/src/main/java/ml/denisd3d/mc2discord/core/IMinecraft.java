@@ -1,6 +1,8 @@
 package ml.denisd3d.mc2discord.core;
 
+import ml.denisd3d.mc2discord.core.account.IAccount;
 import ml.denisd3d.mc2discord.core.entities.Global;
+import reactor.util.annotation.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,4 +22,7 @@ public interface IMinecraft {
     String getNewVersion();
 
     String getEnvInfo();
+
+    @Nullable
+    IAccount getIAccount();
 }

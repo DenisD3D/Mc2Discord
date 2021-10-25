@@ -54,9 +54,11 @@ public class M2DCommands {
         try {
             String config = String.join("\n", Files.readAllLines(Mc2Discord.CONFIG_FILE.toPath()));
 
-            String configWithoutToken = config.substring(0, config.indexOf("token = ")) +
-                    "token = REMOVED|" + (M2DUtils.isTokenValid(Mc2Discord.INSTANCE.config.token) ? ("VALID|" + TokenUtil.getSelfId(Mc2Discord.INSTANCE.config.token)) : Mc2Discord.INSTANCE.config.token.isEmpty() ? "EMPTY" : "INVALID") +
-                    config.substring(config.indexOf("\n", config.indexOf("oken = ")));
+            int token_start_index = config.indexOf("token = ") + 9;
+            String token = config.substring(token_start_index, config.indexOf("\"", token_start_index + 1));
+            String configWithoutToken = config.substring(0, token_start_index) +
+                    "REMOVED|" + (M2DUtils.isTokenValid(token) ? ("VALID|" + TokenUtil.getSelfId(token)) : token.isEmpty() ? "EMPTY" : "INVALID") +
+                    config.substring(config.indexOf("\n", token_start_index));
 
             String responseBody = HttpClient.create()
                     .post()
@@ -83,14 +85,14 @@ public class M2DCommands {
     }
 
     public static String getDiscordText() {
-        return Mc2Discord.INSTANCE.config.discord_text;
+        return Mc2Discord.INSTANCE.config.misc.discord_text;
     }
 
     public static String getDiscordLink() {
-        return Mc2Discord.INSTANCE.config.discord_link;
+        return Mc2Discord.INSTANCE.config.misc.discord_link;
     }
 
     public static String getInviteLink() {
-        return M2DUtils.isTokenValid(Mc2Discord.INSTANCE.config.token) ? "https://discord.com/api/oauth2/authorize?client_id=" + TokenUtil.getSelfId(Mc2Discord.INSTANCE.config.token) + "&permissions=604359761&scope=bot" : LangManager.translate("commands.invite.error");
+        return M2DUtils.isTokenValid(Mc2Discord.INSTANCE.config.general.token) ? "https://discord.com/api/oauth2/authorize?client_id=" + TokenUtil.getSelfId(Mc2Discord.INSTANCE.config.general.token) + "&permissions=604359761&scope=bot" : LangManager.translate("commands.invite.error");
     }
 }

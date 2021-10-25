@@ -1,4 +1,4 @@
-package ml.denisd3d.mc2discord.forge.mixin;
+package ml.denisd3d.mc2discord.forge.mixin.core;
 
 import ml.denisd3d.mc2discord.forge.EnvGenerator;
 import net.minecraftforge.fml.CrashReportExtender;

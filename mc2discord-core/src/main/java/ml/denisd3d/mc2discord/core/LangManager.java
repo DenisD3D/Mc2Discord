@@ -18,6 +18,13 @@ public class LangManager {
     protected final Map<String, String> properties = new HashMap<>();
 
     public LangManager(String lang) {
+        loadLang("en_us");
+        if (!lang.equals("en_us")) {
+            loadLang(lang);
+        }
+    }
+
+    private void loadLang(String lang) {
         String s = String.format("/assets/mc2discord/m2d-lang/core/%s.json", lang);
         try {
             InputStream inputStream = LangManager.class.getResourceAsStream(s);

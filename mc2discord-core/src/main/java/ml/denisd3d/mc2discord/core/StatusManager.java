@@ -6,7 +6,7 @@ import discord4j.core.object.presence.ClientActivity;
 import discord4j.core.object.presence.ClientPresence;
 import discord4j.discordjson.json.ChannelModifyRequest;
 import discord4j.discordjson.possible.Possible;
-import ml.denisd3d.mc2discord.core.config.M2DConfig;
+import ml.denisd3d.mc2discord.core.config.core.Status;
 import ml.denisd3d.mc2discord.core.entities.Entity;
 
 import java.time.Duration;
@@ -20,11 +20,11 @@ public class StatusManager {
 
     public static void register() {
         timer = new Timer(true); // Create a new daemon timer
-        if (!Mc2Discord.INSTANCE.config.presence_message.isEmpty() || Mc2Discord.INSTANCE.config.presence_update != 0) {
-            timer.schedule(new PresenceUpdateTask(Mc2Discord.INSTANCE.config.presence_message, Mc2Discord.INSTANCE.config.presence_type), 0, Mc2Discord.INSTANCE.config.presence_update * 1000);
+        if (!Mc2Discord.INSTANCE.config.status.presence.message.isEmpty() || Mc2Discord.INSTANCE.config.status.presence.update != 0) {
+            timer.schedule(new PresenceUpdateTask(Mc2Discord.INSTANCE.config.status.presence.message, Mc2Discord.INSTANCE.config.status.presence.type), 0, Mc2Discord.INSTANCE.config.status.presence.update * 1000);
         }
 
-        for (M2DConfig.StatusChannel statusChannel : Mc2Discord.INSTANCE.config.status_channels) {
+        for (Status.StatusChannel statusChannel : Mc2Discord.INSTANCE.config.status.statusChannels.channels) {
             if (statusChannel.channel_id == 0 || statusChannel.update_period == 0 || (statusChannel.name_message.isEmpty() && statusChannel.topic_message.isEmpty()))
                 continue;
             timer.schedule(new ChannelUpdateTask(statusChannel), 0, statusChannel.update_period * 1000);
@@ -36,10 +36,10 @@ public class StatusManager {
     }
 
     static class ChannelUpdateTask extends TimerTask {
-        private final M2DConfig.StatusChannel statusChannel;
+        private final Status.StatusChannel statusChannel;
         private boolean shouldStopNextTimeout = false;
 
-        public ChannelUpdateTask(M2DConfig.StatusChannel statusChannel) {
+        public ChannelUpdateTask(Status.StatusChannel statusChannel) {
             this.statusChannel = statusChannel;
         }
 

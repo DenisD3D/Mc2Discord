@@ -14,7 +14,8 @@ public class M2DUtils {
     private static final int NOT_FOUND = -1;
     private static final String CODEBLOCKS_TOKEN = "```";
 
-    public static final List<String> available_lang = Arrays.asList("en_us", "fr_fr");
+    public static final List<String> available_lang = Arrays.asList("en_us", "fr_fr", "ru_ru");
+    public static final List<String> lang_contributors = Arrays.asList("Morty#0273 (ru_ru)");
 
     public static boolean isTokenValid(String token) {
         try {

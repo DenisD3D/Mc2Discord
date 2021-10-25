@@ -22,14 +22,14 @@ public class LifecycleEvents {
         Mc2Discord.INSTANCE.botName = readyEvent.getSelf().getUsername();
         Mc2Discord.INSTANCE.botDiscriminator = readyEvent.getSelf().getDiscriminator();
         Mc2Discord.INSTANCE.botId = readyEvent.getSelf().getId().asLong();
-        Mc2Discord.INSTANCE.botDisplayName = Mc2Discord.INSTANCE.config.bot_name.isEmpty() ? readyEvent.getSelf().getUsername() : Entity.replace(Mc2Discord.INSTANCE.config.bot_name, Collections.emptyList());
-        Mc2Discord.INSTANCE.botAvatar = Mc2Discord.INSTANCE.config.bot_avatar.isEmpty() ? readyEvent.getSelf().getAvatarUrl() : Entity.replace(Mc2Discord.INSTANCE.config.bot_avatar, Collections.emptyList());
+        Mc2Discord.INSTANCE.botDisplayName = Mc2Discord.INSTANCE.config.misc.bot_name.isEmpty() ? readyEvent.getSelf().getUsername() : Entity.replace(Mc2Discord.INSTANCE.config.misc.bot_name, Collections.emptyList());
+        Mc2Discord.INSTANCE.botAvatar = Mc2Discord.INSTANCE.config.misc.bot_avatar.isEmpty() ? readyEvent.getSelf().getAvatarUrl() : Entity.replace(Mc2Discord.INSTANCE.config.misc.bot_avatar, Collections.emptyList());
 
-        if (Mc2Discord.INSTANCE.config.channels.get(0).channel_id != 0) {
+        if (Mc2Discord.INSTANCE.config.channels.channels.get(0).channel_id != 0) {
             ArrayList<Permission> requiredPermissions = new ArrayList<>(PermissionSet.of(604359761));
 
             Mc2Discord.INSTANCE.client
-                    .getChannelById(Snowflake.of(Mc2Discord.INSTANCE.config.channels.get(0).channel_id))
+                    .getChannelById(Snowflake.of(Mc2Discord.INSTANCE.config.channels.channels.get(0).channel_id))
                     .ofType(GuildChannel.class)
                     .flatMap(GuildChannel::getGuild)
                     .flatMap(guild -> Mc2Discord.INSTANCE.client.getSelfMember(guild.getId()))
@@ -62,7 +62,11 @@ public class LifecycleEvents {
             return;
 
         Mc2Discord.INSTANCE.startTime = System.currentTimeMillis();
-        Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(Mc2Discord.INSTANCE.config.start_message, Collections.emptyList()));
+        Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(Mc2Discord.INSTANCE.config.messages.start, Collections.emptyList()));
+
+        if (Mc2Discord.INSTANCE.m2dAccount != null) {
+            Mc2Discord.INSTANCE.m2dAccount.onStart();
+        }
     }
 
     public static void onShutdown() {
@@ -74,7 +78,7 @@ public class LifecycleEvents {
         if (M2DPluginHelper.execute(IM2DPlugin::onShutdown))
             return;
 
-        Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(Mc2Discord.INSTANCE.config.stop_message, Collections.emptyList()));
+        Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(Mc2Discord.INSTANCE.config.messages.stop, Collections.emptyList()));
         StatusManager.stop();
     }
 }

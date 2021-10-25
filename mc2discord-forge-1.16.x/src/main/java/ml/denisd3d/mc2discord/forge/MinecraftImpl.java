@@ -3,7 +3,9 @@ package ml.denisd3d.mc2discord.forge;
 import com.mojang.authlib.GameProfile;
 import ml.denisd3d.mc2discord.core.IMinecraft;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
+import ml.denisd3d.mc2discord.core.account.IAccount;
 import ml.denisd3d.mc2discord.core.entities.Global;
+import ml.denisd3d.mc2discord.forge.account.AccountImpl;
 import ml.denisd3d.mc2discord.forge.commands.DiscordCommandSource;
 import ml.denisd3d.mc2discord.forge.commands.HelpCommandImpl;
 import ml.denisd3d.mc2discord.forge.storage.HiddenPlayerList;
@@ -28,6 +30,7 @@ public class MinecraftImpl implements IMinecraft {
     private static final File FILE_HIDDEN_PLAYERS = new File("hidden-players.json");
     public final HiddenPlayerList hiddenPlayerList = new HiddenPlayerList(FILE_HIDDEN_PLAYERS);
     final Pattern pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+    private final IAccount iAccount = new AccountImpl();
 
     public MinecraftImpl() {
         this.readHiddenPlayerList();
@@ -114,5 +117,10 @@ public class MinecraftImpl implements IMinecraft {
     @Override
     public String getEnvInfo() {
         return new EnvGenerator("Minecraft2Discord debugger. This is not a real crash report !").getFriendlyReport();
+    }
+
+    @Override
+    public IAccount getIAccount() {
+        return iAccount;
     }
 }

@@ -15,9 +15,9 @@ public class MinecraftEvents {
 
         if (!M2DUtils.canHandleEvent() || Mc2Discord.INSTANCE.iMinecraft.isPlayerHidden(player.uuid, player.name))
             return;
-        Mc2Discord.INSTANCE.messageManager.sendChatMessage(message, Entity.replace(Mc2Discord.INSTANCE.config.discord_chat_format, Arrays.asList(player, new Message(message))),
+        Mc2Discord.INSTANCE.messageManager.sendChatMessage(message, Entity.replace(Mc2Discord.INSTANCE.config.misc.discord_chat_format, Arrays.asList(player, new Message(message))),
                 player.displayName,
-                Entity.replace(Mc2Discord.INSTANCE.config.avatar_api, Collections.singletonList(player)));
+                Entity.replace(Mc2Discord.INSTANCE.config.misc.avatar_api, Collections.singletonList(player)));
     }
 
     public static void onPlayerJoinEvent(Player player) {
@@ -26,7 +26,7 @@ public class MinecraftEvents {
 
         if (!M2DUtils.canHandleEvent() || Mc2Discord.INSTANCE.iMinecraft.isPlayerHidden(player.uuid, player.name))
             return;
-        Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(Mc2Discord.INSTANCE.config.join_message, Collections.singletonList(player)));
+        Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(Mc2Discord.INSTANCE.config.messages.join, Collections.singletonList(player)));
     }
 
     public static void onPlayerLeaveEvent(Player player) {
@@ -35,7 +35,7 @@ public class MinecraftEvents {
 
         if (!M2DUtils.canHandleEvent() || Mc2Discord.INSTANCE.iMinecraft.isPlayerHidden(player.uuid, player.name))
             return;
-        Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(Mc2Discord.INSTANCE.config.leave_message, Collections.singletonList(player)));
+        Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(Mc2Discord.INSTANCE.config.messages.leave, Collections.singletonList(player)));
     }
 
     public static void onPlayerDieEvent(Player player, Death death) {
@@ -44,7 +44,7 @@ public class MinecraftEvents {
 
         if (!M2DUtils.canHandleEvent() || Mc2Discord.INSTANCE.iMinecraft.isPlayerHidden(player.uuid, player.name))
             return;
-        Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(Mc2Discord.INSTANCE.config.death_message, Arrays.asList(player, death)));
+        Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(Mc2Discord.INSTANCE.config.messages.death, Arrays.asList(player, death)));
     }
 
     public static void onAdvancementEvent(Player player, Advancement advancement) {
@@ -53,6 +53,6 @@ public class MinecraftEvents {
 
         if (!M2DUtils.canHandleEvent() || Mc2Discord.INSTANCE.iMinecraft.isPlayerHidden(player.uuid, player.name))
             return;
-        Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(Mc2Discord.INSTANCE.config.advancement_message, Arrays.asList(player, advancement)));
+        Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(Mc2Discord.INSTANCE.config.messages.advancement, Arrays.asList(player, advancement)));
     }
 }
