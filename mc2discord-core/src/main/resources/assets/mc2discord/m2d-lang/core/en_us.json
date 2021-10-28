@@ -87,5 +87,6 @@
     "config.account.messages.unlink_error.comment": "The message sent when the account unlink is unsuccessful",
     "config.account.messages.unlink_error.value": "Can't unlink your account",
     "config.account.messages.missing_roles.comment": "The message sent when the account is missing some roles",
-    "config.account.messages.missing_roles.value": "You are missing some role on discord to link your account"
+    "config.account.messages.missing_roles.value": "You are missing some role on discord to link your account",
+    "config.features.account_linking.comment": "Enable account linking features (use /mc2discord restart to generate the associated config)"
 }
