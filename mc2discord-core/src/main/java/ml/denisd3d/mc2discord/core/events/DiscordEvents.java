@@ -59,36 +59,36 @@ public class DiscordEvents {
                 messageCreateEvent.getMember().get().getRoles()
                         .map(role -> role.getId().asLong())
                         .filter(roleId -> Mc2Discord.INSTANCE.config.commands.rules_map.containsKey(roleId)).collectList().subscribe(longs -> {
-                    List<String> allowedCommands = new ArrayList<>();
-                    isAddedCommand = false;
-                    int result = Mc2Discord.INSTANCE.config.commands.rules_map.entrySet().stream()
-                            .filter(longCommandRuleEntry -> longCommandRuleEntry.getKey() == 0L || longCommandRuleEntry.getKey() == author.getId().asLong() || longs.contains(longCommandRuleEntry.getKey()))
-                            .map(Map.Entry::getValue)
-                            .map(commandRule -> {
-                                if (commandRule.commands.stream().anyMatch(s -> messageCreateEvent.getMessage().getContent().substring(Mc2Discord.INSTANCE.config.commands.prefix.length()).startsWith(s))) {
-                                    allowedCommands.addAll(commandRule.commands);
-                                    isAddedCommand = true;
-                                }
-                                return commandRule.permission_level;
-                            }).max(Integer::compareTo).orElse(-1);
+                            List<String> allowedCommands = new ArrayList<>();
+                            isAddedCommand = false;
+                            int result = Mc2Discord.INSTANCE.config.commands.rules_map.entrySet().stream()
+                                    .filter(longCommandRuleEntry -> longCommandRuleEntry.getKey() == 0L || longCommandRuleEntry.getKey() == author.getId().asLong() || longs.contains(longCommandRuleEntry.getKey()))
+                                    .map(Map.Entry::getValue)
+                                    .map(commandRule -> {
+                                        if (commandRule.commands.stream().anyMatch(s -> messageCreateEvent.getMessage().getContent().substring(Mc2Discord.INSTANCE.config.commands.prefix.length()).startsWith(s))) {
+                                            allowedCommands.addAll(commandRule.commands);
+                                            isAddedCommand = true;
+                                        }
+                                        return commandRule.permission_level;
+                                    }).max(Integer::compareTo).orElse(-1);
 
-                    if (isAddedCommand || result != -1) {
-                        String command = messageCreateEvent.getMessage().getContent().substring(Mc2Discord.INSTANCE.config.commands.prefix.length());
-                        if (command.equals("help")) {
-                            Mc2Discord.INSTANCE.messageManager.sendMessageInChannel(messageCreateEvent.getMessage().getChannelId().asLong(), Mc2Discord.INSTANCE.iMinecraft.executeHelpCommand(result, allowedCommands), Mc2Discord.INSTANCE.config.channels.channels_map.containsKey(messageCreateEvent.getMessage().getChannelId().asLong()) && Mc2Discord.INSTANCE.config.channels.channels_map.get(messageCreateEvent.getMessage().getChannelId().asLong()).use_webhook, Mc2Discord.INSTANCE.config.commands.use_codeblocks, null);
-                        } else {
-                            Mc2Discord.INSTANCE.iMinecraft.executeCommand(command, isAddedCommand ? Integer.MAX_VALUE : result, messageCreateEvent.getMessage().getChannelId().asLong(), Mc2Discord.INSTANCE.config.channels.channels_map.containsKey(messageCreateEvent.getMessage().getChannelId().asLong()) && Mc2Discord.INSTANCE.config.channels.channels_map.get(messageCreateEvent.getMessage().getChannelId().asLong()).use_webhook);
-                        }
-                    } else {
-                        Mc2Discord.INSTANCE.messageManager.sendMessageInChannel(messageCreateEvent.getMessage().getChannelId().asLong(), Mc2Discord.INSTANCE.config.commands.error_message, Mc2Discord.INSTANCE.config.channels.channels_map.containsKey(messageCreateEvent.getMessage().getChannelId().asLong()) && Mc2Discord.INSTANCE.config.channels.channels_map.get(messageCreateEvent.getMessage().getChannelId().asLong()).use_webhook, Mc2Discord.INSTANCE.config.commands.use_codeblocks, null);
-                    }
-                });
+                            if (isAddedCommand || result != -1) {
+                                String command = messageCreateEvent.getMessage().getContent().substring(Mc2Discord.INSTANCE.config.commands.prefix.length());
+                                if (command.equals("help")) {
+                                    Mc2Discord.INSTANCE.messageManager.sendMessageInChannel(messageCreateEvent.getMessage().getChannelId().asLong(), Mc2Discord.INSTANCE.iMinecraft.executeHelpCommand(result, allowedCommands), Mc2Discord.INSTANCE.config.channels.channels_map.containsKey(messageCreateEvent.getMessage().getChannelId().asLong()) && Mc2Discord.INSTANCE.config.channels.channels_map.get(messageCreateEvent.getMessage().getChannelId().asLong()).use_webhook, Mc2Discord.INSTANCE.config.commands.use_codeblocks, null);
+                                } else {
+                                    Mc2Discord.INSTANCE.iMinecraft.executeCommand(command, isAddedCommand ? Integer.MAX_VALUE : result, messageCreateEvent.getMessage().getChannelId().asLong(), Mc2Discord.INSTANCE.config.channels.channels_map.containsKey(messageCreateEvent.getMessage().getChannelId().asLong()) && Mc2Discord.INSTANCE.config.channels.channels_map.get(messageCreateEvent.getMessage().getChannelId().asLong()).use_webhook);
+                                }
+                            } else {
+                                Mc2Discord.INSTANCE.messageManager.sendMessageInChannel(messageCreateEvent.getMessage().getChannelId().asLong(), Mc2Discord.INSTANCE.config.commands.error_message, Mc2Discord.INSTANCE.config.channels.channels_map.containsKey(messageCreateEvent.getMessage().getChannelId().asLong()) && Mc2Discord.INSTANCE.config.channels.channels_map.get(messageCreateEvent.getMessage().getChannelId().asLong()).use_webhook, Mc2Discord.INSTANCE.config.commands.use_codeblocks, null);
+                            }
+                        });
                 return;
             }
         }
 
         // It's a chat message
-        if (Mc2Discord.INSTANCE.config.channels.channels.stream().noneMatch(channel -> channel.channel_id == messageCreateEvent.getMessage().getChannelId().asLong() && channel.subscriptions.contains("chat"))) // The message isn't in a chat channel
+        if (Mc2Discord.INSTANCE.config.channels.channels.stream().noneMatch(channel -> channel.channel_id == messageCreateEvent.getMessage().getChannelId().asLong() && (channel.subscriptions.contains("chat") || channel.subscriptions.contains("discord_announcement")))) // The message isn't in a chat channel or a discord_announcement channel
             return;
 
         Member member = new Member(author.getUsername(),

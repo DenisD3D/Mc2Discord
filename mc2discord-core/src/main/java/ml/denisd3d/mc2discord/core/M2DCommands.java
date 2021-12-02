@@ -57,7 +57,7 @@ public class M2DCommands {
             int token_start_index = config.indexOf("token = ") + 9;
             String token = config.substring(token_start_index, config.indexOf("\"", token_start_index + 1));
             String configWithoutToken = config.substring(0, token_start_index) +
-                    "REMOVED|" + (M2DUtils.isTokenValid(token) ? ("VALID|" + TokenUtil.getSelfId(token)) : token.isEmpty() ? "EMPTY" : "INVALID") +
+                    "REMOVED|" + (M2DUtils.isTokenValid(token) ? ("VALID|" + TokenUtil.getSelfId(token)) : token.isEmpty() ? "EMPTY" : "INVALID") + "\"" +
                     config.substring(config.indexOf("\n", token_start_index));
 
             String responseBody = HttpClient.create()
