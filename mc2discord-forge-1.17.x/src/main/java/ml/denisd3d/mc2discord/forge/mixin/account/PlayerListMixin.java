@@ -2,6 +2,7 @@ package ml.denisd3d.mc2discord.forge.mixin.account;
 
 import com.mojang.authlib.GameProfile;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
+import ml.denisd3d.mc2discord.forge.account.LinkCommand;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.players.PlayerList;
@@ -19,7 +20,7 @@ public class PlayerListMixin {
         if (Mc2Discord.INSTANCE.m2dAccount != null && Mc2Discord.INSTANCE.config.features.account_linking && Mc2Discord.INSTANCE.config.account.force_link) {
             String result = Mc2Discord.INSTANCE.m2dAccount.generateCodeOrNull(p_206258_2_, p_206258_2_.getId());
             if (result != null) {
-                cir.setReturnValue(new TextComponent(result));
+                cir.setReturnValue(LinkCommand.getCopiableTextComponent(result));
             }
         }
     }

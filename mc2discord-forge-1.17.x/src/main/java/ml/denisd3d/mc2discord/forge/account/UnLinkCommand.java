@@ -13,20 +13,16 @@ public class UnLinkCommand {
         String[] strings = Mc2Discord.INSTANCE.config.account.unlink_command.trim().split(" ");
 
         LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(strings[strings.length - 1]).executes(context -> {
-            if (!Mc2Discord.INSTANCE.config.account.unlink_command.trim().equals(context.getInput().substring(1))) {
-                context.getSource().sendFailure(new TextComponent("Mc2Discord settings have changed. Please use /" + Mc2Discord.INSTANCE.config.account.link_command.trim() + " instead. This command will be removed at next server restart"));
-            } else {
-                ServerPlayer player = context.getSource().getPlayerOrException();
-                if (Mc2Discord.INSTANCE.m2dAccount != null) { // Should always be the case at this point
-                    if (Mc2Discord.INSTANCE.m2dAccount.iAccount.remove(player.getGameProfile().getId())) {
-                        if (Mc2Discord.INSTANCE.config.account.force_link) {
-                            player.connection.disconnect(new TextComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_successful));
-                        } else {
-                            context.getSource().sendSuccess(new TextComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_successful), false);
-                        }
+            ServerPlayer player = context.getSource().getPlayerOrException();
+            if (Mc2Discord.INSTANCE.m2dAccount != null) { // Should always be the case at this point
+                if (Mc2Discord.INSTANCE.m2dAccount.iAccount.remove(player.getGameProfile().getId())) {
+                    if (Mc2Discord.INSTANCE.config.account.force_link) {
+                        player.connection.disconnect(new TextComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_successful));
                     } else {
-                        context.getSource().sendFailure(new TextComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_error));
+                        context.getSource().sendSuccess(new TextComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_successful), false);
                     }
+                } else {
+                    context.getSource().sendFailure(new TextComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_error));
                 }
             }
             return 1;
