@@ -1,0 +1,7 @@
+//include 'mc2discord-core'
+//project(':mc2discord-core').projectDir = file('../mc2discord-core')
+includeBuild ('../mc2discord-core') {
+    dependencySubstitution {
+        substitute module('ml.denisd3d:mc2discord-core') using project(':')
+    }
+}
