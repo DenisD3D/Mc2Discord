@@ -23,10 +23,12 @@ public class DiscordEvents {
         if (M2DPluginHelper.execute(plugin -> plugin.onDiscordMessageReceived(messageCreateEvent)))
             return;
 
-        if (!messageCreateEvent.getMessage().getAuthor().isPresent()) // It's a webhook
+        if (messageCreateEvent.getMessage().getAuthor().isEmpty()) // It's a webhook
         {
             messageCreateEvent.getMessage().getWebhook().map(Webhook::getName).onErrorReturn(throwable -> true, Optional.of("")).map(s -> s.orElse("")).subscribe(s -> {
-                if (Mc2Discord.INSTANCE.config.misc.relay_bot_messages && !s.equals("Mc2Discord - " + Mc2Discord.INSTANCE.botName + "#" + Mc2Discord.INSTANCE.botDiscriminator)) {
+                if (Mc2Discord.INSTANCE.config.misc.relay_bot_messages
+                        && !s.equals("Mc2Discord - " + Mc2Discord.INSTANCE.botName + "#" + Mc2Discord.INSTANCE.botDiscriminator)
+                        && Mc2Discord.INSTANCE.config.channels.channels.stream().anyMatch(channel -> channel.channel_id == messageCreateEvent.getMessage().getChannelId().asLong() && (channel.subscriptions.contains("chat") || channel.subscriptions.contains("discord_announcement")))) {
                     Member member = new Member(messageCreateEvent.getMessage().getUserData().username(),
                             messageCreateEvent.getMessage().getUserData().discriminator(),
                             messageCreateEvent.getMessage().getUserData().username(),
