@@ -1,6 +1,8 @@
 ext {
-    projectVersion = '3.2.3'
-    projectGroup = 'ml.denisd3d'
-    modid = 'mc2discord'
-    repackGroup = 'ml.denisd3d.mc2discord.repack.'
+        projectVersion = '3.2.4'
+        projectGroup = 'ml.denisd3d'
+        modid = 'mc2discord'
+        repackGroup = 'ml.denisd3d.mc2discord.repack.'
+
+        discord4jVersion = '3.2.2'
 }
