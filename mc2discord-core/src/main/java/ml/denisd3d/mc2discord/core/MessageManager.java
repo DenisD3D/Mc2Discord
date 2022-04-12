@@ -24,9 +24,10 @@ public class MessageManager {
     }
 
     public void sendMessageOfType(String type, String content, String nonWebhookContent, String username, String avatarUrl, Runnable successConsumer, boolean forceChannelMessage) {
+        content = content.replaceAll("\u00A7.", "");
+        
         if (type.isEmpty() || (content.isEmpty() && nonWebhookContent.isEmpty()) || username.isEmpty() || avatarUrl.isEmpty())
             return;
-
         for (Channels.Channel channel : instance.config.channels.channels) {
             if (channel.channel_id == 0)
                 return;
