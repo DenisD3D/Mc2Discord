@@ -15,6 +15,7 @@ import net.minecraft.CrashReport;
 import net.minecraft.Util;
 import net.minecraft.network.chat.*;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.server.ServerLifecycleHooks;
@@ -88,8 +89,15 @@ public class MinecraftImpl implements IMinecraft {
 
     @Override
     public Global getServerData() {
+        int onlinePlayerCount = 0;
+        for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+            if (!this.hiddenPlayerList.isHidden(player.getGameProfile())) {
+                onlinePlayerCount++;
+            }
+        }
+
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        return new Global(server.getPlayerCount(),
+        return new Global(onlinePlayerCount,
                 server.getMaxPlayers(),
                 Optional.of(server.playerDataStorage.getPlayerDataFolder()).map(file -> file.list((dir, name) -> name.endsWith(".dat"))).map(strings -> strings.length).orElse(0),
                 server.getMotd(),
