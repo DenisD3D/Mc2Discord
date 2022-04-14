@@ -14,7 +14,14 @@ public class Channels {
     public List<Channel> channels = new ArrayList<>();
     public transient HashMap<Long, Channel> channels_map = new HashMap<>();
 
+    public enum SendMode {
+        WEBHOOK,
+        PLAIN_TEXT,
+        EMBED
+    }
+
     public static class Channel {
+
         @Path("id")
         @PreserveNotNull
         public long channel_id = 0L;
@@ -23,14 +30,15 @@ public class Channels {
         @PreserveNotNull
         public List<String> subscriptions = new ArrayList<>();
 
-        @Path("use_webhook")
+        @Path("mode")
         @PreserveNotNull
-        public boolean use_webhook = true;
+        public SendMode mode = SendMode.WEBHOOK;
 
         public Channel(String... subscriptions) {
             this.subscriptions.addAll(Arrays.asList(subscriptions));
         }
 
+        @SuppressWarnings("unused")
         public Channel() { // Required for nightconfig to create instance
         }
     }

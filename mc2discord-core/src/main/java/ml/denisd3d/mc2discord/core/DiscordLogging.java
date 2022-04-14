@@ -58,7 +58,7 @@ public class DiscordLogging extends AbstractAppender {
                         return;
                     if (System.currentTimeMillis() - time > 50) {
                         if (M2DUtils.canHandleEvent())
-                            Mc2Discord.INSTANCE.messageManager.sendMessageOfType("log", logs, "", Mc2Discord.INSTANCE.botDisplayName, Mc2Discord.INSTANCE.botAvatar, null, Mc2Discord.INSTANCE.config.misc.bot_name.isEmpty() && Mc2Discord.INSTANCE.config.misc.bot_avatar.isEmpty());
+                            Mc2Discord.INSTANCE.messageManager.sendMessageOfType("log", logs, "", Mc2Discord.INSTANCE.botDisplayName, Mc2Discord.INSTANCE.botAvatar, null, Mc2Discord.INSTANCE.config.style.bot_name.isEmpty() && Mc2Discord.INSTANCE.config.style.bot_avatar.isEmpty());
 
                         logs = "";
                         break;

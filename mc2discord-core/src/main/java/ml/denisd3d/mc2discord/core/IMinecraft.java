@@ -1,6 +1,7 @@
 package ml.denisd3d.mc2discord.core;
 
 import ml.denisd3d.mc2discord.core.account.IAccount;
+import ml.denisd3d.mc2discord.core.config.core.Channels;
 import ml.denisd3d.mc2discord.core.entities.Global;
 import reactor.util.annotation.Nullable;
 
@@ -11,7 +12,7 @@ import java.util.UUID;
 public interface IMinecraft {
     void sendMessage(String content, HashMap<String, String> attachments);
 
-    void executeCommand(String command, int permissionLevel, long messageChannelId, boolean useWebhook);
+    void executeCommand(String command, int permissionLevel, long messageChannelId, Channels.SendMode mode);
 
     Global getServerData();
 

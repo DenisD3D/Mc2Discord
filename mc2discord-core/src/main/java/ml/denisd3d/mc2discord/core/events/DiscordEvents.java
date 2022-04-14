@@ -7,6 +7,7 @@ import discord4j.core.object.entity.Webhook;
 import ml.denisd3d.mc2discord.api.M2DPluginHelper;
 import ml.denisd3d.mc2discord.core.M2DUtils;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
+import ml.denisd3d.mc2discord.core.config.core.Channels;
 import ml.denisd3d.mc2discord.core.entities.Entity;
 import ml.denisd3d.mc2discord.core.entities.Member;
 import ml.denisd3d.mc2discord.core.entities.Message;
@@ -38,7 +39,7 @@ public class DiscordEvents {
                     for (Attachment attachment : messageCreateEvent.getMessage().getAttachments()) {
                         attachments.put(attachment.getFilename(), attachment.getUrl());
                     }
-                    Mc2Discord.INSTANCE.iMinecraft.sendMessage(Entity.replace(Mc2Discord.INSTANCE.config.misc.minecraft_chat_format, Arrays.asList(member, message)), attachments);
+                    Mc2Discord.INSTANCE.iMinecraft.sendMessage(Entity.replace(Mc2Discord.INSTANCE.config.style.minecraft_chat_format, Arrays.asList(member, message)), attachments);
                 }
             });
             return;
@@ -77,12 +78,22 @@ public class DiscordEvents {
                             if (isAddedCommand || result != -1) {
                                 String command = messageCreateEvent.getMessage().getContent().substring(Mc2Discord.INSTANCE.config.commands.prefix.length());
                                 if (command.equals("help")) {
-                                    Mc2Discord.INSTANCE.messageManager.sendMessageInChannel(messageCreateEvent.getMessage().getChannelId().asLong(), Mc2Discord.INSTANCE.iMinecraft.executeHelpCommand(result, allowedCommands), Mc2Discord.INSTANCE.config.channels.channels_map.containsKey(messageCreateEvent.getMessage().getChannelId().asLong()) && Mc2Discord.INSTANCE.config.channels.channels_map.get(messageCreateEvent.getMessage().getChannelId().asLong()).use_webhook, Mc2Discord.INSTANCE.config.commands.use_codeblocks, null);
+                                    Mc2Discord.INSTANCE.messageManager.sendMessageInChannel(
+                                            messageCreateEvent.getMessage().getChannelId().asLong(),
+                                            "command",
+                                            Mc2Discord.INSTANCE.iMinecraft.executeHelpCommand(result, allowedCommands),
+                                            Mc2Discord.INSTANCE.config.channels.channels_map.get(messageCreateEvent.getMessage().getChannelId().asLong()).mode,
+                                            Mc2Discord.INSTANCE.config.commands.use_codeblocks, null);
                                 } else {
-                                    Mc2Discord.INSTANCE.iMinecraft.executeCommand(command, isAddedCommand ? Integer.MAX_VALUE : result, messageCreateEvent.getMessage().getChannelId().asLong(), Mc2Discord.INSTANCE.config.channels.channels_map.containsKey(messageCreateEvent.getMessage().getChannelId().asLong()) && Mc2Discord.INSTANCE.config.channels.channels_map.get(messageCreateEvent.getMessage().getChannelId().asLong()).use_webhook);
+                                    Mc2Discord.INSTANCE.iMinecraft.executeCommand(command, isAddedCommand ? Integer.MAX_VALUE : result, messageCreateEvent.getMessage().getChannelId().asLong(), Mc2Discord.INSTANCE.config.channels.channels_map.get(messageCreateEvent.getMessage().getChannelId().asLong()).mode);
                                 }
                             } else {
-                                Mc2Discord.INSTANCE.messageManager.sendMessageInChannel(messageCreateEvent.getMessage().getChannelId().asLong(), Mc2Discord.INSTANCE.config.commands.error_message, Mc2Discord.INSTANCE.config.channels.channels_map.containsKey(messageCreateEvent.getMessage().getChannelId().asLong()) && Mc2Discord.INSTANCE.config.channels.channels_map.get(messageCreateEvent.getMessage().getChannelId().asLong()).use_webhook, Mc2Discord.INSTANCE.config.commands.use_codeblocks, null);
+                                Mc2Discord.INSTANCE.messageManager.sendMessageInChannel(
+                                        messageCreateEvent.getMessage().getChannelId().asLong(),
+                                        "command",
+                                        Mc2Discord.INSTANCE.config.commands.error_message,
+                                        Mc2Discord.INSTANCE.config.channels.channels_map.get(messageCreateEvent.getMessage().getChannelId().asLong()).mode,
+                                        Mc2Discord.INSTANCE.config.commands.use_codeblocks, null);
                             }
                         });
                 return;
@@ -102,6 +113,6 @@ public class DiscordEvents {
         for (Attachment attachment : messageCreateEvent.getMessage().getAttachments()) {
             attachments.put(attachment.getFilename(), attachment.getUrl());
         }
-        Mc2Discord.INSTANCE.iMinecraft.sendMessage(Entity.replace(Mc2Discord.INSTANCE.config.misc.minecraft_chat_format, Arrays.asList(member, message)), attachments);
+        Mc2Discord.INSTANCE.iMinecraft.sendMessage(Entity.replace(Mc2Discord.INSTANCE.config.style.minecraft_chat_format, Arrays.asList(member, message)), attachments);
     }
 }

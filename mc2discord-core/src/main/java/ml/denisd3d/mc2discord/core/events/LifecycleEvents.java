@@ -22,8 +22,8 @@ public class LifecycleEvents {
         Mc2Discord.INSTANCE.botName = readyEvent.getSelf().getUsername();
         Mc2Discord.INSTANCE.botDiscriminator = readyEvent.getSelf().getDiscriminator();
         Mc2Discord.INSTANCE.botId = readyEvent.getSelf().getId().asLong();
-        Mc2Discord.INSTANCE.botDisplayName = Mc2Discord.INSTANCE.config.misc.bot_name.isEmpty() ? readyEvent.getSelf().getUsername() : Entity.replace(Mc2Discord.INSTANCE.config.misc.bot_name, Collections.emptyList());
-        Mc2Discord.INSTANCE.botAvatar = Mc2Discord.INSTANCE.config.misc.bot_avatar.isEmpty() ? readyEvent.getSelf().getAvatarUrl() : Entity.replace(Mc2Discord.INSTANCE.config.misc.bot_avatar, Collections.emptyList());
+        Mc2Discord.INSTANCE.botDisplayName = Mc2Discord.INSTANCE.config.style.bot_name.isEmpty() ? readyEvent.getSelf().getUsername() : Entity.replace(Mc2Discord.INSTANCE.config.style.bot_name, Collections.emptyList());
+        Mc2Discord.INSTANCE.botAvatar = Mc2Discord.INSTANCE.config.style.bot_avatar.isEmpty() ? readyEvent.getSelf().getAvatarUrl() : Entity.replace(Mc2Discord.INSTANCE.config.style.bot_avatar, Collections.emptyList());
 
         if (Mc2Discord.INSTANCE.config.channels.channels.get(0).channel_id != 0) {
             ArrayList<Permission> requiredPermissions = new ArrayList<>(PermissionSet.of(604359761));

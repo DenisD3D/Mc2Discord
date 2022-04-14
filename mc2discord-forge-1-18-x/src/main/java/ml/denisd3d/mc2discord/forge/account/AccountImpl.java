@@ -25,7 +25,7 @@ public class AccountImpl implements IAccount {
         try {
             discordIds.load();
         } catch (Exception exception) {
-//            Mc2Discord.logger.warn("Failed to load discord ids list: ", exception);
+            Mc2Discord.logger.warn("Failed to load discord ids list: ", exception);
         }
     }
 
@@ -34,7 +34,7 @@ public class AccountImpl implements IAccount {
         try {
             discordIds.save();
         } catch (Exception exception) {
-//            Mc2Discord.logger.warn("Failed to save discord ids list: ", exception);
+            Mc2Discord.logger.warn("Failed to save discord ids list: ", exception);
         }
     }
 

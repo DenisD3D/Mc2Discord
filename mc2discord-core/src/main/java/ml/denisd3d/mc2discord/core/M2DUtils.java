@@ -2,6 +2,8 @@ package ml.denisd3d.mc2discord.core;
 
 import discord4j.common.util.TokenUtil;
 import discord4j.gateway.GatewayObserver;
+import discord4j.rest.util.Color;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,12 +12,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class M2DUtils {
+    public static final List<String> available_lang = Arrays.asList("en_us", "fr_fr", "ru_ru");
+    public static final List<String> lang_contributors = Arrays.asList("Morty#0273 (ru_ru)");
+
     // Inspired from methods by Tomer Godinger.
     private static final int NOT_FOUND = -1;
     private static final String CODEBLOCKS_TOKEN = "```";
-
-    public static final List<String> available_lang = Arrays.asList("en_us", "fr_fr", "ru_ru");
-    public static final List<String> lang_contributors = Arrays.asList("Morty#0273 (ru_ru)");
 
     public static boolean isTokenValid(String token) {
         try {
@@ -94,5 +96,44 @@ public class M2DUtils {
         } else {
             return str.length();
         }
+    }
+
+    public static Color getColorFromString(String color) {
+        return switch (color.toLowerCase()) {
+            case "white" -> Color.DISCORD_WHITE;
+            case "light_gray" -> Color.LIGHT_GRAY;
+            case "gray" -> Color.GRAY;
+            case "dark_gray" -> Color.DARK_GRAY;
+            case "black" -> Color.DISCORD_BLACK;
+            case "red" -> Color.RED;
+            case "pink" -> Color.PINK;
+            case "orange" -> Color.ORANGE;
+            case "yellow" -> Color.YELLOW;
+            case "green" -> Color.GREEN;
+            case "magenta" -> Color.MAGENTA;
+            case "cyan" -> Color.CYAN;
+            case "blue" -> Color.BLUE;
+            case "light_sea_green" -> Color.LIGHT_SEA_GREEN;
+            case "medium_sea_green" -> Color.MEDIUM_SEA_GREEN;
+            case "summer_sky" -> Color.SUMMER_SKY;
+            case "deep_lilac" -> Color.DEEP_LILAC;
+            case "ruby" -> Color.RUBY;
+            case "moon_yellow" -> Color.MOON_YELLOW;
+            case "tahiti_gold" -> Color.TAHITI_GOLD;
+            case "cinnabar" -> Color.CINNABAR;
+            case "submarine" -> Color.SUBMARINE;
+            case "hoki" -> Color.HOKI;
+            case "deep_sea" -> Color.DEEP_SEA;
+            case "sea_green" -> Color.SEA_GREEN;
+            case "endeavour" -> Color.ENDEAVOUR;
+            case "vivid_violet" -> Color.VIVID_VIOLET;
+            case "jazzberry_jam" -> Color.JAZZBERRY_JAM;
+            case "dark_goldenrod" -> Color.DARK_GOLDENROD;
+            case "rust" -> Color.RUST;
+            case "brown" -> Color.BROWN;
+            case "gray_chateau" -> Color.GRAY_CHATEAU;
+            case "bismark" -> Color.BISMARK;
+            default -> NumberUtils.isParsable(color) ? Color.of(Integer.parseInt(color)) : Color.WHITE;
+        };
     }
 }

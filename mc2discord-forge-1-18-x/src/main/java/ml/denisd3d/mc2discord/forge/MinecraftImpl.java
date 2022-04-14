@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import ml.denisd3d.mc2discord.core.IMinecraft;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
 import ml.denisd3d.mc2discord.core.account.IAccount;
+import ml.denisd3d.mc2discord.core.config.core.Channels;
 import ml.denisd3d.mc2discord.core.entities.Global;
 import ml.denisd3d.mc2discord.forge.account.AccountImpl;
 import ml.denisd3d.mc2discord.forge.commands.DiscordCommandSource;
@@ -42,7 +43,7 @@ public class MinecraftImpl implements IMinecraft {
         try {
             this.hiddenPlayerList.load();
         } catch (Exception exception) {
-//            Mc2Discord.logger.warn("Failed to load hidden player list: ", exception);
+            Mc2Discord.logger.warn("Failed to load hidden player list: ", exception);
         }
     }
 
@@ -50,7 +51,7 @@ public class MinecraftImpl implements IMinecraft {
         try {
             this.hiddenPlayerList.save();
         } catch (Exception exception) {
-//            Mc2Discord.logger.warn("Failed to save hidden player list: ", exception);
+            Mc2Discord.logger.warn("Failed to save hidden player list: ", exception);
         }
     }
 
@@ -78,9 +79,9 @@ public class MinecraftImpl implements IMinecraft {
     }
 
     @Override
-    public void executeCommand(String command, int permissionLevel, long messageChannelId, boolean useWebhook) {
+    public void executeCommand(String command, int permissionLevel, long messageChannelId, Channels.SendMode mode) {
         DiscordCommandSource.messageChannelId = messageChannelId;
-        DiscordCommandSource.useWebhook = useWebhook;
+        DiscordCommandSource.mode = mode;
         ServerLifecycleHooks.getCurrentServer().getCommands()
                 .performCommand(Mc2DiscordForge.commandSource.withPermission(permissionLevel), command);
     }

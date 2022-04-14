@@ -1,6 +1,7 @@
 package ml.denisd3d.mc2discord.forge.commands;
 
 import ml.denisd3d.mc2discord.core.Mc2Discord;
+import ml.denisd3d.mc2discord.core.config.core.Channels;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -11,7 +12,7 @@ import java.util.UUID;
 public class DiscordCommandSource implements CommandSource {
     public static String answer = ""; // This is a hack to have only one string as result for the command. We need to clear it after each use and get the result by our self
     public static long messageChannelId;
-    public static boolean useWebhook;
+    public static Channels.SendMode mode;
     private long time;
     private Thread messageScheduler;
 
@@ -43,7 +44,7 @@ public class DiscordCommandSource implements CommandSource {
             messageScheduler = new Thread(() -> {
                 while (true) {
                     if (System.currentTimeMillis() - time > 50) {
-                        Mc2Discord.INSTANCE.messageManager.sendMessageInChannel(messageChannelId, answer, useWebhook, Mc2Discord.INSTANCE.config.commands.use_codeblocks, null);
+                        Mc2Discord.INSTANCE.messageManager.sendMessageInChannel(messageChannelId, "command", answer, mode, Mc2Discord.INSTANCE.config.commands.use_codeblocks, null);
 
                         answer = "";
                         break;
@@ -51,7 +52,7 @@ public class DiscordCommandSource implements CommandSource {
                     try {
                         Thread.sleep(10);
                     } catch (InterruptedException e) {
-//                        Mc2Discord.logger.error(e);
+                        Mc2Discord.logger.error(e);
                     }
                 }
             });

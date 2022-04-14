@@ -17,6 +17,7 @@ public class M2DConfig extends Config4J {
     @Path("lang")
     @Comment("config.lang.comment")
     @PreserveNotNull
+    @SuppressWarnings("unused")
     public String lang = "en_us";
 
     @Path("General")
@@ -50,6 +51,11 @@ public class M2DConfig extends Config4J {
     @PreserveNotNull
     @OnlyIf("Features.account_linking")
     public Account account = new Account();
+
+    @Path("Style")
+    @Comment("config.style.comment")
+    @PreserveNotNull()
+    public Style style = new Style();
 
     @Path("Misc")
     @Comment("config.misc.comment")

@@ -9,21 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Misc {
-    @Path("bot_name")
-    @Comment("config.misc.bot_name.comment")
-    @PreserveNotNull
-    public String bot_name = "";
-
-    @Path("bot_avatar")
-    @Comment("config.misc.bot_avatar.comment")
-    @PreserveNotNull
-    public String bot_avatar = "";
-
-    @Path("avatar_api")
-    @Comment("config.misc.avatar_api.comment")
-    @PreserveNotNull
-    public String avatar_api = "https://mc-heads.net/head/${player_uuid}/right";
-
     @Path("relay_bot_messages")
     @Comment("config.misc.relay_bot_messages.comment")
     @PreserveNotNull
@@ -38,16 +23,6 @@ public class Misc {
     @Comment("config.misc.allowed_mention.comment")
     @PreserveNotNull
     public List<String> allowed_mention = new ArrayList<>();
-
-    @Path("minecraft_chat_format")
-    @Comment("config.misc.minecraft_chat_format.comment")
-    @PreserveNotNull
-    public String minecraft_chat_format = "<Discord - ${member_nickname}> ${message}";
-
-    @Path("discord_chat_format")
-    @Comment("config.misc.discord_chat_format.comment")
-    @PreserveNotNull
-    public String discord_chat_format = "**${player_display_name}**: ${message}";
 
     @Path("discord_text")
     @Comment("config.misc.discord_text.comment")

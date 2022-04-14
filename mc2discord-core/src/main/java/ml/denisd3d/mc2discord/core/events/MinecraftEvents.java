@@ -15,9 +15,9 @@ public class MinecraftEvents {
 
         if (!M2DUtils.canHandleEvent() || Mc2Discord.INSTANCE.iMinecraft.isPlayerHidden(player.uuid, player.name))
             return;
-        Mc2Discord.INSTANCE.messageManager.sendChatMessage(message, Entity.replace(Mc2Discord.INSTANCE.config.misc.discord_chat_format, Arrays.asList(player, new Message(message))),
+        Mc2Discord.INSTANCE.messageManager.sendChatMessage(message, Entity.replace(Mc2Discord.INSTANCE.config.style.discord_chat_format, Arrays.asList(player, new Message(message))),
                 player.displayName,
-                Entity.replace(Mc2Discord.INSTANCE.config.misc.avatar_api, Collections.singletonList(player)));
+                Entity.replace(Mc2Discord.INSTANCE.config.style.avatar_api, Collections.singletonList(player)));
     }
 
     public static void onPlayerJoinEvent(Player player) {
