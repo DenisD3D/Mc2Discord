@@ -8,7 +8,13 @@ import discord4j.rest.util.Color;
 import ml.denisd3d.mc2discord.core.config.core.Channels;
 import reactor.core.publisher.Mono;
 
-public record MessageManager(Mc2Discord instance) {
+public class MessageManager {
+
+    Mc2Discord instance;
+
+    public MessageManager(Mc2Discord instance) {
+        this.instance = instance;
+    }
 
     public void sendInfoMessage(String content) {
         this.sendMessageOfType("info", content, "", this.instance.botDisplayName, this.instance.botAvatar, null, this.instance.config.style.bot_name.isEmpty() && this.instance.config.style.bot_avatar.isEmpty());
@@ -28,26 +34,26 @@ public record MessageManager(Mc2Discord instance) {
 
             if (channel.subscriptions.contains(type)) {
                 String message = !nonWebhookContent.isEmpty() ? nonWebhookContent : content;
-                switch (channel.mode) {
-                    case WEBHOOK -> {
-                        if (forceChannelMessage)
-                            this.sendWebhookMessage(channel.channel_id, content, username, avatarUrl, false, successConsumer);
-                        else this.sendChannelMessage(channel.channel_id, message, false, successConsumer);
-                    }
-                    case PLAIN_TEXT -> this.sendChannelMessage(channel.channel_id, message, false, successConsumer);
-                    case EMBED -> this.sendEmbedMessage(channel.channel_id, type, content, username, avatarUrl, successConsumer);
+                if (channel.mode == Channels.SendMode.WEBHOOK) {
+                    if (forceChannelMessage)
+                        this.sendWebhookMessage(channel.channel_id, content, username, avatarUrl, false, successConsumer);
+                    else this.sendChannelMessage(channel.channel_id, message, false, successConsumer);
+                } else if (channel.mode == Channels.SendMode.PLAIN_TEXT) {
+                    this.sendChannelMessage(channel.channel_id, message, false, successConsumer);
+                } else if (channel.mode == Channels.SendMode.EMBED) {
+                    this.sendEmbedMessage(channel.channel_id, type, content, username, avatarUrl, successConsumer);
                 }
             }
         }
     }
 
     public void sendMessageInChannel(long channelId, String type, String content, Channels.SendMode mode, boolean useCodeblocks, Runnable successConsumer) {
-        switch (mode) {
-            case WEBHOOK ->
-                    this.sendWebhookMessage(channelId, content, this.instance.botDisplayName, this.instance.botAvatar, useCodeblocks, successConsumer);
-            case PLAIN_TEXT -> this.sendChannelMessage(channelId, content, useCodeblocks, successConsumer);
-            case EMBED ->
-                    this.sendEmbedMessage(channelId, type, content, this.instance.botDisplayName, this.instance.botAvatar, successConsumer);
+        if (mode == Channels.SendMode.WEBHOOK) {
+            this.sendWebhookMessage(channelId, content, this.instance.botDisplayName, this.instance.botAvatar, useCodeblocks, successConsumer);
+        } else if (mode == Channels.SendMode.PLAIN_TEXT) {
+            this.sendChannelMessage(channelId, content, useCodeblocks, successConsumer);
+        } else if (mode == Channels.SendMode.EMBED) {
+            this.sendEmbedMessage(channelId, type, content, this.instance.botDisplayName, this.instance.botAvatar, successConsumer);
         }
     }
 
@@ -65,16 +71,16 @@ public record MessageManager(Mc2Discord instance) {
     private void sendEmbedMessage(long channel_id, String type, String message, String username, String avatarUrl, Runnable successConsumer) {
         this.instance.client.getChannelById(Snowflake.of(channel_id)).ofType(TextChannel.class).flatMap(textChannel -> textChannel.createMessage(messageCreateSpec -> messageCreateSpec.addEmbed(embed -> {
             embed.setDescription(message);
-            switch (type) {
-                case "info" ->
-                        embed.setColor(M2DUtils.getColorFromString(Mc2Discord.INSTANCE.config.style.embed_color_info));
-                case "chat" ->
-                        embed.setColor(M2DUtils.getColorFromString(Mc2Discord.INSTANCE.config.style.embed_color_chat));
-                case "command" ->
-                        embed.setColor(M2DUtils.getColorFromString(Mc2Discord.INSTANCE.config.style.embed_color_command));
-                case "log" ->
-                        embed.setColor(M2DUtils.getColorFromString(Mc2Discord.INSTANCE.config.style.embed_color_log));
-                default -> embed.setColor(Color.WHITE);
+            if ("info".equals(type)) {
+                embed.setColor(M2DUtils.getColorFromString(Mc2Discord.INSTANCE.config.style.embed_color_info));
+            } else if ("chat".equals(type)) {
+                embed.setColor(M2DUtils.getColorFromString(Mc2Discord.INSTANCE.config.style.embed_color_chat));
+            } else if ("command".equals(type)) {
+                embed.setColor(M2DUtils.getColorFromString(Mc2Discord.INSTANCE.config.style.embed_color_command));
+            } else if ("log".equals(type)) {
+                embed.setColor(M2DUtils.getColorFromString(Mc2Discord.INSTANCE.config.style.embed_color_log));
+            } else {
+                embed.setColor(Color.WHITE);
             }
 
             if (!username.equals(this.instance.botDisplayName)) {

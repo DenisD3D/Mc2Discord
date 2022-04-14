@@ -20,9 +20,9 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 version = project.projectVersion
 group = project.projectGroup
-archivesBaseName = project.modid + '-forge-1.18.x'
+archivesBaseName = project.modid + '-forge-1.16.x'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17) // Mojang ships Java 17 to end users.
+java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users.
 
 mixin {
     add sourceSets.main, "mixins.mc2discord.refmap.json"
@@ -30,7 +30,7 @@ mixin {
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.18.2'
+    mappings channel: 'official', version: '1.16.5'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -54,26 +54,15 @@ minecraft {
     }
 }
 
-configurations {
-    library
-    implementation.extendsFrom library
-}
-
-minecraft.runs.all {
-    lazyToken('minecraft_classpath') {
-        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
-    }
-}
-
 repositories {
     mavenCentral()
     maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
-    minecraft('net.minecraftforge:forge:1.18.2-40.0.44')
+    minecraft('net.minecraftforge:forge:1.16.5-36.2.34')
 
-    library('ml.denisd3d:mc2discord-core')
+    shadow('ml.denisd3d:mc2discord-core')
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor' // Mixin
 
@@ -84,16 +73,18 @@ dependencies {
     } // Fix compatibility between Minecraft & Reactor netty version in dev
 
     //DISCORD
-    library(group: 'com.discord4j', name: 'discord4j-core', version: project.discord4jVersion)
+    shadow(group: 'com.discord4j', name: 'discord4j-core', version: project.discord4jVersion)
 
     //CONFIG
-    library(group: 'com.github.denisd3d', name: 'config4j', version: '1.0.1') {
+    shadow(group: 'com.github.denisd3d', name: 'config4j', version: '1.0.1') {
         exclude(group: 'com.electronwill.night-config', module: 'core')
     }
 
     //UTILS
-    library(group: 'com.vdurmont', name: 'emoji-java', version: '5.1.1')
-    library(group: 'org.apache.commons', name: 'commons-collections4', version: '4.0') // Account
+    shadow(group: 'com.vdurmont', name: 'emoji-java', version: '5.1.1')
+    shadow(group: 'org.apache.commons', name: 'commons-collections4', version: '4.0') // Account
+
+    configurations.implementation.extendsFrom(configurations.shadow)
 }
 
 jar {
@@ -114,7 +105,7 @@ jar {
 shadowJar {
     classifier ''
 
-    configurations = [project.configurations.library]
+    configurations = [project.configurations.shadow]
 
     relocate('discord4j', repackGroup + 'discord4j')
     relocate('com.austinv11.servicer', repackGroup + 'com.austinv11.servicer')

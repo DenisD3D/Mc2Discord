@@ -99,41 +99,74 @@ public class M2DUtils {
     }
 
     public static Color getColorFromString(String color) {
-        return switch (color.toLowerCase()) {
-            case "white" -> Color.DISCORD_WHITE;
-            case "light_gray" -> Color.LIGHT_GRAY;
-            case "gray" -> Color.GRAY;
-            case "dark_gray" -> Color.DARK_GRAY;
-            case "black" -> Color.DISCORD_BLACK;
-            case "red" -> Color.RED;
-            case "pink" -> Color.PINK;
-            case "orange" -> Color.ORANGE;
-            case "yellow" -> Color.YELLOW;
-            case "green" -> Color.GREEN;
-            case "magenta" -> Color.MAGENTA;
-            case "cyan" -> Color.CYAN;
-            case "blue" -> Color.BLUE;
-            case "light_sea_green" -> Color.LIGHT_SEA_GREEN;
-            case "medium_sea_green" -> Color.MEDIUM_SEA_GREEN;
-            case "summer_sky" -> Color.SUMMER_SKY;
-            case "deep_lilac" -> Color.DEEP_LILAC;
-            case "ruby" -> Color.RUBY;
-            case "moon_yellow" -> Color.MOON_YELLOW;
-            case "tahiti_gold" -> Color.TAHITI_GOLD;
-            case "cinnabar" -> Color.CINNABAR;
-            case "submarine" -> Color.SUBMARINE;
-            case "hoki" -> Color.HOKI;
-            case "deep_sea" -> Color.DEEP_SEA;
-            case "sea_green" -> Color.SEA_GREEN;
-            case "endeavour" -> Color.ENDEAVOUR;
-            case "vivid_violet" -> Color.VIVID_VIOLET;
-            case "jazzberry_jam" -> Color.JAZZBERRY_JAM;
-            case "dark_goldenrod" -> Color.DARK_GOLDENROD;
-            case "rust" -> Color.RUST;
-            case "brown" -> Color.BROWN;
-            case "gray_chateau" -> Color.GRAY_CHATEAU;
-            case "bismark" -> Color.BISMARK;
-            default -> NumberUtils.isParsable(color) ? Color.of(Integer.parseInt(color)) : Color.WHITE;
-        };
+        String s = color.toLowerCase();
+        if ("white".equals(s)) {
+            return Color.DISCORD_WHITE;
+        } else if ("light_gray".equals(s)) {
+            return Color.LIGHT_GRAY;
+        } else if ("gray".equals(s)) {
+            return Color.GRAY;
+        } else if ("dark_gray".equals(s)) {
+            return Color.DARK_GRAY;
+        } else if ("black".equals(s)) {
+            return Color.DISCORD_BLACK;
+        } else if ("red".equals(s)) {
+            return Color.RED;
+        } else if ("pink".equals(s)) {
+            return Color.PINK;
+        } else if ("orange".equals(s)) {
+            return Color.ORANGE;
+        } else if ("yellow".equals(s)) {
+            return Color.YELLOW;
+        } else if ("green".equals(s)) {
+            return Color.GREEN;
+        } else if ("magenta".equals(s)) {
+            return Color.MAGENTA;
+        } else if ("cyan".equals(s)) {
+            return Color.CYAN;
+        } else if ("blue".equals(s)) {
+            return Color.BLUE;
+        } else if ("light_sea_green".equals(s)) {
+            return Color.LIGHT_SEA_GREEN;
+        } else if ("medium_sea_green".equals(s)) {
+            return Color.MEDIUM_SEA_GREEN;
+        } else if ("summer_sky".equals(s)) {
+            return Color.SUMMER_SKY;
+        } else if ("deep_lilac".equals(s)) {
+            return Color.DEEP_LILAC;
+        } else if ("ruby".equals(s)) {
+            return Color.RUBY;
+        } else if ("moon_yellow".equals(s)) {
+            return Color.MOON_YELLOW;
+        } else if ("tahiti_gold".equals(s)) {
+            return Color.TAHITI_GOLD;
+        } else if ("cinnabar".equals(s)) {
+            return Color.CINNABAR;
+        } else if ("submarine".equals(s)) {
+            return Color.SUBMARINE;
+        } else if ("hoki".equals(s)) {
+            return Color.HOKI;
+        } else if ("deep_sea".equals(s)) {
+            return Color.DEEP_SEA;
+        } else if ("sea_green".equals(s)) {
+            return Color.SEA_GREEN;
+        } else if ("endeavour".equals(s)) {
+            return Color.ENDEAVOUR;
+        } else if ("vivid_violet".equals(s)) {
+            return Color.VIVID_VIOLET;
+        } else if ("jazzberry_jam".equals(s)) {
+            return Color.JAZZBERRY_JAM;
+        } else if ("dark_goldenrod".equals(s)) {
+            return Color.DARK_GOLDENROD;
+        } else if ("rust".equals(s)) {
+            return Color.RUST;
+        } else if ("brown".equals(s)) {
+            return Color.BROWN;
+        } else if ("gray_chateau".equals(s)) {
+            return Color.GRAY_CHATEAU;
+        } else if ("bismark".equals(s)) {
+            return Color.BISMARK;
+        }
+        return NumberUtils.isParsable(color) ? Color.of(Integer.parseInt(color)) : Color.WHITE;
     }
 }

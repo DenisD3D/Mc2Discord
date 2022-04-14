@@ -13,6 +13,8 @@ version = projectVersion
 group = projectGroup
 archivesBaseName = modid + '-core'
 
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+
 repositories {
     mavenCentral()
     maven { url = 'https://jitpack.io' }

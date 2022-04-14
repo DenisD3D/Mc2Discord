@@ -24,7 +24,7 @@ public class DiscordEvents {
         if (M2DPluginHelper.execute(plugin -> plugin.onDiscordMessageReceived(messageCreateEvent)))
             return;
 
-        if (messageCreateEvent.getMessage().getAuthor().isEmpty()) // It's a webhook
+        if (!messageCreateEvent.getMessage().getAuthor().isPresent()) // It's a webhook
         {
             messageCreateEvent.getMessage().getWebhook().map(Webhook::getName).onErrorReturn(throwable -> true, Optional.of("")).map(s -> s.orElse("")).subscribe(s -> {
                 if (Mc2Discord.INSTANCE.config.misc.relay_bot_messages
