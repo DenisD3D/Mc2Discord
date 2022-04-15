@@ -3,7 +3,7 @@ apply from: '../properties.gradle'
 
 buildscript {
     repositories {
-        maven { url = 'https://plugins.gradle.org/m2/' }
+        gradlePluginPortal()
         maven { url = 'https://maven.minecraftforge.net' }
         maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
     }
@@ -97,7 +97,7 @@ jar {
                 "Implementation-Title"  : project.name,
                 "Implementation-Version": project.version,
                 "Implementation-Vendor" : "DenisD3D",
-                "MixinConfigs"          : "mc2discord.mixins.json"
+                "MixinConfigs"          : "mixins.mc2discord.json"
         ])
     }
 }

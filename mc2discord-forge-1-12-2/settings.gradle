@@ -1,0 +1,5 @@
+includeBuild ('../mc2discord-core') {
+    dependencySubstitution {
+        substitute module('ml.denisd3d:mc2discord-core') using project(':')
+    }
+}
