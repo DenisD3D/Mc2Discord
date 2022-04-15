@@ -60,6 +60,8 @@ dependencies {
         exclude(group: 'com.electronwill.night-config', module: 'core')
     }
 
+    shadow(group: 'com.electronwill.night-config', name: 'toml', version: '3.6.0')
+
     //UTILS
     shadow(group: 'com.vdurmont', name: 'emoji-java', version: '5.1.1')
     shadow(group: 'org.apache.commons', name: 'commons-collections4', version: '4.0') // Account
