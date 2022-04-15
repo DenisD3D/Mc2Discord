@@ -24,6 +24,11 @@ public class DiscordCommandImpl extends CommandBase {
     }
 
     @Override
+    public int getRequiredPermissionLevel() {
+        return 0;
+    }
+
+    @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         sender.sendMessage(new TextComponentString(M2DCommands.getDiscordText()).setStyle(new Style()
                 .setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, M2DCommands.getDiscordLink()))
