@@ -15,9 +15,10 @@ public class DiscordCommandSender implements ICommandSender {
     public static String answer = ""; // This is a hack to have only one string as result for the command. We need to clear it after each use and get the result by our self
     public static long messageChannelId;
     public static Channels.SendMode mode;
+    public static int permissionLevel = 0;
     private long time;
     private Thread messageScheduler;
-    private MinecraftServer server;
+    private final MinecraftServer server;
 
     public DiscordCommandSender(MinecraftServer serverIn) {
         this.server = serverIn;
@@ -31,7 +32,7 @@ public class DiscordCommandSender implements ICommandSender {
 
     @Override
     public boolean canUseCommand(int permLevel, String commandName) {
-        return true;
+        return permissionLevel >= permLevel;
     }
 
     @Override

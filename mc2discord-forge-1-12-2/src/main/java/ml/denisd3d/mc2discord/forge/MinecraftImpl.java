@@ -57,6 +57,7 @@ public class MinecraftImpl implements IMinecraft {
     public void executeCommand(String command, int permissionLevel, long messageChannelId, Channels.SendMode mode) {
         DiscordCommandSender.messageChannelId = messageChannelId;
         DiscordCommandSender.mode = mode;
+        DiscordCommandSender.permissionLevel = permissionLevel;
         FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager().executeCommand(Mc2DiscordForge.commandSender, command);
     }
 

@@ -1,9 +1,7 @@
 package ml.denisd3d.mc2discord.forge.commands;
 
-import mcp.MethodsReturnNonnullByDefault;
 import ml.denisd3d.mc2discord.core.M2DCommands;
 import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.Style;
