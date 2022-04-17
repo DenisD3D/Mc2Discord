@@ -38,10 +38,6 @@ jobs:
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
-      - name: Validate no assets
-        run: test ! -d ./src/generated
-      - name: Validate assets
-        run: test -d ./src/generated -a -f ./src/generated/resources/.cache/cache
       - name: Build with Gradle
         run: ./gradlew build
       - uses: actions/upload-artifact@v3
