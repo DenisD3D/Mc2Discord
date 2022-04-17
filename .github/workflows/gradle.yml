@@ -13,9 +13,6 @@ on:
   pull_request:
     branches: [ main ]
 
-permissions:
-  contents: read
-
 defaults:
   run:
     working-directory: mc2discord-forge-1-18-x
