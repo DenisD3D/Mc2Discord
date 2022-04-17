@@ -16,6 +16,10 @@ on:
 permissions:
   contents: read
 
+defaults:
+  run:
+    working-directory: mc2discord-forge-1-18-x
+
 jobs:
   build:
 
@@ -32,4 +36,3 @@ jobs:
       uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
       with:
         arguments: build
-      working-directory: mc2discord-forge-1-18-x
