@@ -35,7 +35,7 @@ public class MessageManager {
             if (channel.subscriptions.contains(type)) {
                 String message = !nonWebhookContent.isEmpty() ? nonWebhookContent : content;
                 if (channel.mode == Channels.SendMode.WEBHOOK) {
-                    if (forceChannelMessage)
+                    if (!forceChannelMessage)
                         this.sendWebhookMessage(channel.channel_id, content, username, avatarUrl, false, successConsumer);
                     else this.sendChannelMessage(channel.channel_id, message, false, successConsumer);
                 } else if (channel.mode == Channels.SendMode.PLAIN_TEXT) {
