@@ -2,8 +2,7 @@
 
 name: 'Build 1.18.x'
 
-on:
-  push:
+on: workflow_dispatch
 
 defaults:
   run:
@@ -47,4 +46,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: dist
-          path: build/libs/
+          path: /
