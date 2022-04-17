@@ -20,6 +20,10 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.2
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Use gradle cache for faster builds
