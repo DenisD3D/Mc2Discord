@@ -43,7 +43,7 @@ jobs:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
       - name: Build with Gradle
-        run: ./gradlew build
+        run: gradle build
       - uses: actions/upload-artifact@v3
         with:
           name: dist
