@@ -1,17 +1,13 @@
-# From Applied-Energistics-2
-
-name: 'Build 1.18.x'
+name: 'Build'
 
 on: workflow_dispatch
-
-defaults:
-  run:
-    working-directory: mc2discord-forge-1-18-x
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    defaults:
+        run:
+            working-directory: mc2discord-forge-1-18-x 
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
@@ -22,7 +18,6 @@ jobs:
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.2
-
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Use gradle cache for faster builds
@@ -45,5 +40,7 @@ jobs:
         run: gradle build
       - uses: actions/upload-artifact@v3
         with:
-          name: dist
-          path: ${{ github.workspace }}
+          name: forge 1.18.x
+          path: |
+              ${{ github.workspace }}/mc2discord-forge-1-18-x/build/libs/
+              !${{ github.workspace }}/mc2discord-forge-1-18-x/build/libs/*-slim.jar
