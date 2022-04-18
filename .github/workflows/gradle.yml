@@ -3,7 +3,7 @@ name: 'Build'
 on: workflow_dispatch
 
 jobs:
-  build:
+  build-1.18.x:
     runs-on: ubuntu-latest
     defaults:
         run:
@@ -40,7 +40,7 @@ jobs:
         run: gradle build
       - uses: actions/upload-artifact@v3
         with:
-          name: forge 1.18.x
+          name: build
           path: |
               ${{ github.workspace }}/mc2discord-forge-1-18-x/build/libs/
               !${{ github.workspace }}/mc2discord-forge-1-18-x/build/libs/*-slim.jar
