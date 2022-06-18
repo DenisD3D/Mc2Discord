@@ -21,4 +21,9 @@ public class Presence {
     @Comment("config.status.presence.update.comment")
     @PreserveNotNull
     public long update = 60L;
+
+    @Path("link")
+    @Comment("config.status.presence.link.comment")
+    @PreserveNotNull
+    public String link = "";
 }

@@ -51,6 +51,7 @@
     "config.status.presence.message.value": "${online_players} / ${max_players} joueurs",
     "config.status.presence.type.comment": "Le type de présence (PLAYING, STREAMING, LISTENING, WATCHING, COMPETING)",
     "config.status.presence.update.comment": " La fréquence de mise à jour de la présence (en secondes). Une valeur trop faible peut entraîner des limitations par Discord",
+    "config.status.presence.link.comment": " Uniquement pour le type de présence STREAMING, ignoré pour les autres. Doit être une lien youtube ou twitch valide.",
     "config.status.channels.comment": " Configurations de salons de status. Vous pouvez dupliquer ce block. Chaque block correspond à un salon\n id est l'id discord du salon. Voir : https://github.com/DenisD3D/Minecraft2Discord/wiki/Discord-ids\n update_period est la fréquence de mise à jour du salon (en secondes). Une valeur trop faible peut entraîner des limitations par discord (max 2 mise à jour toutes les 10 minutes au moment de l'écriture)\n name_message est le message à mettre comme nom du salon. Vous pouvez utiliser les variables globales. Si le salon est un salon texte, les espaces blanc seront remplacé par '-'\n topic_message est le message à mettre en description du salon. Vous pouvez utiliser les variables globales",
     "config.style.comment": " Configuration du style",
     "config.style.bot_name.comment": " Change le nom du bot avec le mode webhook. Vous pouvez utiliser les variables globales.",

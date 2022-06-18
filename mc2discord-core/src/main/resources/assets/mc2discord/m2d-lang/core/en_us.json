@@ -51,6 +51,7 @@
     "config.status.presence.message.value": "${online_players} / ${max_players} players",
     "config.status.presence.type.comment": "The type of presence (PLAYING, STREAMING, LISTENING, WATCHING, COMPETING)",
     "config.status.presence.update.comment": " Update frequency of the presence message (in seconds). A too low number might result in limitation from Discord",
+    "config.status.presence.link.comment": " Only if type is STREAMING, ignored for others. Must be a valid youtube or twitch link.",
     "config.status.channels.comment": " Status channels configuration. You may duplicate the block. Each block correspond to one channel\n id is the discord id of the channel. See : https://github.com/DenisD3D/Minecraft2Discord/wiki/Discord-ids\n update_period is the update frequency of the channel (in seconds). A too low number might result in limitation form Discord (max 2 update per 10 minutes as of writing)\n name_message is the message to set as a name of the channel. You can use Global variables. If the channel is a text channel, whitespace will be replaced by '-'\n topic_message is the message to set as the description of the channel. You can use Global variables",
     "config.style.comment": " Style configuration",
     "config.style.bot_name.comment": " Override the bot name in webhook mode. You may use global variable here",
