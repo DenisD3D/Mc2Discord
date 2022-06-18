@@ -12,8 +12,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class M2DUtils {
-    public static final List<String> available_lang = Arrays.asList("en_us", "fr_fr", "ru_ru");
-    public static final List<String> lang_contributors = Arrays.asList("Morty#0273 (ru_ru)");
+    public static final List<String> available_lang = Arrays.asList("en_us", "fr_fr", "ru_ru", "ko_kr");
+    public static final List<String> lang_contributors = Arrays.asList("Morty#0273 (ru_ru)", "PixelVoxel#4327 (ko_kr)");
 
     // Inspired from methods by Tomer Godinger.
     private static final int NOT_FOUND = -1;

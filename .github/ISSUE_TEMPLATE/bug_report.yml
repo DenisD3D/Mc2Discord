@@ -1,0 +1,21 @@
+name: "🐛 Bug report"
+description: Report errors or unexpected behavior
+labels: 
+- bug
+body:
+- type: textarea
+  attributes:
+    label: Describe the bug
+    placeholder: A clear and concise description of what the bug is.
+  validations:
+    required: true
+    
+- type: input
+  attributes:
+    label: Your config file
+    placeholder: |
+      http://m2d.denisd3d.ml/uploads/view?key=xxx
+    description: |
+      Must be the link returned by the `/mc2discord upload` command (remove sensitive data)
+  validations:
+    required: false
