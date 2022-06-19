@@ -90,5 +90,5 @@
     "config.account.messages.unlink_error.value": "연동을 해제할 수 없습니다",
     "config.account.messages.missing_roles.comment": " 계정에 연동을 위한 일부 역할이 누락되었을 시 보내질 메세지",
     "config.account.messages.missing_roles.value": "계정 연동을 위해서는 디스코드에서 추가 역할이 필요합니다",
-    "config.features.account_linking.comment": " 계정 연동 기능 활성화 (/mc2discord restart 를 사용해 관련 구성을 추가로 생성)"
+    "config.features.account_linking.comment": " 계정 연동 기능 활성화 (/mc2discord restart 를 사용해 관련 구성을 추가로 생성). Require SERVER MEMBERS INTENT to be enabled for all features to work"
 }

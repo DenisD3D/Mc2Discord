@@ -1,6 +1,6 @@
 package ml.denisd3d.mc2discord.core.account;
 
-import ml.denisd3d.mc2discord.core.Mc2Discord;
+import discord4j.core.object.entity.User;
 
 import java.util.UUID;
 
@@ -17,9 +17,11 @@ public interface IAccount {
 
     void updateCommands();
 
-    void checkDiscordPseudoForAllDiscordAccount();
+    void checkAllDiscordAccount();
 
     void sendLinkSuccess(UUID uuid);
 
     String getInGameName(UUID uuid);
+
+    void removeIfPresent(User user);
 }

@@ -1,10 +1,11 @@
 package ml.denisd3d.mc2discord.core.account;
 
 import discord4j.common.util.Snowflake;
+import discord4j.core.event.domain.guild.MemberLeaveEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.spec.GuildMemberEditSpec;
+import discord4j.rest.http.client.ClientException;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
-import ml.denisd3d.mc2discord.core.config.account.Account;
 import ml.denisd3d.mc2discord.core.entities.Entity;
 import ml.denisd3d.mc2discord.core.entities.Member;
 import ml.denisd3d.mc2discord.core.entities.Player;
@@ -15,13 +16,9 @@ import reactor.core.publisher.Mono;
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 public class M2DAccount {
-    public final PassiveExpiringMap.ConstantTimeToLiveExpirationPolicy<UUID, String>
-            expirationPolicy = new PassiveExpiringMap.ConstantTimeToLiveExpirationPolicy<>(
-            10, TimeUnit.MINUTES);
+    public final PassiveExpiringMap.ConstantTimeToLiveExpirationPolicy<UUID, String> expirationPolicy = new PassiveExpiringMap.ConstantTimeToLiveExpirationPolicy<>(10, TimeUnit.MINUTES);
 
     public final PassiveExpiringMap<UUID, String> codes = new PassiveExpiringMap<>(expirationPolicy);
 
@@ -60,7 +57,8 @@ public class M2DAccount {
                 codes.put(gameProfile_uuid, code);
             }
 
-            return Entity.replace(Mc2Discord.INSTANCE.config.account.messages.link_get_code, Collections.emptyList()).replace("${code}", code);
+            return Entity.replace(Mc2Discord.INSTANCE.config.account.messages.link_get_code, Collections.emptyList())
+                    .replace("${code}", code);
         }
     }
 
@@ -69,41 +67,47 @@ public class M2DAccount {
             String message = event.getMessage().getContent();
             if (message.startsWith("!code ")) {
                 if (codes.containsValue(message.substring("!code ".length()))) {
-                    UUID uuid = codes.entrySet().stream().filter(uuidStringEntry -> uuidStringEntry.getValue().equals(message.substring("!code ".length()))).map(Map.Entry::getKey).findFirst().orElse(null);
+                    UUID uuid = codes.entrySet()
+                            .stream()
+                            .filter(uuidStringEntry -> uuidStringEntry.getValue()
+                                    .equals(message.substring("!code ".length())))
+                            .map(Map.Entry::getKey)
+                            .findFirst()
+                            .orElse(null);
                     if (uuid != null && event.getMessage().getAuthor().isPresent()) {
                         if (Mc2Discord.INSTANCE.config.account.guild_id != 0) {
-/*                            event.getMessage().getAuthor().get().asMember(Snowflake.of(Mc2Discord.INSTANCE.config.account.guild_id))
-                                    .flatMapMany(member -> {
-                                        Supplier<Stream<Account.AccountPolicy>> streamAccountPolicySupplier = () -> Mc2Discord.INSTANCE.config.account.policies.stream()
-                                                .filter(accountPolicy -> member.getRoleIds().size() != 0 && member.getRoleIds().stream().map(Snowflake::asLong).allMatch(id -> accountPolicy.required_roles_id.contains(id)));
-                                        if (streamAccountPolicySupplier.get().findAny().isPresent()) {
-                                            validate_link(uuid, event);
-                                            return Flux.fromArray(streamAccountPolicySupplier.get().map(accountPolicy -> accountPolicy.roles_id_to_give)
-                                                    .flatMap(longs -> longs.stream().map(Snowflake::of)).map(member::addRole).toArray());
-                                        } else {
-                                            return Flux.from(event.getMessage().getRestChannel().createMessage(Mc2Discord.INSTANCE.config.account.messages.missing_roles));
-                                        }
-                                    }).subscribe();*/
-
-                            event.getMessage().getAuthor().get().asMember(Snowflake.of(Mc2Discord.INSTANCE.config.account.guild_id))
-                                    .flatMapMany(member ->
-                                            Mono.fromSupplier(() -> Mc2Discord.INSTANCE.config.account.policies)
-                                                    .flatMapMany(Flux::fromIterable)
-                                                    .filter(policy -> policy.required_roles_id.size() == 0 || (member.getRoleIds().size() != 0 && member.getRoleIds().containsAll(policy.required_roles_id)))
-                                                    .switchIfEmpty(event.getMessage().getRestChannel().createMessage(Mc2Discord.INSTANCE.config.account.messages.missing_roles).then(Mono.empty()))
-                                                    .doOnNext(accountPolicy -> validate_link(uuid, event))
-                                                    .map(policy -> policy.roles_id_to_give)
-                                                    .flatMap(Flux::fromIterable)
-                                                    .flatMap(member::addRole)).subscribe();
-
+                            event.getMessage()
+                                    .getAuthor()
+                                    .get()
+                                    .asMember(Snowflake.of(Mc2Discord.INSTANCE.config.account.guild_id))
+                                    .flatMapMany(member -> Mono.fromSupplier(() -> Mc2Discord.INSTANCE.config.account.policies)
+                                            .flatMapMany(Flux::fromIterable)
+                                            .filter(policy -> policy.required_roles_id.size() == 0 || (member.getRoleIds()
+                                                    .size() != 0 && member.getRoleIds()
+                                                    .containsAll(policy.required_roles_id)))
+                                            .switchIfEmpty(event.getMessage()
+                                                    .getRestChannel()
+                                                    .createMessage(Mc2Discord.INSTANCE.config.account.messages.missing_roles)
+                                                    .then(Mono.empty()))
+                                            .doOnNext(accountPolicy -> validate_link(uuid, event))
+                                            .map(policy -> policy.roles_id_to_give)
+                                            .flatMap(Flux::fromIterable)
+                                            .flatMap(member::addRole))
+                                    .subscribe();
                         } else {
                             validate_link(uuid, event);
                         }
                     } else {
-                        event.getMessage().getRestChannel().createMessage("An unexpected error occurred! Please try again").subscribe();
+                        event.getMessage()
+                                .getRestChannel()
+                                .createMessage("An unexpected error occurred! Please try again")
+                                .subscribe();
                     }
                 } else {
-                    event.getMessage().getRestChannel().createMessage(Mc2Discord.INSTANCE.config.account.messages.link_invalid_code).subscribe();
+                    event.getMessage()
+                            .getRestChannel()
+                            .createMessage(Mc2Discord.INSTANCE.config.account.messages.link_invalid_code)
+                            .subscribe();
                 }
             }
             return true;
@@ -114,7 +118,10 @@ public class M2DAccount {
 
     private void validate_link(UUID uuid, MessageCreateEvent event) {
         iAccount.add(uuid, event.getMessage().getAuthor().get().getId().asLong());
-        event.getMessage().getRestChannel().createMessage(Mc2Discord.INSTANCE.config.account.messages.link_successful).subscribe();
+        event.getMessage()
+                .getRestChannel()
+                .createMessage(Mc2Discord.INSTANCE.config.account.messages.link_successful)
+                .subscribe();
         codes.remove(uuid);
 
         iAccount.sendLinkSuccess(uuid);
@@ -132,21 +139,22 @@ public class M2DAccount {
     }
 
     public void renameDiscordAccount(UUID uuid, String name, Snowflake authorId) {
-        if (!Mc2Discord.INSTANCE.config.account.rename_discord_member)
-            return;
-        Mc2Discord.INSTANCE.client
-                .getMemberById(Snowflake.of(Mc2Discord.INSTANCE.config.account.guild_id), authorId)
-                .subscribe(member -> Mc2Discord.INSTANCE.client
-                        .getSelfMember(Snowflake.of(Mc2Discord.INSTANCE.config.account.guild_id))
-                        .flatMap(member::isHigher).flatMap(isHigher -> {
+        if (!Mc2Discord.INSTANCE.config.account.rename_discord_member) return;
+        Mc2Discord.INSTANCE.client.getMemberById(Snowflake.of(Mc2Discord.INSTANCE.config.account.guild_id), authorId)
+                .subscribe(member -> Mc2Discord.INSTANCE.client.getSelfMember(Snowflake.of(Mc2Discord.INSTANCE.config.account.guild_id))
+                        .flatMap(member::isHigher)
+                        .flatMap(isHigher -> {
                             if (!isHigher) {
-                                return member.edit(GuildMemberEditSpec.builder().nicknameOrNull(Entity.replace(Mc2Discord.INSTANCE.config.account.discord_pseudo_format, Arrays.asList(new Player(name, name, uuid), new Member(member.getUsername(), member.getDiscriminator(), member.getNickname().orElse(""), member.getAvatarUrl())))).build());
+                                return member.edit(GuildMemberEditSpec.builder()
+                                        .nicknameOrNull(Entity.replace(Mc2Discord.INSTANCE.config.account.discord_pseudo_format, Arrays.asList(new Player(name, name, uuid), new Member(member.getUsername(), member.getDiscriminator(), member.getNickname()
+                                                .orElse(""), member.getAvatarUrl()))))
+                                        .build());
                             } else {
                                 Mc2Discord.logger.warn("Can't change pseudo for member " + member.getDisplayName() + " (IG : " + name + ")");
                                 return Mono.empty();
                             }
-                        }).subscribe()
-                );
+                        })
+                        .subscribe());
     }
 
     public void onStart() {
@@ -156,6 +164,19 @@ public class M2DAccount {
 
         iAccount.updateCommands();
 
-        iAccount.checkDiscordPseudoForAllDiscordAccount();
+        iAccount.checkAllDiscordAccount();
+    }
+
+    public void checkDiscordAccount(UUID id, String name, long discordId) {
+        Mc2Discord.INSTANCE.client.getMemberById(Snowflake.of(Mc2Discord.INSTANCE.config.account.guild_id), Snowflake.of(discordId))
+                .onErrorResume(ClientException.isStatusCode(404), throwable -> {
+                    iAccount.remove(id);
+                    return Mono.empty();
+                })
+                .subscribe(member -> this.renameDiscordAccountL(id, name, discordId));
+    }
+
+    public void onMemberLeave(MemberLeaveEvent memberLeaveEvent) {
+        iAccount.removeIfPresent(memberLeaveEvent.getUser());
     }
 }
