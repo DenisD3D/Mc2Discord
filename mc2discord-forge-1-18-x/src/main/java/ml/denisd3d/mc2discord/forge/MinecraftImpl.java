@@ -76,7 +76,9 @@ public class MinecraftImpl implements IMinecraft {
                 .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url))
                 .withColor(TextColor.fromLegacyFormat(ChatFormatting.BLUE))
                 .setUnderlined(true))));
-        ServerLifecycleHooks.getCurrentServer().getPlayerList().broadcastMessage(textComponent, ChatType.CHAT, Util.NIL_UUID);
+        ServerLifecycleHooks.getCurrentServer()
+                .getPlayerList()
+                .broadcastMessage(textComponent, ChatType.CHAT, Util.NIL_UUID);
     }
 
     @Override
@@ -99,7 +101,10 @@ public class MinecraftImpl implements IMinecraft {
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         return new Global(onlinePlayerCount,
                 server.getMaxPlayers(),
-                Optional.of(server.playerDataStorage.getPlayerDataFolder()).map(file -> file.list((dir, name) -> name.endsWith(".dat"))).map(strings -> strings.length).orElse(0),
+                Optional.of(server.playerDataStorage.getPlayerDataFolder())
+                        .map(file -> file.list((dir, name) -> name.endsWith(".dat")))
+                        .map(strings -> strings.length)
+                        .orElse(0),
                 server.getMotd(),
                 server.getServerVersion(),
                 server.getLocalIp(),
@@ -120,7 +125,10 @@ public class MinecraftImpl implements IMinecraft {
 
     @Override
     public String getNewVersion() {
-        VersionChecker.CheckResult versionChecker = VersionChecker.getResult(ModList.get().getModContainerById("mc2discord").orElseThrow(() -> new RuntimeException("Where is Mc2Discord???!")).getModInfo());
+        VersionChecker.CheckResult versionChecker = VersionChecker.getResult(ModList.get()
+                .getModContainerById("mc2discord")
+                .orElseThrow(() -> new RuntimeException("Where is Mc2Discord???!"))
+                .getModInfo());
         return versionChecker.target() == null ? "" : versionChecker.target().toString();
     }
 

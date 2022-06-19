@@ -31,18 +31,22 @@ public abstract class Entity {
             String replacement;
             if (matcher.group(1).contains("!")) {
                 int separator = matcher.group(1).indexOf("!");
-                String value = replacements.get(matcher.group(1).substring(prefix != null ? prefix.length() + 1 : 0, separator));
+                String value = replacements.get(matcher.group(1)
+                        .substring(prefix != null ? prefix.length() + 1 : 0, separator));
                 if (value != null) {
-                    replacement = DateFormatUtils.format(Long.parseLong(value), matcher.group(1).substring(separator + 1));
+                    replacement = DateFormatUtils.format(Long.parseLong(value), matcher.group(1)
+                            .substring(separator + 1));
                 } else {
                     replacement = null;
                 }
 
             } else if (matcher.group(1).contains("@")) {
                 int separator = matcher.group(1).indexOf("@");
-                String value = replacements.get(matcher.group(1).substring(prefix != null ? prefix.length() + 1 : 0, separator));
+                String value = replacements.get(matcher.group(1)
+                        .substring(prefix != null ? prefix.length() + 1 : 0, separator));
                 if (value != null) {
-                    replacement = DurationFormatUtils.formatDuration(Long.parseLong(value), matcher.group(1).substring(separator + 1));
+                    replacement = DurationFormatUtils.formatDuration(Long.parseLong(value), matcher.group(1)
+                            .substring(separator + 1));
                 } else {
                     replacement = null;
                 }

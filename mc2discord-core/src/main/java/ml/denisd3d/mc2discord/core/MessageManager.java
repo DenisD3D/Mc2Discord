@@ -58,34 +58,66 @@ public class MessageManager {
     }
 
     private void sendWebhookMessage(long channelId, String content, String username, String avatarUrl, boolean useCodeblocks, Runnable successConsumer) {
-        Mono<TextChannel> channelMono = this.instance.client.getChannelById(Snowflake.of(channelId)).ofType(TextChannel.class);
-        channelMono.flatMapMany(textChannel -> textChannel.getWebhooks()).filter(webhook -> webhook.getName().filter(s -> s.equals("Mc2Discord - " + Mc2Discord.INSTANCE.botName + "#" + Mc2Discord.INSTANCE.botDiscriminator)).isPresent()).switchIfEmpty(Mono.defer(() -> channelMono.flatMap(textChannel -> textChannel.createWebhook(webhookCreateSpec -> webhookCreateSpec.setName("Mc2Discord - " + Mc2Discord.INSTANCE.botName + "#" + Mc2Discord.INSTANCE.botDiscriminator))))).next().subscribe(webhook -> M2DUtils.breakStringToLines(content, 2000, useCodeblocks).forEach(s -> webhook.execute(WebhookExecuteSpec.builder().content(s).username(username).avatarUrl(avatarUrl).allowedMentions(AllowedMentions.builder().parseType(Mc2Discord.INSTANCE.config.misc.allowed_mention.stream().map(AllowedMentions.Type::valueOf).toArray(AllowedMentions.Type[]::new)).build()).build())
+        Mono<TextChannel> channelMono = this.instance.client.getChannelById(Snowflake.of(channelId))
+                .ofType(TextChannel.class);
+        channelMono.flatMapMany(textChannel -> textChannel.getWebhooks())
+                .filter(webhook -> webhook.getName()
+                        .filter(s -> s.equals("Mc2Discord - " + Mc2Discord.INSTANCE.botName + "#" + Mc2Discord.INSTANCE.botDiscriminator))
+                        .isPresent())
+                .switchIfEmpty(Mono.defer(() -> channelMono.flatMap(textChannel -> textChannel.createWebhook(webhookCreateSpec -> webhookCreateSpec.setName("Mc2Discord - " + Mc2Discord.INSTANCE.botName + "#" + Mc2Discord.INSTANCE.botDiscriminator)))))
+                .next()
+                .subscribe(webhook -> M2DUtils.breakStringToLines(content, 2000, useCodeblocks)
+                        .forEach(s -> webhook.execute(WebhookExecuteSpec.builder()
+                                        .content(s)
+                                        .username(username)
+                                        .avatarUrl(avatarUrl)
+                                        .allowedMentions(AllowedMentions.builder()
+                                                .parseType(Mc2Discord.INSTANCE.config.misc.allowed_mention.stream()
+                                                        .map(AllowedMentions.Type::valueOf)
+                                                        .toArray(AllowedMentions.Type[]::new))
+                                                .build())
+                                        .build())
 
-                .doOnError(Mc2Discord.logger::error).subscribe(unused -> successConsumer.run(), throwable -> DiscordLogging.logs = "", null)));
+                                .doOnError(Mc2Discord.logger::error)
+                                .subscribe(unused -> successConsumer.run(), throwable -> DiscordLogging.logs = "", null)));
     }
 
     private void sendChannelMessage(long channelId, String content, boolean useCodeblocks, Runnable successConsumer) {
-        this.instance.client.getChannelById(Snowflake.of(channelId)).ofType(TextChannel.class).subscribe(textChannel -> M2DUtils.breakStringToLines(content, 2000, useCodeblocks).forEach(s -> textChannel.createMessage(messageCreateSpec -> messageCreateSpec.setContent(s).setAllowedMentions(AllowedMentions.builder().parseType(Mc2Discord.INSTANCE.config.misc.allowed_mention.stream().map(AllowedMentions.Type::valueOf).toArray(AllowedMentions.Type[]::new)).build())).doOnError(Mc2Discord.logger::error).subscribe(unused -> successConsumer.run(), throwable -> DiscordLogging.logs = "", null)));
+        this.instance.client.getChannelById(Snowflake.of(channelId))
+                .ofType(TextChannel.class)
+                .subscribe(textChannel -> M2DUtils.breakStringToLines(content, 2000, useCodeblocks)
+                        .forEach(s -> textChannel.createMessage(messageCreateSpec -> messageCreateSpec.setContent(s)
+                                        .setAllowedMentions(AllowedMentions.builder()
+                                                .parseType(Mc2Discord.INSTANCE.config.misc.allowed_mention.stream()
+                                                        .map(AllowedMentions.Type::valueOf)
+                                                        .toArray(AllowedMentions.Type[]::new))
+                                                .build()))
+                                .doOnError(Mc2Discord.logger::error)
+                                .subscribe(unused -> successConsumer.run(), throwable -> DiscordLogging.logs = "", null)));
     }
 
     private void sendEmbedMessage(long channel_id, String type, String message, String username, String avatarUrl, Runnable successConsumer) {
-        this.instance.client.getChannelById(Snowflake.of(channel_id)).ofType(TextChannel.class).flatMap(textChannel -> textChannel.createMessage(messageCreateSpec -> messageCreateSpec.addEmbed(embed -> {
-            embed.setDescription(message);
-            if ("info".equals(type)) {
-                embed.setColor(M2DUtils.getColorFromString(Mc2Discord.INSTANCE.config.style.embed_color_info));
-            } else if ("chat".equals(type)) {
-                embed.setColor(M2DUtils.getColorFromString(Mc2Discord.INSTANCE.config.style.embed_color_chat));
-            } else if ("command".equals(type)) {
-                embed.setColor(M2DUtils.getColorFromString(Mc2Discord.INSTANCE.config.style.embed_color_command));
-            } else if ("log".equals(type)) {
-                embed.setColor(M2DUtils.getColorFromString(Mc2Discord.INSTANCE.config.style.embed_color_log));
-            } else {
-                embed.setColor(Color.WHITE);
-            }
+        this.instance.client.getChannelById(Snowflake.of(channel_id))
+                .ofType(TextChannel.class)
+                .flatMap(textChannel -> textChannel.createMessage(messageCreateSpec -> messageCreateSpec.addEmbed(embed -> {
+                    embed.setDescription(message);
+                    if ("info".equals(type)) {
+                        embed.setColor(M2DUtils.getColorFromString(Mc2Discord.INSTANCE.config.style.embed_color_info));
+                    } else if ("chat".equals(type)) {
+                        embed.setColor(M2DUtils.getColorFromString(Mc2Discord.INSTANCE.config.style.embed_color_chat));
+                    } else if ("command".equals(type)) {
+                        embed.setColor(M2DUtils.getColorFromString(Mc2Discord.INSTANCE.config.style.embed_color_command));
+                    } else if ("log".equals(type)) {
+                        embed.setColor(M2DUtils.getColorFromString(Mc2Discord.INSTANCE.config.style.embed_color_log));
+                    } else {
+                        embed.setColor(Color.WHITE);
+                    }
 
-            if (!username.equals(this.instance.botDisplayName)) {
-                embed.setAuthor(username, null, avatarUrl);
-            }
-        }))).doOnError(Mc2Discord.logger::error).subscribe(unused -> successConsumer.run(), throwable -> DiscordLogging.logs = "", null);
+                    if (!username.equals(this.instance.botDisplayName)) {
+                        embed.setAuthor(username, null, avatarUrl);
+                    }
+                })))
+                .doOnError(Mc2Discord.logger::error)
+                .subscribe(unused -> successConsumer.run(), throwable -> DiscordLogging.logs = "", null);
     }
 }

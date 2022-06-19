@@ -19,7 +19,8 @@ public class MixinEmoteCommand {
     private static void lambda(CommandContext<CommandSourceStack> commandContext, CallbackInfoReturnable<Integer> ci) {
         if (Mc2Discord.INSTANCE.config.misc.relay_say_me_command && M2DUtils.canHandleEvent()) {
             TranslatableComponent translatableComponent = new TranslatableComponent("chat.type.emote",
-                    commandContext.getSource().getDisplayName(), StringArgumentType.getString(commandContext, "action"));
+                    commandContext.getSource()
+                            .getDisplayName(), StringArgumentType.getString(commandContext, "action"));
             Mc2Discord.INSTANCE.messageManager.sendInfoMessage(translatableComponent.getString());
         }
     }

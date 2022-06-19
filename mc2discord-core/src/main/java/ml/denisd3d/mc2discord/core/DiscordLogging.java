@@ -43,8 +43,10 @@ public class DiscordLogging extends AbstractAppender {
 
     @Override
     public void append(LogEvent event) {
-        if (Mc2Discord.INSTANCE != null && Mc2Discord.INSTANCE.client != null && Mc2Discord.INSTANCE.getState() == GatewayObserver.CONNECTED && !Mc2Discord.INSTANCE.is_stopping && event.getLevel().intLevel() <= Level.getLevel(Mc2Discord.INSTANCE.config.misc.logs_level).intLevel()) {
-            logs += Entity.replace(Mc2Discord.INSTANCE.config.misc.logs_format, Collections.singletonList(new Log(event.getLoggerName(), event.getThreadName(), event.getInstant().getEpochMillisecond(), event.getLevel(), event.getMessage()))) + "\n";
+        if (Mc2Discord.INSTANCE != null && Mc2Discord.INSTANCE.client != null && Mc2Discord.INSTANCE.getState() == GatewayObserver.CONNECTED && !Mc2Discord.INSTANCE.is_stopping && event.getLevel()
+                .intLevel() <= Level.getLevel(Mc2Discord.INSTANCE.config.misc.logs_level).intLevel()) {
+            logs += Entity.replace(Mc2Discord.INSTANCE.config.misc.logs_format, Collections.singletonList(new Log(event.getLoggerName(), event.getThreadName(), event.getInstant()
+                    .getEpochMillisecond(), event.getLevel(), event.getMessage()))) + "\n";
             scheduleMessage();
         }
     }

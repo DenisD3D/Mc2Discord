@@ -53,13 +53,25 @@ public class M2DCommandImpl {
                             .setUnderlined(true)), false);
                     return 1;
                 })).then(Commands.literal("hidden")
-                        .then(Commands.literal("list").executes((p_198878_0_) -> listHiddenPlayers(p_198878_0_.getSource()))).then(Commands.literal("add").then(Commands.argument("targets", GameProfileArgument.gameProfile()).suggests((p_198879_0_, p_198879_1_) -> {
-                                    PlayerList playerlist = p_198879_0_.getSource().getServer().getPlayerList();
-                                    HiddenPlayerList hiddenPlayerList = ((MinecraftImpl) Mc2Discord.INSTANCE.iMinecraft).hiddenPlayerList;
-                                    return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream().filter((p_198871_1_) -> !hiddenPlayerList.isHidden(p_198871_1_.getGameProfile())).map((p_200567_0_) -> p_200567_0_.getGameProfile().getName()), p_198879_1_);
-                                }).executes((p_198875_0_) -> addPlayers(p_198875_0_.getSource(), GameProfileArgument.getGameProfiles(p_198875_0_, "targets")))
-                        )).then(Commands.literal("remove").then(Commands.argument("targets", GameProfileArgument.gameProfile()).suggests((p_198881_0_, p_198881_1_) -> SharedSuggestionProvider.suggest(((MinecraftImpl) Mc2Discord.INSTANCE.iMinecraft).hiddenPlayerList.getUserList(), p_198881_1_))
-                                .executes((p_198870_0_) -> removePlayers(p_198870_0_.getSource(), GameProfileArgument.getGameProfiles(p_198870_0_, "targets")))))
+                        .then(Commands.literal("list")
+                                .executes((p_198878_0_) -> listHiddenPlayers(p_198878_0_.getSource())))
+                        .then(Commands.literal("add")
+                                .then(Commands.argument("targets", GameProfileArgument.gameProfile())
+                                        .suggests((p_198879_0_, p_198879_1_) -> {
+                                            PlayerList playerlist = p_198879_0_.getSource().getServer().getPlayerList();
+                                            HiddenPlayerList hiddenPlayerList = ((MinecraftImpl) Mc2Discord.INSTANCE.iMinecraft).hiddenPlayerList;
+                                            return SharedSuggestionProvider.suggest(playerlist.getPlayers()
+                                                    .stream()
+                                                    .filter((p_198871_1_) -> !hiddenPlayerList.isHidden(p_198871_1_.getGameProfile()))
+                                                    .map((p_200567_0_) -> p_200567_0_.getGameProfile()
+                                                            .getName()), p_198879_1_);
+                                        })
+                                        .executes((p_198875_0_) -> addPlayers(p_198875_0_.getSource(), GameProfileArgument.getGameProfiles(p_198875_0_, "targets")))
+                                ))
+                        .then(Commands.literal("remove")
+                                .then(Commands.argument("targets", GameProfileArgument.gameProfile())
+                                        .suggests((p_198881_0_, p_198881_1_) -> SharedSuggestionProvider.suggest(((MinecraftImpl) Mc2Discord.INSTANCE.iMinecraft).hiddenPlayerList.getUserList(), p_198881_1_))
+                                        .executes((p_198870_0_) -> removePlayers(p_198870_0_.getSource(), GameProfileArgument.getGameProfiles(p_198870_0_, "targets")))))
                         .then(Commands.literal("reload").executes((p_198882_0_) -> reload(p_198882_0_.getSource())))
 
                 ));
@@ -79,7 +91,8 @@ public class M2DCommandImpl {
             if (!hiddenPlayerList.isHidden(gameprofile)) {
                 HiddenPlayerEntry hiddenPlayerEntry = new HiddenPlayerEntry(gameprofile);
                 hiddenPlayerList.add(hiddenPlayerEntry);
-                source.sendSuccess(new TextComponent(LangManager.translate("commands.hidden.hidden", ComponentUtils.getDisplayName(gameprofile).getString())), true);
+                source.sendSuccess(new TextComponent(LangManager.translate("commands.hidden.hidden", ComponentUtils.getDisplayName(gameprofile)
+                        .getString())), true);
                 ++i;
             }
         }
@@ -99,7 +112,8 @@ public class M2DCommandImpl {
             if (hiddenPlayerList.isHidden(gameprofile)) {
                 HiddenPlayerEntry hiddenPlayerEntry = new HiddenPlayerEntry(gameprofile);
                 hiddenPlayerList.remove(hiddenPlayerEntry);
-                source.sendSuccess(new TextComponent(LangManager.translate("commands.hidden.visible", ComponentUtils.getDisplayName(gameprofile).getString())), true);
+                source.sendSuccess(new TextComponent(LangManager.translate("commands.hidden.visible", ComponentUtils.getDisplayName(gameprofile)
+                        .getString())), true);
                 ++i;
             }
         }

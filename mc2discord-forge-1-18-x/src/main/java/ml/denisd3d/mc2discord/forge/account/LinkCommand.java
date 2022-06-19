@@ -20,18 +20,21 @@ public class LinkCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         String[] strings = Mc2Discord.INSTANCE.config.account.link_command.trim().split(" ");
 
-        LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(strings[strings.length - 1]).executes(context -> {
-            ServerPlayer player = context.getSource().getPlayerOrException();
-            if (Mc2Discord.INSTANCE.m2dAccount != null) { // Should always be the case at this point
-                String result = Mc2Discord.INSTANCE.m2dAccount.generateCodeOrNull(player.getGameProfile(), player.getGameProfile().getId());
-                if (result != null) {
-                    context.getSource().sendSuccess(getCopiableTextComponent(result), false);
-                } else {
-                    context.getSource().sendFailure(new TextComponent(Mc2Discord.INSTANCE.config.account.messages.link_error_already));
-                }
-            }
-            return 1;
-        });
+        LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal(strings[strings.length - 1])
+                .executes(context -> {
+                    ServerPlayer player = context.getSource().getPlayerOrException();
+                    if (Mc2Discord.INSTANCE.m2dAccount != null) { // Should always be the case at this point
+                        String result = Mc2Discord.INSTANCE.m2dAccount.generateCodeOrNull(player.getGameProfile(), player.getGameProfile()
+                                .getId());
+                        if (result != null) {
+                            context.getSource().sendSuccess(getCopiableTextComponent(result), false);
+                        } else {
+                            context.getSource()
+                                    .sendFailure(new TextComponent(Mc2Discord.INSTANCE.config.account.messages.link_error_already));
+                        }
+                    }
+                    return 1;
+                });
         for (int i = strings.length - 2; i >= 0; i--) {
             command = Commands.literal(strings[i]).then(command);
         }

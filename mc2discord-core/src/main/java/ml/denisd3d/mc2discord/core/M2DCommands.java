@@ -17,12 +17,18 @@ public class M2DCommands {
         response.add(LangManager.translate("commands.status.bot_name", Mc2Discord.INSTANCE.botName, Mc2Discord.INSTANCE.botDiscriminator));
         response.add(LangManager.translate("commands.status.bot_id", Mc2Discord.INSTANCE.getBotId()));
         response.add(LangManager.translate("commands.status.state", Mc2Discord.INSTANCE.getState()));
-        for (int shard_id = 0; shard_id <= Mc2Discord.INSTANCE.client.getGatewayClientGroup().getShardCount(); shard_id++) {
+        for (int shard_id = 0; shard_id <= Mc2Discord.INSTANCE.client.getGatewayClientGroup()
+                .getShardCount(); shard_id++) {
             if (Mc2Discord.INSTANCE.client.getGatewayClientGroup().find(shard_id).isPresent()) {
                 response.add(LangManager.translate("commands.status.shard",
                         shard_id,
-                        Mc2Discord.INSTANCE.client.getGatewayClientGroup().find(shard_id).get().getResponseTime().toString()
-                                .substring(2).replaceAll("(\\d[HMS])(?!$)", "$1 ")
+                        Mc2Discord.INSTANCE.client.getGatewayClientGroup()
+                                .find(shard_id)
+                                .get()
+                                .getResponseTime()
+                                .toString()
+                                .substring(2)
+                                .replaceAll("(\\d[HMS])(?!$)", "$1 ")
                                 .toLowerCase()));
             }
 

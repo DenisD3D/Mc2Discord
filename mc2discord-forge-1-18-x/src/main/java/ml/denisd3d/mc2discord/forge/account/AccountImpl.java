@@ -2,6 +2,7 @@ package ml.denisd3d.mc2discord.forge.account;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
+import discord4j.core.object.entity.User;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
 import ml.denisd3d.mc2discord.core.account.IAccount;
 import ml.denisd3d.mc2discord.forge.storage.DiscordIdEntry;
@@ -44,17 +45,14 @@ public class AccountImpl implements IAccount {
     }
 
     @Override
-    public void checkDiscordPseudoForAllDiscordAccount() {
+    public void checkAllDiscordAccount() {
         if (Mc2Discord.INSTANCE.m2dAccount == null) {
             return;
         }
         for (DiscordIdEntry discordIdEntry : discordIds.getEntries()) {
             if (discordIdEntry.getUser() != null) {
-                Mc2Discord.INSTANCE.m2dAccount
-                        .renameDiscordAccountL(
-                                discordIdEntry.getUser().getId(),
-                                discordIdEntry.getUser().getName(),
-                                discordIdEntry.getDiscordId());
+                Mc2Discord.INSTANCE.m2dAccount.checkDiscordAccount(discordIdEntry.getUser()
+                        .getId(), discordIdEntry.getUser().getName(), discordIdEntry.getDiscordId());
             }
         }
     }
@@ -85,7 +83,9 @@ public class AccountImpl implements IAccount {
 
     @Override
     public void updateCommands() {
-        CommandDispatcher<CommandSourceStack> dispatcher = ServerLifecycleHooks.getCurrentServer().getCommands().getDispatcher();
+        CommandDispatcher<CommandSourceStack> dispatcher = ServerLifecycleHooks.getCurrentServer()
+                .getCommands()
+                .getDispatcher();
         if (!Mc2Discord.INSTANCE.config.account.force_link) {
             if (dispatcher.getRoot().getChild(Mc2Discord.INSTANCE.config.account.link_command) == null) {
                 LinkCommand.register(dispatcher);
@@ -109,5 +109,22 @@ public class AccountImpl implements IAccount {
     public String getInGameName(UUID uuid) {
         Optional<GameProfile> gameProfile = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(uuid);
         return gameProfile.map(GameProfile::getName).orElse(null);
+    }
+
+    @Override
+    public void removeIfPresent(User user) {
+        discordIds.getEntries()
+                .stream()
+                .filter(discordIdEntry -> discordIdEntry.getDiscordId() == user.getId().asLong())
+                .findFirst()
+                .ifPresent(p_11387_ -> {
+                    ServerPlayer player = ServerLifecycleHooks.getCurrentServer()
+                            .getPlayerList()
+                            .getPlayer(p_11387_.getUser().getId());
+                    if (player != null) {
+                        player.connection.disconnect(new TextComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_successful));
+                    }
+                    discordIds.remove(p_11387_);
+                });
     }
 }

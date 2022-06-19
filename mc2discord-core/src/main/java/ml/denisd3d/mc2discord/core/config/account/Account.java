@@ -1,7 +1,6 @@
 package ml.denisd3d.mc2discord.core.config.account;
 
 import com.electronwill.nightconfig.core.conversion.Conversion;
-import com.electronwill.nightconfig.core.conversion.Converter;
 import com.electronwill.nightconfig.core.conversion.Path;
 import com.electronwill.nightconfig.core.conversion.PreserveNotNull;
 import discord4j.common.util.Snowflake;

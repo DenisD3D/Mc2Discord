@@ -11,7 +11,9 @@ import java.util.Map;
 
 public class HelpCommandImpl {
     public static String execute(int permissionLevel, List<String> commands) {
-        CommandDispatcher<CommandSourceStack> commandDispatcher = ServerLifecycleHooks.getCurrentServer().getCommands().getDispatcher();
+        CommandDispatcher<CommandSourceStack> commandDispatcher = ServerLifecycleHooks.getCurrentServer()
+                .getCommands()
+                .getDispatcher();
 
         StringBuilder response = new StringBuilder();
 
@@ -25,11 +27,12 @@ public class HelpCommandImpl {
 
         for (String command : commands) {
             CommandNode<CommandSourceStack> node = commandDispatcher.getRoot();
-            for (String child : command.split(" "))
-            {
+            for (String child : command.split(" ")) {
                 node = node.getChild(child);
             }
-            commandDispatcher.getSmartUsage(node, Mc2DiscordForge.commandSource).values().forEach(s -> response.append("/").append(command).append(" ").append(s).append("\n"));
+            commandDispatcher.getSmartUsage(node, Mc2DiscordForge.commandSource)
+                    .values()
+                    .forEach(s -> response.append("/").append(command).append(" ").append(s).append("\n"));
         }
 
         return response.toString();

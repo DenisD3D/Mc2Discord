@@ -4,7 +4,6 @@ import com.mojang.authlib.GameProfile;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
 import ml.denisd3d.mc2discord.forge.account.LinkCommand;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.players.PlayerList;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

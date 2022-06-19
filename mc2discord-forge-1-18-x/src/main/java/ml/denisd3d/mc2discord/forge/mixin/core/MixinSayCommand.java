@@ -17,11 +17,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(SayCommand.class)
 public class MixinSayCommand {
     @SuppressWarnings("target")
-    @Inject(method = {"lambda$register$1(Lcom/mojang/brigadier/context/CommandContext;)I", "m_138411_(Lcom/mojang/brigadier/context/CommandContext;)I" }, at = @At("RETURN"), remap = false)
+    @Inject(method = {"lambda$register$1(Lcom/mojang/brigadier/context/CommandContext;)I", "m_138411_(Lcom/mojang/brigadier/context/CommandContext;)I"}, at = @At("RETURN"), remap = false)
     private static void lambda(CommandContext<CommandSourceStack> commandContext, CallbackInfoReturnable<Integer> ci) throws CommandSyntaxException {
         if (Mc2Discord.INSTANCE.config.misc.relay_say_me_command && M2DUtils.canHandleEvent()) {
             Component component = MessageArgument.getMessage(commandContext, "message");
-            TranslatableComponent translatableComponent = new TranslatableComponent("chat.type.announcement", commandContext.getSource().getDisplayName(), component);
+            TranslatableComponent translatableComponent = new TranslatableComponent("chat.type.announcement", commandContext.getSource()
+                    .getDisplayName(), component);
             Mc2Discord.INSTANCE.messageManager.sendInfoMessage(translatableComponent.getString());
         }
     }

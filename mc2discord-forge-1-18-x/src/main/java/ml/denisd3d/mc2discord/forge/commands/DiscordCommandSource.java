@@ -18,7 +18,11 @@ public class DiscordCommandSource implements CommandSource {
 
     @Override
     public void sendMessage(Component component, @Nonnull UUID p_145747_2_) {
-        answer += component.getString() + ((component.getStyle().getClickEvent() != null && component.getStyle().getClickEvent().getAction() == ClickEvent.Action.OPEN_URL) ? " <" + component.getStyle().getClickEvent().getValue() + ">" : "") + "\n";
+        answer += component.getString() + ((component.getStyle().getClickEvent() != null && component.getStyle()
+                .getClickEvent()
+                .getAction() == ClickEvent.Action.OPEN_URL) ? " <" + component.getStyle()
+                .getClickEvent()
+                .getValue() + ">" : "") + "\n";
         scheduleMessage();
     }
 
