@@ -24,16 +24,6 @@ public class LangManager {
         }
     }
 
-    private void loadLang(String lang) {
-        String s = String.format("/assets/mc2discord/m2d-lang/core/%s.json", lang);
-        try {
-            InputStream inputStream = LangManager.class.getResourceAsStream(s);
-            this.loadLocaleData(inputStream);
-        } catch (Exception exception) {
-            Mc2Discord.logger.warn("Skipped Minecraft2Discord language file: {} ({})", s, exception.toString());
-        }
-    }
-
     public static JsonObject getJsonObject(JsonElement json, String memberName) {
         if (json.isJsonObject()) {
             return json.getAsJsonObject();
@@ -76,6 +66,20 @@ public class LangManager {
         }
     }
 
+    public static String translate(String translateKey, Object... parameters) {
+        return Mc2Discord.INSTANCE.langManager.formatMessage(translateKey, parameters);
+    }
+
+    private void loadLang(String lang) {
+        String s = String.format("/assets/mc2discord/m2d-lang/core/%s.json", lang);
+        try {
+            InputStream inputStream = LangManager.class.getResourceAsStream(s);
+            this.loadLocaleData(inputStream);
+        } catch (Exception exception) {
+            Mc2Discord.logger.warn("Skipped Minecraft2Discord language file: {} ({})", s, exception.toString());
+        }
+    }
+
     private void loadLocaleData(InputStream inputStreamIn) {
         try {
             JsonElement jsonelement = GSON.fromJson(new InputStreamReader(inputStreamIn, StandardCharsets.UTF_8), JsonElement.class);
@@ -103,9 +107,5 @@ public class LangManager {
         } catch (IllegalFormatException var5) {
             return "Format error: " + s;
         }
-    }
-
-    public static String translate(String translateKey, Object... parameters) {
-        return Mc2Discord.INSTANCE.langManager.formatMessage(translateKey, parameters);
     }
 }

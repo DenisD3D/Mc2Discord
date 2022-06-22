@@ -3,12 +3,11 @@ package ml.denisd3d.mc2discord.core.entities;
 import java.util.HashMap;
 
 public class Advancement extends Entity {
+    public final HashMap<String, String> replacements = new HashMap<>();
     private final String path;
     private final String displayText;
     private final String title;
     private final String description;
-
-    public final HashMap<String, String> replacements = new HashMap<>();
 
     public Advancement(String path, String displayText, String title, String description) {
 

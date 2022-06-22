@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 
 public class Message extends Entity {
     private static final Pattern p = Pattern.compile(" <:(.+?):\\d+>");
-    public String message;
     public final HashMap<String, String> replacements = new HashMap<>();
+    public String message;
 
     public Message(String message) {
         this.message = message;
