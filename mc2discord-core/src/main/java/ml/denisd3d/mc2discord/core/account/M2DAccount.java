@@ -3,6 +3,7 @@ package ml.denisd3d.mc2discord.core.account;
 import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.guild.MemberLeaveEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.entity.User;
 import discord4j.core.spec.GuildMemberEditSpec;
 import discord4j.rest.http.client.ClientException;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
@@ -117,7 +118,21 @@ public class M2DAccount {
     }
 
     private void validate_link(UUID uuid, MessageCreateEvent event) {
-        iAccount.add(uuid, event.getMessage().getAuthor().get().getId().asLong());
+        Mc2Discord.logger.info("New account linked (Discord: " + event.getMessage()
+                .getAuthor()
+                .map(User::getId)
+                .map(Snowflake::asLong)
+                .orElse(0L) + ", MC: " + uuid + ")");
+
+        if (!iAccount.add(uuid, event.getMessage().getAuthor().get().getId().asLong())) {
+            event.getMessage()
+                    .getRestChannel()
+                    .createMessage("Failed to link account")
+                    .subscribe();
+            Mc2Discord.logger.error("Failed to link account");
+            return;
+        }
+
         event.getMessage()
                 .getRestChannel()
                 .createMessage(Mc2Discord.INSTANCE.config.account.messages.link_successful)

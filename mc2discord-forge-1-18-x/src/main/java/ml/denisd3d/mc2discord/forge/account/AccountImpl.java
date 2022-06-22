@@ -51,8 +51,8 @@ public class AccountImpl implements IAccount {
         }
         for (DiscordIdEntry discordIdEntry : discordIds.getEntries()) {
             if (discordIdEntry.getUser() != null) {
-                Mc2Discord.INSTANCE.m2dAccount.checkDiscordAccount(discordIdEntry.getUser()
-                        .getId(), discordIdEntry.getUser().getName(), discordIdEntry.getDiscordId());
+                Mc2Discord.INSTANCE.m2dAccount.checkDiscordAccount(discordIdEntry.getUser().getId(), discordIdEntry.getUser()
+                        .getName(), discordIdEntry.getDiscordId());
             }
         }
     }
@@ -60,11 +60,14 @@ public class AccountImpl implements IAccount {
     @Override
     public boolean add(UUID uuid, long id) {
         if (uuid != null) {
-            Optional<GameProfile> gameProfile = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(uuid);
-            if (gameProfile.isPresent()) {
-                discordIds.add(new DiscordIdEntry(gameProfile.get(), id));
-                return true;
+            Optional<GameProfile> optionalGameProfile = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(uuid);
+
+            GameProfile gameProfile = optionalGameProfile.orElse(null);
+            if (gameProfile == null) {
+                gameProfile = new GameProfile(uuid, null);
             }
+            discordIds.add(new DiscordIdEntry(gameProfile, id));
+            return true;
         }
         return false;
     }
@@ -83,9 +86,7 @@ public class AccountImpl implements IAccount {
 
     @Override
     public void updateCommands() {
-        CommandDispatcher<CommandSourceStack> dispatcher = ServerLifecycleHooks.getCurrentServer()
-                .getCommands()
-                .getDispatcher();
+        CommandDispatcher<CommandSourceStack> dispatcher = ServerLifecycleHooks.getCurrentServer().getCommands().getDispatcher();
         if (!Mc2Discord.INSTANCE.config.account.force_link) {
             if (dispatcher.getRoot().getChild(Mc2Discord.INSTANCE.config.account.link_command) == null) {
                 LinkCommand.register(dispatcher);
@@ -118,9 +119,7 @@ public class AccountImpl implements IAccount {
                 .filter(discordIdEntry -> discordIdEntry.getDiscordId() == user.getId().asLong())
                 .findFirst()
                 .ifPresent(p_11387_ -> {
-                    ServerPlayer player = ServerLifecycleHooks.getCurrentServer()
-                            .getPlayerList()
-                            .getPlayer(p_11387_.getUser().getId());
+                    ServerPlayer player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(p_11387_.getUser().getId());
                     if (player != null) {
                         player.connection.disconnect(new TextComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_successful));
                     }
