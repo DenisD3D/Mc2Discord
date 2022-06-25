@@ -126,7 +126,7 @@ shadowJar {
     relocate('reactor', repackGroup + 'reactor')
     relocate('ml.denisd3d.config4j', repackGroup + 'ml.denisd3d.config4j')
     relocate('org.apache.commons.collections4', repackGroup + 'org.apache.commons.collections4')
-    
+
     exclude('META-INF/services/**') // Fix compatibility with geckolib
 }
 

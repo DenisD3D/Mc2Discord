@@ -11,8 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(CrashReportExtender.class)
 public class MixinCrashReporterExtender {
     @Inject(method = "registerCrashCallable(Lnet/minecraftforge/fml/common/ICrashCallable;)V", at = @At("HEAD"), remap = false)
-    private static void registerCrashCallable(ICrashCallable callable, CallbackInfo ci)
-    {
+    private static void registerCrashCallable(ICrashCallable callable, CallbackInfo ci) {
         EnvGenerator.crashCallables.add(callable);
     }
 }

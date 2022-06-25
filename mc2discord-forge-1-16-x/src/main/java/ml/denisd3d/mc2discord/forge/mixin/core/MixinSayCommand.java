@@ -21,7 +21,8 @@ public class MixinSayCommand {
     private static void lambda(CommandContext<CommandSource> commandContext, CallbackInfoReturnable<Integer> ci) throws CommandSyntaxException {
         if (Mc2Discord.INSTANCE.config.misc.relay_say_me_command && M2DUtils.canHandleEvent()) {
             ITextComponent itextcomponent = MessageArgument.getMessage(commandContext, "message");
-            TranslationTextComponent translationtextcomponent = new TranslationTextComponent("chat.type.announcement", commandContext.getSource().getDisplayName(), itextcomponent);
+            TranslationTextComponent translationtextcomponent = new TranslationTextComponent("chat.type.announcement", commandContext.getSource()
+                    .getDisplayName(), itextcomponent);
             Mc2Discord.INSTANCE.messageManager.sendInfoMessage(translationtextcomponent.getString());
         }
     }

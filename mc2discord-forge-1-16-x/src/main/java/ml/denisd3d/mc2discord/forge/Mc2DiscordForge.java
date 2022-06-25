@@ -35,7 +35,8 @@ public class Mc2DiscordForge {
     public static CommandSource commandSource = null;
 
     public Mc2DiscordForge() {
-        ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (in, net) -> true));
+        ModLoadingContext.get()
+                .registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(() -> FMLNetworkConstants.IGNORESERVERONLY, (in, net) -> true));
     }
 
     @SubscribeEvent

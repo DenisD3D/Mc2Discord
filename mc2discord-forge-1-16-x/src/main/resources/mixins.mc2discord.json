@@ -6,9 +6,9 @@
     "target": "@env(DEFAULT)",
     "compatibilityLevel": "JAVA_8",
     "mixins": [
+        "account.PlayerListMixin",
         "core.MixinCrashReporterExtender",
         "core.MixinMeCommand",
-        "core.MixinSayCommand",
-        "account.PlayerListMixin"
+        "core.MixinSayCommand"
     ]
 }

@@ -6,7 +6,6 @@ import ml.denisd3d.mc2discord.forge.Mc2DiscordForge;
 import net.minecraft.command.CommandSource;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -26,11 +25,12 @@ public class HelpCommandImpl {
 
         for (String command : commands) {
             CommandNode<CommandSource> node = commandDispatcher.getRoot();
-            for (String child : command.split(" "))
-            {
+            for (String child : command.split(" ")) {
                 node = node.getChild(child);
             }
-            commandDispatcher.getSmartUsage(node, Mc2DiscordForge.commandSource).values().forEach(s -> response.append("/").append(command).append(" ").append(s).append("\n"));
+            commandDispatcher.getSmartUsage(node, Mc2DiscordForge.commandSource)
+                    .values()
+                    .forEach(s -> response.append("/").append(command).append(" ").append(s).append("\n"));
         }
 
         return response.toString();

@@ -3,16 +3,13 @@ package ml.denisd3d.mc2discord.forge.mixin.account;
 import com.mojang.authlib.GameProfile;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
 import ml.denisd3d.mc2discord.forge.account.LinkCommand;
-import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.ITextComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.net.SocketAddress;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Mixin(net.minecraft.server.management.PlayerList.class)
 public class PlayerListMixin {

@@ -19,7 +19,8 @@ public class UnLinkCommand {
                     if (Mc2Discord.INSTANCE.config.account.force_link) {
                         player.connection.disconnect(new StringTextComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_successful));
                     } else {
-                        context.getSource().sendSuccess(new StringTextComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_successful), false);
+                        context.getSource()
+                                .sendSuccess(new StringTextComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_successful), false);
                     }
                 } else {
                     context.getSource().sendFailure(new StringTextComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_error));

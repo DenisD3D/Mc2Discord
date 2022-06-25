@@ -78,6 +78,14 @@ public class EnvCategory {
         return stringbuilder.toString();
     }
 
+    public static void populateBlockDetails(net.minecraft.crash.CrashReportCategory p_175750_0_, BlockPos p_175750_1_, @Nullable BlockState p_175750_2_) {
+        if (p_175750_2_ != null) {
+            p_175750_0_.setDetail("Block", p_175750_2_::toString);
+        }
+
+        p_175750_0_.setDetail("Block location", () -> formatLocation(p_175750_1_));
+    }
+
     public EnvCategory setDetail(String p_189529_1_, ICrashReportDetail<String> p_189529_2_) {
         try {
             this.setDetail(p_189529_1_, p_189529_2_.call());
@@ -113,7 +121,9 @@ public class EnvCategory {
     public boolean validateStackTrace(StackTraceElement p_85069_1_, StackTraceElement p_85069_2_) {
         if (this.stackTrace.length != 0 && p_85069_1_ != null) {
             StackTraceElement stacktraceelement = this.stackTrace[0];
-            if (stacktraceelement.isNativeMethod() == p_85069_1_.isNativeMethod() && stacktraceelement.getClassName().equals(p_85069_1_.getClassName()) && stacktraceelement.getFileName().equals(p_85069_1_.getFileName()) && stacktraceelement.getMethodName().equals(p_85069_1_.getMethodName())) {
+            if (stacktraceelement.isNativeMethod() == p_85069_1_.isNativeMethod() && stacktraceelement.getClassName()
+                    .equals(p_85069_1_.getClassName()) && stacktraceelement.getFileName()
+                    .equals(p_85069_1_.getFileName()) && stacktraceelement.getMethodName().equals(p_85069_1_.getMethodName())) {
                 if (p_85069_2_ != null != this.stackTrace.length > 1) {
                     return false;
                 } else if (p_85069_2_ != null && !this.stackTrace[1].equals(p_85069_2_)) {
@@ -140,7 +150,7 @@ public class EnvCategory {
         p_85072_1_.append("-- ").append(this.title).append(" --\n");
         p_85072_1_.append("Details:");
 
-        for(Entry crashreportcategory$entry : this.entries) {
+        for (Entry crashreportcategory$entry : this.entries) {
             p_85072_1_.append("\n\t");
             p_85072_1_.append(crashreportcategory$entry.getKey());
             p_85072_1_.append(": ");
@@ -162,14 +172,6 @@ public class EnvCategory {
         this.stackTrace = t.getStackTrace();
     }
 
-    public static void populateBlockDetails(net.minecraft.crash.CrashReportCategory p_175750_0_, BlockPos p_175750_1_, @Nullable BlockState p_175750_2_) {
-        if (p_175750_2_ != null) {
-            p_175750_0_.setDetail("Block", p_175750_2_::toString);
-        }
-
-        p_175750_0_.setDetail("Block location", () -> formatLocation(p_175750_1_));
-    }
-
     static class Entry {
         private final String key;
         private final String value;
@@ -179,7 +181,7 @@ public class EnvCategory {
             if (p_i1352_2_ == null) {
                 this.value = "~~NULL~~";
             } else if (p_i1352_2_ instanceof Throwable) {
-                Throwable throwable = (Throwable)p_i1352_2_;
+                Throwable throwable = (Throwable) p_i1352_2_;
                 this.value = "~~ERROR~~ " + throwable.getClass().getSimpleName() + ": " + throwable.getMessage();
             } else {
                 this.value = p_i1352_2_.toString();
