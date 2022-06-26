@@ -1,9 +1,6 @@
 package ml.denisd3d.mc2discord.forge.commands;
 
-import ml.denisd3d.mc2discord.core.LangManager;
 import ml.denisd3d.mc2discord.core.M2DCommands;
-import ml.denisd3d.mc2discord.core.Mc2Discord;
-import ml.denisd3d.mc2discord.forge.MinecraftImpl;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;

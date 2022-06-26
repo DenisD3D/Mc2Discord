@@ -40,7 +40,7 @@ public class EnvCategory {
         p_85072_1_.append("-- ").append(this.title).append(" --\n");
         p_85072_1_.append("Details:");
 
-        for(Entry crashreportcategory$entry : this.entries) {
+        for (Entry crashreportcategory$entry : this.entries) {
             p_85072_1_.append("\n\t");
             p_85072_1_.append(crashreportcategory$entry.getKey());
             p_85072_1_.append(": ");
@@ -58,7 +58,7 @@ public class EnvCategory {
             if (p_i1352_2_ == null) {
                 this.value = "~~NULL~~";
             } else if (p_i1352_2_ instanceof Throwable) {
-                Throwable throwable = (Throwable)p_i1352_2_;
+                Throwable throwable = (Throwable) p_i1352_2_;
                 this.value = "~~ERROR~~ " + throwable.getClass().getSimpleName() + ": " + throwable.getMessage();
             } else {
                 this.value = p_i1352_2_.toString();

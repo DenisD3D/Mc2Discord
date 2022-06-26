@@ -66,7 +66,12 @@ public class MinecraftImpl implements IMinecraft {
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
         return new Global(server.getCurrentPlayerCount(),
                 server.getMaxPlayers(),
-                Optional.of(new File(((SaveHandler) server.getEntityWorld().getSaveHandler().getPlayerNBTManager()).getWorldDirectory(), "playerdata")).map(file -> file.list((dir, name) -> name.endsWith(".dat"))).map(strings -> strings.length).orElse(0),
+                Optional.of(new File(((SaveHandler) server.getEntityWorld()
+                                .getSaveHandler()
+                                .getPlayerNBTManager()).getWorldDirectory(), "playerdata"))
+                        .map(file -> file.list((dir, name) -> name.endsWith(".dat")))
+                        .map(strings -> strings.length)
+                        .orElse(0),
                 server.getMOTD(),
                 server.getMinecraftVersion(),
                 server.getServerHostname(),

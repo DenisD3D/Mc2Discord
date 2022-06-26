@@ -16,9 +16,9 @@ public class DiscordCommandSender implements ICommandSender {
     public static long messageChannelId;
     public static Channels.SendMode mode;
     public static int permissionLevel = 0;
+    private final MinecraftServer server;
     private long time;
     private Thread messageScheduler;
-    private final MinecraftServer server;
 
     public DiscordCommandSender(MinecraftServer serverIn) {
         this.server = serverIn;
@@ -48,7 +48,9 @@ public class DiscordCommandSender implements ICommandSender {
 
     @Override
     public void sendMessage(ITextComponent component) {
-        answer += component.getUnformattedText() + ((component.getStyle().getClickEvent() != null && component.getStyle().getClickEvent().getAction() == ClickEvent.Action.OPEN_URL) ? " <" + component.getStyle().getClickEvent().getValue() + ">" : "") + "\n";
+        answer += component.getUnformattedText() + ((component.getStyle().getClickEvent() != null && component.getStyle()
+                .getClickEvent()
+                .getAction() == ClickEvent.Action.OPEN_URL) ? " <" + component.getStyle().getClickEvent().getValue() + ">" : "") + "\n";
         scheduleMessage();
     }
 
