@@ -83,12 +83,12 @@ public class Mc2Discord {
         langManager = new LangManager(lang);
 
         try {
-            this.config = new M2DConfig(CONFIG_FILE, translateKey -> {
-                switch (translateKey) {
+            this.config = new M2DConfig(CONFIG_FILE, translationKey -> {
+                switch (translationKey) {
                     case "config.lang.comment":
-                        return langManager.formatMessage(translateKey, String.join(", ", M2DUtils.lang_contributors), String.join(", ", M2DUtils.available_lang));
+                        return langManager.formatMessage(translationKey, String.join(", ", M2DUtils.lang_contributors), String.join(", ", M2DUtils.available_lang));
                     default:
-                        return langManager.formatMessage(translateKey);
+                        return iMinecraft.translateKey(langManager, translationKey);
                 }
             }).loadAndCorrect();
         } catch (ParsingException parsingException) {
@@ -106,8 +106,7 @@ public class Mc2Discord {
 
 
         Thread thread = new Thread(() -> {
-            AtomicReference<IntentSet> intents = new AtomicReference<>(IntentSet.all()
-                    .andNot(IntentSet.of(Intent.GUILD_PRESENCES)));
+            AtomicReference<IntentSet> intents = new AtomicReference<>(IntentSet.all().andNot(IntentSet.of(Intent.GUILD_PRESENCES)));
             if (!this.config.features.account_linking || this.config.account.guild_id == 0) {
                 intents.getAndUpdate(intents1 -> intents1.andNot(IntentSet.of(Intent.GUILD_MEMBERS)));
             }
@@ -180,8 +179,7 @@ public class Mc2Discord {
 
     public void restart() {
         if (client != null) {
-            this.client.logout()
-                    .subscribe(null, null, () -> Mc2Discord.INSTANCE = new Mc2Discord(true, this.iMinecraft));
+            this.client.logout().subscribe(null, null, () -> Mc2Discord.INSTANCE = new Mc2Discord(true, this.iMinecraft));
         } else {
             Mc2Discord.INSTANCE = new Mc2Discord(true, this.iMinecraft);
         }

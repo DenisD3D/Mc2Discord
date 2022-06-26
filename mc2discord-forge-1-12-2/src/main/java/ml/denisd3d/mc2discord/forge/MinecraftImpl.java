@@ -1,6 +1,7 @@
 package ml.denisd3d.mc2discord.forge;
 
 import ml.denisd3d.mc2discord.core.IMinecraft;
+import ml.denisd3d.mc2discord.core.LangManager;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
 import ml.denisd3d.mc2discord.core.account.IAccount;
 import ml.denisd3d.mc2discord.core.config.core.Channels;
@@ -39,15 +40,13 @@ public class MinecraftImpl implements IMinecraft {
         while (matcher.find()) {
             textComponent.appendSibling(new TextComponentString(content.substring(previous_end, matcher.start())));
             previous_end = matcher.end();
-            textComponent.appendSibling(new TextComponentString(matcher.group()).setStyle(new Style()
-                    .setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, matcher.group()))
+            textComponent.appendSibling(new TextComponentString(matcher.group()).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, matcher.group()))
                     .setColor(TextFormatting.BLUE)
                     .setUnderlined(true)));
         }
         textComponent.appendSibling(new TextComponentString(content.substring(previous_end) + (attachments.isEmpty() ? "" : " ")));
 
-        attachments.forEach((filename, url) -> textComponent.appendSibling(new TextComponentString("[" + filename + "]").setStyle(new Style()
-                .setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url))
+        attachments.forEach((filename, url) -> textComponent.appendSibling(new TextComponentString("[" + filename + "]").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url))
                 .setColor(TextFormatting.BLUE)
                 .setUnderlined(true))));
         FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList().sendMessage(textComponent);
@@ -64,20 +63,12 @@ public class MinecraftImpl implements IMinecraft {
     @Override
     public Global getServerData() {
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-        return new Global(server.getCurrentPlayerCount(),
-                server.getMaxPlayers(),
-                Optional.of(new File(((SaveHandler) server.getEntityWorld()
-                                .getSaveHandler()
-                                .getPlayerNBTManager()).getWorldDirectory(), "playerdata"))
-                        .map(file -> file.list((dir, name) -> name.endsWith(".dat")))
-                        .map(strings -> strings.length)
-                        .orElse(0),
-                server.getMOTD(),
-                server.getMinecraftVersion(),
-                server.getServerHostname(),
-                String.valueOf(server.getServerPort()),
-                String.valueOf(System.currentTimeMillis()),
-                String.valueOf(System.currentTimeMillis() - Mc2Discord.INSTANCE.startTime));
+        return new Global(server.getCurrentPlayerCount(), server.getMaxPlayers(), Optional.of(new File(((SaveHandler) server.getEntityWorld()
+                        .getSaveHandler()
+                        .getPlayerNBTManager()).getWorldDirectory(), "playerdata"))
+                .map(file -> file.list((dir, name) -> name.endsWith(".dat")))
+                .map(strings -> strings.length)
+                .orElse(0), server.getMOTD(), server.getMinecraftVersion(), server.getServerHostname(), String.valueOf(server.getServerPort()), String.valueOf(System.currentTimeMillis()), String.valueOf(System.currentTimeMillis() - Mc2Discord.INSTANCE.startTime));
     }
 
     @Override
@@ -104,5 +95,16 @@ public class MinecraftImpl implements IMinecraft {
     @Override
     public IAccount getIAccount() {
         return null;
+    }
+
+    @Override
+    public String translateKey(LangManager langManager, String translationKey) {
+        if (translationKey.matches(".*(logs_format|logs_level).*")) {
+            return " /!\\ Logs feature is disabled on 1.12.2 /!\\" + IMinecraft.super.translateKey(langManager, translationKey);
+        } else if (translationKey.equals("config.features.account_linking.comment")) {
+            return " /!\\ Account linking feature is disabled on 1.12.2 /!\\" + IMinecraft.super.translateKey(langManager, translationKey);
+        } else {
+            return IMinecraft.super.translateKey(langManager, translationKey);
+        }
     }
 }

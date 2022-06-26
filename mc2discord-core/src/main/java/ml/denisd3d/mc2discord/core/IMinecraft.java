@@ -26,4 +26,8 @@ public interface IMinecraft {
 
     @Nullable
     IAccount getIAccount();
+
+    default String translateKey(LangManager langManager, String translationKey) {
+        return langManager.formatMessage(translationKey);
+    }
 }
