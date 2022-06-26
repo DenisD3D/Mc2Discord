@@ -2,6 +2,7 @@ package ml.denisd3d.mc2discord.forge.account;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
+import discord4j.core.object.entity.User;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
 import ml.denisd3d.mc2discord.core.account.IAccount;
 import ml.denisd3d.mc2discord.forge.storage.DiscordIdEntry;
@@ -10,6 +11,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.Util;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.io.File;
@@ -43,17 +45,14 @@ public class AccountImpl implements IAccount {
     }
 
     @Override
-    public void checkDiscordPseudoForAllDiscordAccount() {
+    public void checkAllDiscordAccount() {
         if (Mc2Discord.INSTANCE.m2dAccount == null) {
             return;
         }
         for (DiscordIdEntry discordIdEntry : discordIds.getEntries()) {
             if (discordIdEntry.getUser() != null) {
-                Mc2Discord.INSTANCE.m2dAccount
-                        .renameDiscordAccountL(
-                                discordIdEntry.getUser().getId(),
-                                discordIdEntry.getUser().getName(),
-                                discordIdEntry.getDiscordId());
+                Mc2Discord.INSTANCE.m2dAccount.checkDiscordAccount(discordIdEntry.getUser().getId(), discordIdEntry.getUser()
+                        .getName(), discordIdEntry.getDiscordId());
             }
         }
     }
@@ -62,10 +61,11 @@ public class AccountImpl implements IAccount {
     public boolean add(UUID uuid, long id) {
         if (uuid != null) {
             GameProfile gameProfile = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(uuid);
-            if (gameProfile != null) {
-                discordIds.add(new DiscordIdEntry(gameProfile, id));
-                return true;
+            if (gameProfile == null) {
+                gameProfile = new GameProfile(uuid, null);
             }
+            discordIds.add(new DiscordIdEntry(gameProfile, id));
+            return true;
         }
         return false;
     }
@@ -111,5 +111,20 @@ public class AccountImpl implements IAccount {
             return gameProfile.getName();
         }
         return null;
+    }
+
+    @Override
+    public void removeIfPresent(User user) {
+        discordIds.getEntries()
+                .stream()
+                .filter(discordIdEntry -> discordIdEntry.getDiscordId() == user.getId().asLong())
+                .findFirst()
+                .ifPresent(p_11387_ -> {
+                    ServerPlayerEntity player = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayer(p_11387_.getUser().getId());
+                    if (player != null) {
+                        player.connection.disconnect(new StringTextComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_successful));
+                    }
+                    discordIds.remove(p_11387_);
+                });
     }
 }

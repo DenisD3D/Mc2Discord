@@ -1,10 +1,13 @@
 package ml.denisd3d.mc2discord.forge.storage;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.management.UserListEntry;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 import java.util.UUID;
 
 public class DiscordIdEntry extends UserListEntry<GameProfile> {
@@ -21,7 +24,7 @@ public class DiscordIdEntry extends UserListEntry<GameProfile> {
     }
 
     private static GameProfile constructProfile(JsonObject jsonObject) {
-        if (jsonObject.has("uuid") && jsonObject.has("name")) {
+        if (jsonObject.has("uuid") || jsonObject.has("name")) {
             String s = jsonObject.get("uuid").getAsString();
 
             UUID uuid;
@@ -31,7 +34,12 @@ public class DiscordIdEntry extends UserListEntry<GameProfile> {
                 return null;
             }
 
-            return new GameProfile(uuid, jsonObject.get("name").getAsString());
+            JsonElement nameJsonElement = jsonObject.get("name");
+            String name = nameJsonElement != null ? nameJsonElement.getAsString() : Optional.ofNullable(ServerLifecycleHooks.getCurrentServer()
+                    .getProfileCache()
+                    .get(uuid)).map(GameProfile::getName).orElse(null);
+
+            return new GameProfile(uuid, name);
         } else {
             return null;
         }
