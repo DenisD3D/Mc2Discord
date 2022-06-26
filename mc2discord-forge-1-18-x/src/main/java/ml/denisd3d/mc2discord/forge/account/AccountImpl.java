@@ -19,7 +19,7 @@ import java.util.UUID;
 
 public class AccountImpl implements IAccount {
     public static final File FILE_DISCORD_IDS = new File("discord-ids.json");
-    private static final DiscordIdList discordIds = new DiscordIdList(FILE_DISCORD_IDS);
+    public static final DiscordIdList discordIds = new DiscordIdList(FILE_DISCORD_IDS);
 
     @Override
     public void loadDiscordIds() {
