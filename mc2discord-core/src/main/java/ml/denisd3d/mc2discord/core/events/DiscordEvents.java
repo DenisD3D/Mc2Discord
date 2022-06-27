@@ -34,13 +34,12 @@ public class DiscordEvents {
                                 .anyMatch(channel -> channel.channel_id == messageCreateEvent.getMessage()
                                         .getChannelId()
                                         .asLong() && (channel.subscriptions.contains("chat") || channel.subscriptions.contains("discord_announcement")))) {
-                            Member member = new Member(messageCreateEvent.getMessage()
+                            Member member = new Member(messageCreateEvent.getMessage().getUserData().username(), messageCreateEvent.getMessage()
                                     .getUserData()
-                                    .username(), messageCreateEvent.getMessage()
+                                    .discriminator(), messageCreateEvent.getMessage().getUserData().username(), messageCreateEvent.getMessage()
                                     .getUserData()
-                                    .discriminator(), messageCreateEvent.getMessage()
-                                    .getUserData()
-                                    .username(), messageCreateEvent.getMessage().getUserData().avatar().orElse(""));
+                                    .avatar()
+                                    .orElse(""));
                             Message message = new Message(messageCreateEvent.getMessage().getContent());
                             HashMap<String, String> attachments = new HashMap<>();
                             for (Attachment attachment : messageCreateEvent.getMessage().getAttachments()) {
@@ -62,9 +61,7 @@ public class DiscordEvents {
         if (Mc2Discord.INSTANCE.m2dAccount != null && Mc2Discord.INSTANCE.config.features.account_linking && Mc2Discord.INSTANCE.m2dAccount.onMessage(messageCreateEvent))
             return;
 
-        if (messageCreateEvent.getMessage()
-                .getContent()
-                .startsWith(Mc2Discord.INSTANCE.config.commands.prefix)) // It's a command
+        if (messageCreateEvent.getMessage().getContent().startsWith(Mc2Discord.INSTANCE.config.commands.prefix)) // It's a command
         {
             if (Mc2Discord.INSTANCE.config.channels.channels.stream()
                     .anyMatch(channel -> channel.channel_id == messageCreateEvent.getMessage()
@@ -139,7 +136,8 @@ public class DiscordEvents {
         Member member = new Member(author.getUsername(), author.getDiscriminator(), messageCreateEvent.getMember()
                 .map(discord4j.core.object.entity.Member::getDisplayName)
                 .orElse(author.getUsername()), author.getAvatarUrl());
-        Message message = new Message(messageCreateEvent.getMessage().getContent());
+        Message message = new Message(M2DUtils.replaceAllMentions(messageCreateEvent.getMessage().getContent(), messageCreateEvent.getMessage()
+                .getMemberMentions()));
         HashMap<String, String> attachments = new HashMap<>();
         for (Attachment attachment : messageCreateEvent.getMessage().getAttachments()) {
             attachments.put(attachment.getFilename(), attachment.getUrl());

@@ -1,6 +1,7 @@
 package ml.denisd3d.mc2discord.core;
 
 import discord4j.common.util.TokenUtil;
+import discord4j.core.object.entity.PartialMember;
 import discord4j.gateway.GatewayObserver;
 import discord4j.rest.util.Color;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -168,5 +169,31 @@ public class M2DUtils {
             return Color.BISMARK;
         }
         return NumberUtils.isParsable(color) ? Color.of(Integer.parseInt(color)) : Color.WHITE;
+    }
+
+
+    private static final Pattern any_pattern = Pattern.compile("<(?::\\w+:|@&*|#)\\d+>");
+
+    public static String replaceAllMentions(String str, List<PartialMember> partialMembers) {
+        Matcher matcher = any_pattern.matcher(str);
+        StringBuffer buffer = new StringBuffer();
+
+        while (matcher.find()) {
+            String replacement = matcher.group(0);
+            if (replacement.matches("<(:\\w+:)\\d+>")) {
+                matcher.appendReplacement(buffer, "");
+                buffer.append(":").append(replacement.split(":")[1]).append(":");
+            } else if (replacement.matches("<@(\\d+)>")) {
+                partialMembers.stream()
+                        .filter(partialMember -> partialMember.getId().asString().equals(replacement.substring(2, replacement.length() - 1)))
+                        .findFirst()
+                        .ifPresent(partialMember -> {
+                            matcher.appendReplacement(buffer, "");
+                            buffer.append("@").append(partialMember.getDisplayName());
+                        });
+            }
+        }
+        matcher.appendTail(buffer);
+        return buffer.toString();
     }
 }
