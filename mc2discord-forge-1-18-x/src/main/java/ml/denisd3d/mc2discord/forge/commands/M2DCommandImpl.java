@@ -3,6 +3,7 @@ package ml.denisd3d.mc2discord.forge.commands;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import ml.denisd3d.mc2discord.core.LangManager;
@@ -19,15 +20,15 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.GameProfileArgument;
-import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.ComponentUtils;
-import net.minecraft.network.chat.TextColor;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.*;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.server.players.StoredUserEntry;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class M2DCommandImpl {
@@ -88,7 +89,7 @@ public class M2DCommandImpl {
                 .then(Commands.literal("linked")
                         .then(Commands.literal("list").executes((p_198878_0_) -> listLinkedPlayers(p_198878_0_.getSource())))
                         .then(Commands.literal("add")
-                                .then(Commands.argument("targets", GameProfileArgument.gameProfile())
+                                .then(Commands.argument("target", StringArgumentType.string())
                                         .suggests((p_198879_0_, p_198879_1_) -> {
                                             if (Mc2Discord.INSTANCE.m2dAccount == null || !Mc2Discord.INSTANCE.config.features.account_linking) {
                                                 return SharedSuggestionProvider.suggest(new String[0], p_198879_1_);
@@ -101,7 +102,7 @@ public class M2DCommandImpl {
                                                     .map((p_200567_0_) -> p_200567_0_.getGameProfile().getName()), p_198879_1_);
                                         })
                                         .then(Commands.argument("discord_id", IntegerArgumentType.integer(0))
-                                                .executes((p_198875_0_) -> addLinkedPlayers(p_198875_0_.getSource(), GameProfileArgument.getGameProfiles(p_198875_0_, "targets"), IntegerArgumentType.getInteger(p_198875_0_, "discord_id"))))))
+                                                .executes((p_198875_0_) -> addLinkedPlayers(p_198875_0_.getSource(), StringArgumentType.getString(p_198875_0_, "target"), IntegerArgumentType.getInteger(p_198875_0_, "discord_id"))))))
                         .then(Commands.literal("remove")
                                 .then(Commands.argument("targets", GameProfileArgument.gameProfile())
                                         .suggests((p_198881_0_, p_198881_1_) -> {
@@ -155,22 +156,28 @@ public class M2DCommandImpl {
         }
     }
 
-    private static int addLinkedPlayers(CommandSourceStack source, Collection<GameProfile> targets, int discord_id) throws CommandSyntaxException {
+    private static int addLinkedPlayers(CommandSourceStack source, String target, int discord_id) throws CommandSyntaxException {
         if (Mc2Discord.INSTANCE.m2dAccount == null || !Mc2Discord.INSTANCE.config.features.account_linking) {
             source.sendFailure(new TextComponent("Account linking features isn't enabled."));
             return 0;
         }
-        if (targets.size() > 1) {
-            source.sendFailure(new TextComponent("You can only link one player at a time."));
-            return 0;
-        }
-
 
         IAccount iAccount = Mc2Discord.INSTANCE.m2dAccount.iAccount;
-        GameProfile gameprofile = targets.iterator().next();
 
-        if (gameprofile.getId() == null) {
-            source.sendFailure(new TextComponent("Can't link this player by name. Please use the player uuid"));
+        UUID uuid;
+        Optional<GameProfile> optionalGameProfile;
+        try {
+            uuid = UUID.fromString(target);
+            optionalGameProfile = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(uuid);
+        } catch (IllegalArgumentException e) {
+            uuid = null;
+            optionalGameProfile = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(target);
+        }
+        UUID finalUuid = uuid;
+        GameProfile gameprofile = optionalGameProfile.orElseGet(() -> finalUuid != null ? new GameProfile(finalUuid, null) : null);
+
+        if (gameprofile == null || gameprofile.getId() == null) {
+            source.sendFailure(new TextComponent("Can't link this player by name. Please use a valid player uuid"));
             return 0;
         }
 
@@ -197,7 +204,18 @@ public class M2DCommandImpl {
             source.sendSuccess(new TextComponent(LangManager.translate("commands.linked.list", entries.size(), entries.stream()
                     .map(StoredUserEntry::getUser)
                     .filter(Objects::nonNull)
-                    .map(gameProfile -> gameProfile.getName() != null ? gameProfile.getName() : gameProfile.getId().toString())
+                    .map(gameProfile -> {
+                        if (gameProfile.getName() != null) {
+                            return gameProfile.getName();
+                        } else {
+                            Optional<GameProfile> optionalGameProfile = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(gameProfile.getId());
+                            if(optionalGameProfile.isPresent() && optionalGameProfile.get().getName() != null) {
+                                return optionalGameProfile.get().getName();
+                            } else {
+                                return gameProfile.getId().toString();
+                            }
+                        }
+                    })
                     .collect(Collectors.joining(", ")))), false);
         }
 

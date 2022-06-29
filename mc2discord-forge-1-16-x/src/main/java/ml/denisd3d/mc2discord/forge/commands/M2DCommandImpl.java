@@ -3,6 +3,7 @@ package ml.denisd3d.mc2discord.forge.commands;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import ml.denisd3d.mc2discord.core.LangManager;
@@ -11,7 +12,6 @@ import ml.denisd3d.mc2discord.core.Mc2Discord;
 import ml.denisd3d.mc2discord.core.account.IAccount;
 import ml.denisd3d.mc2discord.forge.MinecraftImpl;
 import ml.denisd3d.mc2discord.forge.account.AccountImpl;
-import ml.denisd3d.mc2discord.forge.account.UnknowableGameProfileArgument;
 import ml.denisd3d.mc2discord.forge.storage.DiscordIdEntry;
 import ml.denisd3d.mc2discord.forge.storage.HiddenPlayerEntry;
 import ml.denisd3d.mc2discord.forge.storage.HiddenPlayerList;
@@ -26,11 +26,11 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextComponentUtils;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
-import net.minecraftforge.fml.event.server.ServerLifecycleEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class M2DCommandImpl {
@@ -87,7 +87,7 @@ public class M2DCommandImpl {
                 .then(Commands.literal("linked")
                         .then(Commands.literal("list").executes((p_198878_0_) -> listLinkedPlayers(p_198878_0_.getSource())))
                         .then(Commands.literal("add")
-                                .then(Commands.argument("targets", UnknowableGameProfileArgument.unknowableGameProfileArgument())
+                                .then(Commands.argument("target", StringArgumentType.string())
                                         .suggests((p_198879_0_, p_198879_1_) -> {
                                             if (Mc2Discord.INSTANCE.m2dAccount == null || !Mc2Discord.INSTANCE.config.features.account_linking) {
                                                 return ISuggestionProvider.suggest(new String[0], p_198879_1_);
@@ -100,7 +100,7 @@ public class M2DCommandImpl {
                                                     .map((p_200567_0_) -> p_200567_0_.getGameProfile().getName()), p_198879_1_);
                                         })
                                         .then(Commands.argument("discord_id", IntegerArgumentType.integer(0))
-                                                .executes((p_198875_0_) -> addLinkedPlayers(p_198875_0_.getSource(), UnknowableGameProfileArgument.getGameProfiles(p_198875_0_, "targets"), IntegerArgumentType.getInteger(p_198875_0_, "discord_id"))))))
+                                                .executes((p_198875_0_) -> addLinkedPlayers(p_198875_0_.getSource(), StringArgumentType.getString(p_198875_0_, "target"), IntegerArgumentType.getInteger(p_198875_0_, "discord_id"))))))
                         .then(Commands.literal("remove")
                                 .then(Commands.argument("targets", GameProfileArgument.gameProfile())
                                         .suggests((p_198881_0_, p_198881_1_) -> {
@@ -154,28 +154,36 @@ public class M2DCommandImpl {
         }
     }
 
-    private static int addLinkedPlayers(CommandSource source, Collection<GameProfile> targets, int discord_id) throws CommandSyntaxException {
+    private static int addLinkedPlayers(CommandSource source, String target, int discord_id) throws CommandSyntaxException {
         if (Mc2Discord.INSTANCE.m2dAccount == null || !Mc2Discord.INSTANCE.config.features.account_linking) {
             source.sendFailure(new StringTextComponent("Account linking features isn't enabled."));
             return 0;
         }
-        if (targets.size() > 1) {
-            source.sendFailure(new StringTextComponent("You can only link one player at a time."));
-            return 0;
-        }
-
 
         IAccount iAccount = Mc2Discord.INSTANCE.m2dAccount.iAccount;
-        GameProfile gameprofile = targets.iterator().next();
 
-        if (gameprofile.getId() == null) {
-            source.sendFailure(new StringTextComponent("Can't link this player by name. Please use the player uuid"));
+        UUID uuid;
+        GameProfile gameProfile;
+        try {
+            uuid = UUID.fromString(target);
+            gameProfile = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(uuid);
+        } catch (IllegalArgumentException e) {
+            uuid = null;
+            gameProfile = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(target);
+        }
+        if (gameProfile == null) {
+            gameProfile = uuid != null ? new GameProfile(uuid, null) : null;
+        }
+
+
+        if (gameProfile == null || gameProfile.getId() == null) {
+            source.sendFailure(new StringTextComponent("Can't link this player by name. Please use a valid player uuid"));
             return 0;
         }
 
-        if (!iAccount.contains(gameprofile)) {
-            iAccount.add(gameprofile.getId(), discord_id);
-            source.sendSuccess(new StringTextComponent(LangManager.translate("commands.linked.linked", TextComponentUtils.getDisplayName(gameprofile)
+        if (!iAccount.contains(gameProfile)) {
+            iAccount.add(gameProfile.getId(), discord_id);
+            source.sendSuccess(new StringTextComponent(LangManager.translate("commands.linked.linked", TextComponentUtils.getDisplayName(gameProfile)
                     .getString())), true);
             return 1;
         } else {
@@ -201,7 +209,7 @@ public class M2DCommandImpl {
                             return gameProfile.getName();
                         } else {
                             GameProfile gameProfile1 = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(gameProfile.getId());
-                            if(gameProfile1 != null && gameProfile1.getName() != null) {
+                            if (gameProfile1 != null && gameProfile1.getName() != null) {
                                 return gameProfile1.getName();
                             } else {
                                 return gameProfile.getId().toString();
