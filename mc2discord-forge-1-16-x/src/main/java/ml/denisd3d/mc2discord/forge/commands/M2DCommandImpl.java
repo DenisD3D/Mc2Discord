@@ -11,7 +11,6 @@ import ml.denisd3d.mc2discord.core.Mc2Discord;
 import ml.denisd3d.mc2discord.core.account.IAccount;
 import ml.denisd3d.mc2discord.forge.MinecraftImpl;
 import ml.denisd3d.mc2discord.forge.account.AccountImpl;
-import ml.denisd3d.mc2discord.forge.account.UnknowableGameProfileArgument;
 import ml.denisd3d.mc2discord.forge.storage.DiscordIdEntry;
 import ml.denisd3d.mc2discord.forge.storage.HiddenPlayerEntry;
 import ml.denisd3d.mc2discord.forge.storage.HiddenPlayerList;
@@ -26,11 +25,11 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextComponentUtils;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
-import net.minecraftforge.fml.event.server.ServerLifecycleEvent;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class M2DCommandImpl {
@@ -154,28 +153,36 @@ public class M2DCommandImpl {
         }
     }
 
-    private static int addLinkedPlayers(CommandSource source, Collection<GameProfile> targets, int discord_id) throws CommandSyntaxException {
+    private static int addLinkedPlayers(CommandSource source, String target, int discord_id) throws CommandSyntaxException {
         if (Mc2Discord.INSTANCE.m2dAccount == null || !Mc2Discord.INSTANCE.config.features.account_linking) {
             source.sendFailure(new StringTextComponent("Account linking features isn't enabled."));
             return 0;
         }
-        if (targets.size() > 1) {
-            source.sendFailure(new StringTextComponent("You can only link one player at a time."));
-            return 0;
-        }
-
 
         IAccount iAccount = Mc2Discord.INSTANCE.m2dAccount.iAccount;
-        GameProfile gameprofile = targets.iterator().next();
 
-        if (gameprofile.getId() == null) {
-            source.sendFailure(new StringTextComponent("Can't link this player by name. Please use the player uuid"));
+        UUID uuid;
+        GameProfile gameProfile;
+        try {
+            uuid = UUID.fromString(target);
+            gameProfile = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(uuid);
+        } catch (IllegalArgumentException e) {
+            uuid = null;
+            gameProfile = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(target);
+        }
+        if (gameProfile == null) {
+            gameProfile = uuid != null ? new GameProfile(uuid, null) : null;
+        }
+
+
+        if (gameProfile == null || gameProfile.getId() == null) {
+            source.sendFailure(new StringTextComponent("Can't link this player by name. Please use a valid player uuid"));
             return 0;
         }
 
-        if (!iAccount.contains(gameprofile)) {
-            iAccount.add(gameprofile.getId(), discord_id);
-            source.sendSuccess(new StringTextComponent(LangManager.translate("commands.linked.linked", TextComponentUtils.getDisplayName(gameprofile)
+        if (!iAccount.contains(gameProfile)) {
+            iAccount.add(gameProfile.getId(), discord_id);
+            source.sendSuccess(new StringTextComponent(LangManager.translate("commands.linked.linked", TextComponentUtils.getDisplayName(gameProfile)
                     .getString())), true);
             return 1;
         } else {
@@ -201,7 +208,7 @@ public class M2DCommandImpl {
                             return gameProfile.getName();
                         } else {
                             GameProfile gameProfile1 = ServerLifecycleHooks.getCurrentServer().getProfileCache().get(gameProfile.getId());
-                            if(gameProfile1 != null && gameProfile1.getName() != null) {
+                            if (gameProfile1 != null && gameProfile1.getName() != null) {
                                 return gameProfile1.getName();
                             } else {
                                 return gameProfile.getId().toString();
