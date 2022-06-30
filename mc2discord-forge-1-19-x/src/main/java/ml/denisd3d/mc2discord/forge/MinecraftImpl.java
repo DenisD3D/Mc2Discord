@@ -78,7 +78,7 @@ public class MinecraftImpl implements IMinecraft {
                 .withUnderlined(true))));
         ServerLifecycleHooks.getCurrentServer()
                 .getPlayerList()
-                .broadcastSystemMessage(textComponent, ChatType.CHAT);
+                .broadcastSystemMessage(textComponent, ChatType.SYSTEM);
     }
 
     @Override
