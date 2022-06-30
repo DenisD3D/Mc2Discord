@@ -5,13 +5,7 @@
 # ![Mc2Discord](https://user-images.githubusercontent.com/35769613/176792772-8d446a05-103f-4cdd-91c1-8a0274d3e6cc.png)
 Link your Minecraft server chat with your Discord
 
-/!\ This mod needs configuration to work properly.
-
-Discord (Support): https://discord.gg/rzzd76c \
-CurseForge (Download): https://www.curseforge.com/minecraft/mc-mods/mc2discord/ \
-Modrinth (Download): https://modrinth.com/mod/mc2discord \
-Github (Source): https://github.com/DenisD3D/Mc2Discord \
-Wiki: https://github.com/DenisD3D/Mc2Discord/wiki
+/!\ This mod needs configuration to work properly. Follow the wiki: https://github.com/DenisD3D/Minecraft2Discord/wiki
 
 ## Features
  * Send Minecraft chat message to your Discord server
@@ -40,4 +34,11 @@ If you need any help or want new features, you can join the [Discord support ser
 
 
 ## Misc
+### Links
+ * Discord (Support): https://discord.gg/rzzd76c
+ * CurseForge (Download): https://www.curseforge.com/minecraft/mc-mods/mc2discord/
+ * Modrinth (Download): https://modrinth.com/mod/mc2discord
+ * Github (Source): https://github.com/DenisD3D/Mc2Discord
+ * Wiki: https://github.com/DenisD3D/Mc2Discord/wiki
+
 [Demo server hosted thanks to MtxServ ![MtxServ](https://cdn.discordapp.com/attachments/867823347555368981/867895810712272916/Large_Banner_EN.png)](https://mtxserv.denisd3d.ml/)
