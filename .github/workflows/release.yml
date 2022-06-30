@@ -1,4 +1,4 @@
-name: 'Build'
+name: 'Release'
 
 on: workflow_dispatch
 
@@ -172,7 +172,7 @@ jobs:
             !${{ github.workspace }}/mc2discord-forge-1-12-2/build/libs/*-slim.jar
 
   artifact-use-build:
-    name: Re-use Artifact
+    name: Release on Curseforge & Modrinth
     runs-on: ubuntu-latest
     needs: [ build-1-19-x, build-1-18-x, build-1-16-x, build-1-12-2 ]
 
