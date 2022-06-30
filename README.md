@@ -5,7 +5,7 @@
 # ![Mc2Discord](https://user-images.githubusercontent.com/35769613/176792772-8d446a05-103f-4cdd-91c1-8a0274d3e6cc.png)
 Link your Minecraft server chat with your Discord
 
-/!\ This mod needs configuration to work properly. Follow the wiki: https://github.com/DenisD3D/Minecraft2Discord/wiki
+/!\ This mod needs configuration to work properly. Follow the wiki: https://github.com/DenisD3D/Mc2Discord/wiki
 
 ## Features
  * Send Minecraft chat message to your Discord server
@@ -28,7 +28,7 @@ Join the official demo server hosted by MtxServ
  * Join the demo discord channel [#access-demo](https://discord.gg/rzzd76c)
 
 ## Installation
-A quick configuration is mandatory for the mod to work. Steps are described on the wiki: https://github.com/DenisD3D/Minecraft2Discord/wiki
+A quick configuration is mandatory for the mod to work. Steps are described on the wiki: https://github.com/DenisD3D/Mc2Discord/wiki
 
 If you need any help or want new features, you can join the [Discord support server](https://discord.gg/rzzd76c)
 
