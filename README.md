@@ -5,7 +5,7 @@
 # ![Mc2Discord](https://user-images.githubusercontent.com/35769613/176792772-8d446a05-103f-4cdd-91c1-8a0274d3e6cc.png)
 Link your Minecraft server chat with your Discord
 
-/!\ This mod needs configuration to work properly. Follow the wiki: https://github.com/DenisD3D/Mc2Discord/wiki
+/!\ This mod needs configuration to work properly. Please take a look to the wiki: https://github.com/DenisD3D/Mc2Discord/wiki
 
 ## Features
  * Send Minecraft chat message to your Discord server
