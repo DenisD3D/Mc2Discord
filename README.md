@@ -39,4 +39,5 @@ A quick configuration is mandatory for the mod to work. Steps are described on t
 If you need any help or want new features, you can join the [Discord support server](https://discord.gg/rzzd76c)
 
 
+## Misc
 [Demo server hosted thanks to MtxServ ![MtxServ](https://cdn.discordapp.com/attachments/867823347555368981/867895810712272916/Large_Banner_EN.png)](https://mtxserv.denisd3d.ml/)
