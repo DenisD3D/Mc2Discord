@@ -189,8 +189,8 @@ jobs:
           modrinth-featured: true
           modrinth-unfeature-mode: intersection
 
-          curseforge-id: 325235
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+#           curseforge-id: 325235
+#           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
           files-primary: mc2discord-forge-1.12.2-*.jar
 
@@ -210,8 +210,8 @@ jobs:
           modrinth-featured: true
           modrinth-unfeature-mode: intersection
 
-          curseforge-id: 325235
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+#           curseforge-id: 325235
+#           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
           files-primary: mc2discord-forge-1.16.x-*.jar
 
@@ -235,8 +235,8 @@ jobs:
           modrinth-featured: true
           modrinth-unfeature-mode: intersection
 
-          curseforge-id: 325235
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+#           curseforge-id: 325235
+#           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
           files-primary: mc2discord-forge-1.18.x-*.jar
 
@@ -258,8 +258,8 @@ jobs:
           modrinth-featured: true
           modrinth-unfeature-mode: intersection
 
-          curseforge-id: 325235
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+#           curseforge-id: 325235
+#           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
           files-primary: mc2discord-forge-1.19.x-*.jar
 
