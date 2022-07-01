@@ -24,8 +24,9 @@ Link your Minecraft server chat with your Discord
 
 ## Try without installing
 Join the official demo server hosted by MtxServ
- * Connect to demo-m2d.denisd3d.ml with minecraft 1.19.1 Vanilla
  * Join the demo discord channel [#access-demo](https://discord.gg/rzzd76c)
+ * Start the sever with /start command (server is stopped when nobody use it)
+ * Connect to demo-m2d.denisd3d.ml with minecraft 1.19.1 Vanilla
 
 ## Installation
 A quick configuration is mandatory for the mod to work. Steps are described on the wiki: https://github.com/DenisD3D/Mc2Discord/wiki
