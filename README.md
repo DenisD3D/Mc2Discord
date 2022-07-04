@@ -38,6 +38,9 @@ A quick configuration is mandatory for the mod to work. Steps are described on t
 
 If you need any help or want new features, you can join the [Discord support server](https://discord.gg/rzzd76c)
 
+You can also watch the video tutorial: 
+
+[![Watch the video](https://img.youtube.com/vi/PI9j-rwiHoo/0.jpg)](https://youtu.be/PI9j-rwiHoo)
 
 ## Misc
 ### Links
