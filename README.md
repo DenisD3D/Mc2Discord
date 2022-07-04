@@ -40,7 +40,9 @@ If you need any help or want new features, you can join the [Discord support ser
 
 You can also watch the video tutorial: 
 
-[![Watch the video](https://img.youtube.com/vi/PI9j-rwiHoo/0.jpg)](https://youtu.be/PI9j-rwiHoo)
+<a href="https://youtu.be/PI9j-rwiHoo">
+<img src="https://user-images.githubusercontent.com/35769613/177222845-63e42dd7-1486-4463-9861-f8c53fa8bb84.png" width="50%">
+</a>
 
 ## Misc
 ### Links
