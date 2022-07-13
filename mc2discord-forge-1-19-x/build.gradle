@@ -68,7 +68,7 @@ repositories {
 }
 
 dependencies {
-    minecraft('net.minecraftforge:forge:1.19-41.0.45')
+    minecraft('net.minecraftforge:forge:1.19-41.0.98')
 
     library('ml.denisd3d:mc2discord-core')
 

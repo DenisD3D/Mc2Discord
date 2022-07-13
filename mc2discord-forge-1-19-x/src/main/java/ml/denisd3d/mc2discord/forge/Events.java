@@ -1,5 +1,6 @@
 package ml.denisd3d.mc2discord.forge;
 
+import ml.denisd3d.mc2discord.core.M2DUtils;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
 import ml.denisd3d.mc2discord.core.entities.Advancement;
 import ml.denisd3d.mc2discord.core.entities.Death;
@@ -24,36 +25,38 @@ public class Events {
     @SubscribeEvent
     public static void onMinecraftChatMessageEvent(ServerChatEvent event) {
         if (event.getPlayer() == null) {
+            if (!M2DUtils.canHandleEvent())
+                return;
             Mc2Discord.INSTANCE.messageManager.sendInfoMessage(event.getMessage());
         } else {
             MinecraftEvents.onMinecraftChatMessageEvent(event.getMessage(), new Player(event.getPlayer()
                     .getGameProfile()
-                    .getName(), event.getPlayer().getDisplayName().getString(), Optional.ofNullable(event.getPlayer()
+                    .getName(), event.getPlayer().getDisplayName().getString(), event.getPlayer()
                     .getGameProfile()
-                    .getId()).orElse(null)));
+                    .getId()));
         }
     }
 
     @SubscribeEvent
     public static void onPlayerJoinEvent(PlayerEvent.PlayerLoggedInEvent event) {
-        MinecraftEvents.onPlayerJoinEvent(new Player(event.getPlayer().getGameProfile().getName(), event.getPlayer()
+        MinecraftEvents.onPlayerJoinEvent(new Player(event.getEntity().getGameProfile().getName(), event.getEntity()
                 .getDisplayName()
-                .getString(), Optional.ofNullable(event.getPlayer().getGameProfile().getId()).orElse(null)));
+                .getString(), event.getEntity().getGameProfile().getId()));
     }
 
     @SubscribeEvent
     public static void onPlayerLeaveEvent(PlayerEvent.PlayerLoggedOutEvent event) {
-        MinecraftEvents.onPlayerLeaveEvent(new Player(event.getPlayer().getGameProfile().getName(), event.getPlayer()
+        MinecraftEvents.onPlayerLeaveEvent(new Player(event.getEntity().getGameProfile().getName(), event.getEntity()
                 .getDisplayName()
-                .getString(), Optional.ofNullable(event.getPlayer().getGameProfile().getId()).orElse(null)));
+                .getString(), event.getEntity().getGameProfile().getId()));
     }
 
     @SubscribeEvent
     public static void onPlayerDieEvent(LivingDeathEvent event) {
-        if (event.getEntityLiving() instanceof net.minecraft.world.entity.player.Player player) {
+        if (event.getEntity() instanceof net.minecraft.world.entity.player.Player player) {
             MinecraftEvents.onPlayerDieEvent(
                     new Player(player.getGameProfile().getName(), player.getDisplayName()
-                            .getString(), Optional.ofNullable(player.getGameProfile().getId()).orElse(null)),
+                            .getString(), player.getGameProfile().getId()),
                     new Death(event.getSource().msgId, player.getCombatTracker()
                             .getDeathMessage()
                             .getString(), player.getCombatTracker()
@@ -69,9 +72,9 @@ public class Events {
     public static void onAdvancementEvent(AdvancementEvent event) {
         if (event.getAdvancement().getDisplay() != null && event.getAdvancement().getDisplay().shouldAnnounceChat()) {
             MinecraftEvents.onAdvancementEvent(
-                    new Player(event.getPlayer().getGameProfile().getName(), event.getPlayer()
+                    new Player(event.getEntity().getGameProfile().getName(), event.getEntity()
                             .getDisplayName()
-                            .getString(), Optional.ofNullable(event.getPlayer().getGameProfile().getId()).orElse(null)),
+                            .getString(), event.getEntity().getGameProfile().getId()),
                     new Advancement(event.getAdvancement().getId().getPath(), event.getAdvancement()
                             .getChatComponent()
                             .getString(), event.getAdvancement()
