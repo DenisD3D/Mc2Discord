@@ -29,20 +29,30 @@ import java.util.regex.Pattern;
 
 public class MinecraftImpl implements IMinecraft {
 
-    final Pattern pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+    final Pattern url_pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+    final Pattern color_pattern = Pattern.compile("\\$\\{color_start_(#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})}(.+?)\\$\\{color_end}");
+    final Pattern both_pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]|\\$\\{color_start_(#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})}(.+?)\\$\\{color_end}");
 
     @Override
     public void sendMessage(String content, HashMap<String, String> attachments) {
-        Matcher matcher = pattern.matcher(content);
+        Matcher matcher = both_pattern.matcher(content);
         ITextComponent textComponent = new TextComponentString("");
         int previous_end = 0;
 
         while (matcher.find()) {
             textComponent.appendSibling(new TextComponentString(content.substring(previous_end, matcher.start())));
             previous_end = matcher.end();
-            textComponent.appendSibling(new TextComponentString(matcher.group()).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, matcher.group()))
-                    .setColor(TextFormatting.BLUE)
-                    .setUnderlined(true)));
+
+            Matcher url_matcher = url_pattern.matcher(content.substring(matcher.start(), matcher.end()));
+            Matcher color_matcher = color_pattern.matcher(content.substring(matcher.start(), matcher.end()));
+
+            if (url_matcher.matches()) {
+                textComponent.appendSibling(new TextComponentString(matcher.group()).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, matcher.group()))
+                        .setColor(TextFormatting.BLUE)
+                        .setUnderlined(true)));
+            } else if (color_matcher.matches()) {
+                textComponent.appendSibling(new TextComponentString(color_matcher.group(2)));
+            }
         }
         textComponent.appendSibling(new TextComponentString(content.substring(previous_end) + (attachments.isEmpty() ? "" : " ")));
 

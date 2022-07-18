@@ -3,8 +3,10 @@ package ml.denisd3d.mc2discord.core.events;
 import discord4j.core.event.domain.guild.MemberLeaveEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.entity.Attachment;
+import discord4j.core.object.entity.Role;
 import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.Webhook;
+import discord4j.rest.util.Color;
 import ml.denisd3d.mc2discord.api.M2DPluginHelper;
 import ml.denisd3d.mc2discord.core.M2DUtils;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
@@ -39,7 +41,7 @@ public class DiscordEvents {
                                     .discriminator(), messageCreateEvent.getMessage().getUserData().username(), messageCreateEvent.getMessage()
                                     .getUserData()
                                     .avatar()
-                                    .orElse(""));
+                                    .orElse(""), 16777215);
                             Message message = new Message(messageCreateEvent.getMessage().getContent());
                             HashMap<String, String> attachments = new HashMap<>();
                             for (Attachment attachment : messageCreateEvent.getMessage().getAttachments()) {
@@ -133,20 +135,22 @@ public class DiscordEvents {
                         .asLong() && (channel.subscriptions.contains("chat") || channel.subscriptions.contains("discord_announcement")))) // The message isn't in a chat channel or a discord_announcement channel
             return;
 
-        Member member = new Member(author.getUsername(), author.getDiscriminator(), messageCreateEvent.getMember()
-                .map(discord4j.core.object.entity.Member::getDisplayName)
-                .orElse(author.getUsername()), author.getAvatarUrl());
-        Message message = new Message(M2DUtils.replaceAllMentions(messageCreateEvent.getMessage().getContent(), messageCreateEvent.getMessage()
-                .getMemberMentions()));
-        HashMap<String, String> attachments = new HashMap<>();
-        for (Attachment attachment : messageCreateEvent.getMessage().getAttachments()) {
-            attachments.put(attachment.getFilename(), attachment.getUrl());
-        }
-        Mc2Discord.INSTANCE.iMinecraft.sendMessage(Entity.replace(Mc2Discord.INSTANCE.config.style.minecraft_chat_format, Arrays.asList(member, message)), attachments);
+        messageCreateEvent.getMember().get().getHighestRole().map(Role::getColor).map(Color::getRGB).defaultIfEmpty(16777215).subscribe(integer -> {
+            Member member = new Member(author.getUsername(), author.getDiscriminator(), messageCreateEvent.getMember()
+                    .map(discord4j.core.object.entity.Member::getDisplayName)
+                    .orElse(author.getUsername()), author.getAvatarUrl(), integer);
+            Message message = new Message(M2DUtils.replaceAllMentions(messageCreateEvent.getMessage().getContent(), messageCreateEvent.getMessage()
+                    .getMemberMentions()));
+            HashMap<String, String> attachments = new HashMap<>();
+            for (Attachment attachment : messageCreateEvent.getMessage().getAttachments()) {
+                attachments.put(attachment.getFilename(), attachment.getUrl());
+            }
+            Mc2Discord.INSTANCE.iMinecraft.sendMessage(Entity.replace(Mc2Discord.INSTANCE.config.style.minecraft_chat_format, Arrays.asList(member, message)), attachments);
+        });
     }
 
     public static void onDiscordMemberLeave(MemberLeaveEvent memberLeaveEvent) {
-        if (Mc2Discord.INSTANCE.m2dAccount == null) {
+        if (Mc2Discord.INSTANCE.m2dAccount == null || !Mc2Discord.INSTANCE.config.features.account_linking || Mc2Discord.INSTANCE.config.account.guild_id == 0) {
             return;
         }
         Mc2Discord.INSTANCE.m2dAccount.onMemberLeave(memberLeaveEvent);

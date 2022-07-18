@@ -12,7 +12,6 @@ import ml.denisd3d.mc2discord.forge.commands.HelpCommandImpl;
 import ml.denisd3d.mc2discord.forge.storage.HiddenPlayerList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.CrashReport;
-import net.minecraft.Util;
 import net.minecraft.network.chat.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,7 +31,9 @@ public class MinecraftImpl implements IMinecraft {
 
     private static final File FILE_HIDDEN_PLAYERS = new File("hidden-players.json");
     public final HiddenPlayerList hiddenPlayerList = new HiddenPlayerList(FILE_HIDDEN_PLAYERS);
-    final Pattern pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+    final Pattern url_pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+    final Pattern color_pattern = Pattern.compile("\\$\\{color_start_(#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})}(.+?)\\$\\{color_end}");
+    final Pattern both_pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]|\\$\\{color_start_(#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})}(.+?)\\$\\{color_end}");
     private final IAccount iAccount = new AccountImpl();
 
     public MinecraftImpl() {
@@ -58,17 +59,27 @@ public class MinecraftImpl implements IMinecraft {
 
     @Override
     public void sendMessage(String content, HashMap<String, String> attachments) {
-        Matcher matcher = pattern.matcher(content);
+        Matcher matcher = both_pattern.matcher(content);
         MutableComponent textComponent = Component.literal("");
-        int previous_end = 0;
 
+        int previous_end = 0;
         while (matcher.find()) {
             textComponent.append(Component.literal(content.substring(previous_end, matcher.start())));
             previous_end = matcher.end();
-            textComponent.append(Component.literal(matcher.group()).withStyle(style -> style
-                    .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, matcher.group()))
-                    .withColor(TextColor.fromLegacyFormat(ChatFormatting.BLUE))
-                    .withUnderlined(true)));
+
+
+            Matcher url_matcher = url_pattern.matcher(content.substring(matcher.start(), matcher.end()));
+            Matcher color_matcher = color_pattern.matcher(content.substring(matcher.start(), matcher.end()));
+
+            if (url_matcher.matches()) {
+                textComponent.append(Component.literal(matcher.group()).withStyle(style -> style
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, matcher.group()))
+                        .withColor(TextColor.fromLegacyFormat(ChatFormatting.BLUE))
+                        .withUnderlined(true)));
+            } else if (color_matcher.matches()) {
+                textComponent.append(Component.literal(color_matcher.group(2)).withStyle(style -> style
+                        .withColor(TextColor.parseColor(color_matcher.group(1)))));
+            }
         }
         textComponent.append(Component.literal(content.substring(previous_end) + (attachments.isEmpty() ? "" : " ")));
 
@@ -76,6 +87,8 @@ public class MinecraftImpl implements IMinecraft {
                 .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url))
                 .withColor(TextColor.fromLegacyFormat(ChatFormatting.BLUE))
                 .withUnderlined(true))));
+
+
         ServerLifecycleHooks.getCurrentServer()
                 .getPlayerList()
                 .broadcastSystemMessage(textComponent, ChatType.SYSTEM);

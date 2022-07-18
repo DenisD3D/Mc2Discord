@@ -3,9 +3,11 @@ package ml.denisd3d.mc2discord.core.account;
 import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.guild.MemberLeaveEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.entity.Role;
 import discord4j.core.object.entity.User;
 import discord4j.core.spec.GuildMemberEditSpec;
 import discord4j.rest.http.client.ClientException;
+import discord4j.rest.util.Color;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
 import ml.denisd3d.mc2discord.core.entities.Entity;
 import ml.denisd3d.mc2discord.core.entities.Member;
@@ -58,8 +60,7 @@ public class M2DAccount {
                 codes.put(gameProfile_uuid, code);
             }
 
-            return Entity.replace(Mc2Discord.INSTANCE.config.account.messages.link_get_code, Collections.emptyList())
-                    .replace("${code}", code);
+            return Entity.replace(Mc2Discord.INSTANCE.config.account.messages.link_get_code, Collections.emptyList()).replace("${code}", code);
         }
     }
 
@@ -70,8 +71,7 @@ public class M2DAccount {
                 if (codes.containsValue(message.substring("!code ".length()))) {
                     UUID uuid = codes.entrySet()
                             .stream()
-                            .filter(uuidStringEntry -> uuidStringEntry.getValue()
-                                    .equals(message.substring("!code ".length())))
+                            .filter(uuidStringEntry -> uuidStringEntry.getValue().equals(message.substring("!code ".length())))
                             .map(Map.Entry::getKey)
                             .findFirst()
                             .orElse(null);
@@ -84,8 +84,7 @@ public class M2DAccount {
                                     .flatMapMany(member -> Mono.fromSupplier(() -> Mc2Discord.INSTANCE.config.account.policies)
                                             .flatMapMany(Flux::fromIterable)
                                             .filter(policy -> policy.required_roles_id.size() == 0 || (member.getRoleIds()
-                                                    .size() != 0 && member.getRoleIds()
-                                                    .containsAll(policy.required_roles_id)))
+                                                    .size() != 0 && member.getRoleIds().containsAll(policy.required_roles_id)))
                                             .switchIfEmpty(event.getMessage()
                                                     .getRestChannel()
                                                     .createMessage(Mc2Discord.INSTANCE.config.account.messages.missing_roles)
@@ -99,16 +98,10 @@ public class M2DAccount {
                             validate_link(uuid, event);
                         }
                     } else {
-                        event.getMessage()
-                                .getRestChannel()
-                                .createMessage("An unexpected error occurred! Please try again")
-                                .subscribe();
+                        event.getMessage().getRestChannel().createMessage("An unexpected error occurred! Please try again").subscribe();
                     }
                 } else {
-                    event.getMessage()
-                            .getRestChannel()
-                            .createMessage(Mc2Discord.INSTANCE.config.account.messages.link_invalid_code)
-                            .subscribe();
+                    event.getMessage().getRestChannel().createMessage(Mc2Discord.INSTANCE.config.account.messages.link_invalid_code).subscribe();
                 }
             }
             return true;
@@ -125,18 +118,12 @@ public class M2DAccount {
                 .orElse(0L) + ", MC: " + uuid + ")");
 
         if (!iAccount.add(uuid, event.getMessage().getAuthor().get().getId().asLong())) {
-            event.getMessage()
-                    .getRestChannel()
-                    .createMessage("Failed to link account")
-                    .subscribe();
+            event.getMessage().getRestChannel().createMessage("Failed to link account").subscribe();
             Mc2Discord.logger.error("Failed to link account");
             return;
         }
 
-        event.getMessage()
-                .getRestChannel()
-                .createMessage(Mc2Discord.INSTANCE.config.account.messages.link_successful)
-                .subscribe();
+        event.getMessage().getRestChannel().createMessage(Mc2Discord.INSTANCE.config.account.messages.link_successful).subscribe();
         codes.remove(uuid);
 
         iAccount.sendLinkSuccess(uuid);
@@ -160,15 +147,16 @@ public class M2DAccount {
                         .flatMap(member::isHigher)
                         .flatMap(isHigher -> {
                             if (!isHigher) {
-                                return member.edit(GuildMemberEditSpec.builder()
-                                        .nicknameOrNull(Entity.replace(Mc2Discord.INSTANCE.config.account.discord_pseudo_format, Arrays.asList(new Player(name, name, uuid), new Member(member.getUsername(), member.getDiscriminator(), member.getNickname()
-                                                .orElse(""), member.getAvatarUrl()))))
-                                        .build());
+                                return Mono.from(member.getHighestRole()).map(Role::getColor).map(Color::getRGB).defaultIfEmpty(16777215);
                             } else {
                                 Mc2Discord.logger.warn("Can't change pseudo for member " + member.getDisplayName() + " (IG : " + name + ")");
                                 return Mono.empty();
                             }
                         })
+                        .flatMap(integer -> member.edit(GuildMemberEditSpec.builder()
+                                .nicknameOrNull(Entity.replace(Mc2Discord.INSTANCE.config.account.discord_pseudo_format, Arrays.asList(new Player(name, name, uuid), new Member(member.getUsername(), member.getDiscriminator(), member.getNickname()
+                                        .orElse(""), member.getAvatarUrl(), integer))))
+                                .build()))
                         .subscribe());
     }
 

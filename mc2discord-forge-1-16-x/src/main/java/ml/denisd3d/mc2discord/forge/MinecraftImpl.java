@@ -30,7 +30,9 @@ public class MinecraftImpl implements IMinecraft {
 
     private static final File FILE_HIDDEN_PLAYERS = new File("hidden-players.json");
     public final HiddenPlayerList hiddenPlayerList = new HiddenPlayerList(FILE_HIDDEN_PLAYERS);
-    final Pattern pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+    final Pattern url_pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+    final Pattern color_pattern = Pattern.compile("\\$\\{color_start_(#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})}(.+?)\\$\\{color_end}");
+    final Pattern both_pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]|\\$\\{color_start_(#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})}(.+?)\\$\\{color_end}");
     private final IAccount iAccount = new AccountImpl();
 
     public MinecraftImpl() {
@@ -56,17 +58,26 @@ public class MinecraftImpl implements IMinecraft {
 
     @Override
     public void sendMessage(String content, HashMap<String, String> attachments) {
-        Matcher matcher = pattern.matcher(content);
+        Matcher matcher = both_pattern.matcher(content);
         IFormattableTextComponent textComponent = new StringTextComponent("");
         int previous_end = 0;
 
         while (matcher.find()) {
             textComponent.append(new StringTextComponent(content.substring(previous_end, matcher.start())));
             previous_end = matcher.end();
+
+            Matcher url_matcher = url_pattern.matcher(content.substring(matcher.start(), matcher.end()));
+            Matcher color_matcher = color_pattern.matcher(content.substring(matcher.start(), matcher.end()));
+
+            if (url_matcher.matches()) {
             textComponent.append(new StringTextComponent(matcher.group()).withStyle(style -> style
                     .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, matcher.group()))
                     .withColor(Color.fromLegacyFormat(TextFormatting.BLUE))
                     .setUnderlined(true)));
+            } else if (color_matcher.matches()) {
+                textComponent.append(new StringTextComponent(color_matcher.group(2)).withStyle(style -> style
+                        .withColor(Color.parseColor(color_matcher.group(1)))));
+            }
         }
         textComponent.append(new StringTextComponent(content.substring(previous_end) + (attachments.isEmpty() ? "" : " ")));
 

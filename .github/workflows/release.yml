@@ -182,7 +182,7 @@ jobs:
         with:
           name: build
 
-      - uses: Kir-Antipov/mc-publish@v3.0
+      - uses: Kir-Antipov/mc-publish@v3.1
         with:
           modrinth-id: Cfbcv7uF
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
@@ -203,7 +203,7 @@ jobs:
           game-versions: |
             1.12.2
 
-      - uses: Kir-Antipov/mc-publish@v3.0
+      - uses: Kir-Antipov/mc-publish@v3.1
         with:
           modrinth-id: Cfbcv7uF
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
@@ -228,7 +228,7 @@ jobs:
             1.16.4
             1.16.5
 
-      - uses: Kir-Antipov/mc-publish@v3.0
+      - uses: Kir-Antipov/mc-publish@v3.1
         with:
           modrinth-id: Cfbcv7uF
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
@@ -251,7 +251,7 @@ jobs:
             1.18.1
             1.18.2
 
-      - uses: Kir-Antipov/mc-publish@v3.0
+      - uses: Kir-Antipov/mc-publish@v3.1
         with:
           modrinth-id: Cfbcv7uF
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}

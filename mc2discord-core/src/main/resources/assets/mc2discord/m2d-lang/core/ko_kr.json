@@ -60,7 +60,7 @@
     "config.misc.relay_bot_messages.comment": " 다른 봇의 메세지가 마인크래프트 채팅에 보이게 할 지 정의합니다",
     "config.misc.relay_say_me_command.comment": " /say & /me 명령어가 디스코드로 넘어가게 할 지 정의합니다",
     "config.misc.allowed_mention.comment": " 허가된 언급 종류입니다. 지원되는 값 : \"EVERYONE_AND_HERE\", \"ROLE\", \"USER\"\n 예 : [\"ROLE\", \"USER\"]를 입력 시 @everyone & @here를 제외한 모든 언급이 가능합니다",
-    "config.style.minecraft_chat_format.comment": " 마인크래프트 채팅에 보내질 메세지 양식입니다. 전역 변수, 멤버 변수, 그리고 메세지 변수를 사용 가능합니다.",
+    "config.style.minecraft_chat_format.comment": " 마인크래프트 채팅에 보내질 메세지 양식입니다. 전역 변수, 멤버 변수, 그리고 메세지 변수를 사용 가능합니다. You may change the color with '${color_start_COLOR} CONTENT ${color_end}' where COLOR is a hex color or 'top_role' for discord highest role color.",
     "config.style.discord_chat_format.comment": " 웹훅 모드가 비활성화일 경우 디스코드 채팅에 보내질 메세지 양식입니다. 전역 변수, 플레이어 변수, 그리고 메세지 변수를 사용 가능합니다.",
     "config.misc.discord_text.comment": " /discord 명령어로 보내질 메세지",
     "config.misc.discord_text.value": "초대 링크가 설정되어 있지 않습니다",

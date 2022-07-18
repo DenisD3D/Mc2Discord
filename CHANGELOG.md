@@ -1,4 +1,3 @@
-## Mc2Discord 3.2.7
+## Mc2Discord 3.2.8
 ### Fixed
- + 1.19 Support for forge .94 and later du to breaking changes
- + 1.19 Fixed issue with say command when bot isn't started
+ + Add color and top role color feature to mc chat message (except 1.12.2) close #63

@@ -58,7 +58,7 @@
     "config.misc.relay_bot_messages.comment": "Если сообщения от других ботов должны отправляться в minecraft чат",
     "config.misc.relay_say_me_command.comment": "Должна ли команда /say & /me передаваться на Discord",
     "config.misc.allowed_mention.comment": "Список разрешенных типов меншенов. Поддерживаемые значение: \"EVERYONE_AND_HERE\", \"ROLE\", \"USER\"\n Например: [\"ROLE\", \"USER\"] чтобы разрешить все упоминания, кроме @everyone & @here",
-    "config.style.minecraft_chat_format.comment": "Формат сообщений, отправляемых в чате minecraft. Вы можете использовать \"Global variables\", \"Member variables\" и \"Message variable\"",
+    "config.style.minecraft_chat_format.comment": "Формат сообщений, отправляемых в чате minecraft. Вы можете использовать \"Global variables\", \"Member variables\" и \"Message variable\". You may change the color with '${color_start_COLOR} CONTENT ${color_end}' where COLOR is a hex color or 'top_role' for discord highest role color.",
     "config.style.discord_chat_format.comment": "Формат для сообщений чата, отправляемых в Discord, когда режим webhook mode в значении false. Вы можете использовать \"Global variables\", \"Player variables\" и \"Message variable\"",
     "config.misc.discord_text.comment": "Сообщение для команды /discord",
     "config.misc.discord_text.value": "Ссылка на приглашение не установлена",

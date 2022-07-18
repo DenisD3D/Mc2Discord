@@ -32,7 +32,10 @@ public class MinecraftImpl implements IMinecraft {
 
     private static final File FILE_HIDDEN_PLAYERS = new File("hidden-players.json");
     public final HiddenPlayerList hiddenPlayerList = new HiddenPlayerList(FILE_HIDDEN_PLAYERS);
-    final Pattern pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+    final Pattern url_pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
+    final Pattern color_pattern = Pattern.compile("\\$\\{color_start_(#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})}(.+?)\\$\\{color_end}");
+    final Pattern both_pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]|\\$\\{color_start_(#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})}(.+?)\\$\\{color_end}");
+
     private final IAccount iAccount = new AccountImpl();
 
     public MinecraftImpl() {
@@ -58,17 +61,26 @@ public class MinecraftImpl implements IMinecraft {
 
     @Override
     public void sendMessage(String content, HashMap<String, String> attachments) {
-        Matcher matcher = pattern.matcher(content);
+        Matcher matcher = both_pattern.matcher(content);
         BaseComponent textComponent = new TextComponent("");
         int previous_end = 0;
 
         while (matcher.find()) {
             textComponent.append(new TextComponent(content.substring(previous_end, matcher.start())));
             previous_end = matcher.end();
-            textComponent.append(new TextComponent(matcher.group()).withStyle(style -> style
-                    .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, matcher.group()))
-                    .withColor(TextColor.fromLegacyFormat(ChatFormatting.BLUE))
-                    .setUnderlined(true)));
+
+            Matcher url_matcher = url_pattern.matcher(content.substring(matcher.start(), matcher.end()));
+            Matcher color_matcher = color_pattern.matcher(content.substring(matcher.start(), matcher.end()));
+
+            if (url_matcher.matches()) {
+                textComponent.append(new TextComponent(matcher.group()).withStyle(style -> style
+                        .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, matcher.group()))
+                        .withColor(TextColor.fromLegacyFormat(ChatFormatting.BLUE))
+                        .setUnderlined(true)));
+            } else if (color_matcher.matches()) {
+                textComponent.append(new TextComponent(color_matcher.group(2)).withStyle(style -> style
+                        .withColor(TextColor.parseColor(color_matcher.group(1)))));
+            }
         }
         textComponent.append(new TextComponent(content.substring(previous_end) + (attachments.isEmpty() ? "" : " ")));
 
