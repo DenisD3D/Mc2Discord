@@ -91,7 +91,7 @@ public class MinecraftImpl implements IMinecraft {
 
         ServerLifecycleHooks.getCurrentServer()
                 .getPlayerList()
-                .broadcastSystemMessage(textComponent, ChatType.SYSTEM);
+                .broadcastSystemMessage(textComponent, false);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class MinecraftImpl implements IMinecraft {
         DiscordCommandSource.messageChannelId = messageChannelId;
         DiscordCommandSource.mode = mode;
         ServerLifecycleHooks.getCurrentServer().getCommands()
-                .performCommand(Mc2DiscordForge.commandSource.withPermission(permissionLevel), command);
+                .performPrefixedCommand(Mc2DiscordForge.commandSource.withPermission(permissionLevel), command);
     }
 
     @Override

@@ -6,7 +6,6 @@ import ml.denisd3d.mc2discord.core.entities.Advancement;
 import ml.denisd3d.mc2discord.core.entities.Death;
 import ml.denisd3d.mc2discord.core.entities.Player;
 import ml.denisd3d.mc2discord.core.events.MinecraftEvents;
-import net.minecraft.core.Registry;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.ServerChatEvent;
@@ -15,8 +14,6 @@ import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
 
 import java.util.Optional;
 
@@ -27,9 +24,9 @@ public class Events {
         if (event.getPlayer() == null) {
             if (!M2DUtils.canHandleEvent())
                 return;
-            Mc2Discord.INSTANCE.messageManager.sendInfoMessage(event.getMessage());
+            Mc2Discord.INSTANCE.messageManager.sendInfoMessage(event.getMessage().getString());
         } else {
-            MinecraftEvents.onMinecraftChatMessageEvent(event.getMessage(), new Player(event.getPlayer()
+            MinecraftEvents.onMinecraftChatMessageEvent(event.getMessage().getString(), new Player(event.getPlayer()
                     .getGameProfile()
                     .getName(), event.getPlayer().getDisplayName().getString(), event.getPlayer()
                     .getGameProfile()
