@@ -65,6 +65,8 @@
     "config.style.bot_avatar.comment": " Change l'avatar du bot avec le mode webhook. Il doit s'agir d'une url valide. Vous pouvez utiliser les variables globales",
     "config.style.avatar_api.comment": " Url pour récupérer les avatar des joueurs. Il doit s'agir d'une url valide et non vide. Vous pouvez utiliser les variables globales et les variables du joueur (Player)",
     "config.style.embed_color.comment": " La couleur pour les embeds. Une couleur sous la forme d'un entier ou dans cette liste https://github.com/DenisD3D/Mc2Discord/blob/main/mc2discord-core/src/main/java/ml/denisd3d/mc2discord/core/M2DUtils.java#L102-L134",
+    "config.style.reply_format.value": "En réponse à ${member_nickname}: ",
+    "config.style.reply_format.comment": " Remplace ${reply} dans minecraft_chat_format si le message a un message référencé. Vous pouvez utiliser les variables Global et Member (auteur du message référencé) ici.",
     "config.misc.relay_bot_messages.comment": " Définie si les messages des autres bots doivent être envoyer sur le chat minecraft",
     "config.misc.relay_say_me_command.comment": " Définie si les commandes /say & /me doivent être relayé sur Discord",
     "config.misc.allowed_mention.comment": " Liste des types de mentions autorisé. Valeurs supportés : \"EVERYONE_AND_HERE\", \"ROLE\", \"USER\"\n Ex : [\"ROLE\", \"USER\"] pour autoriser toutes les mentions sauf @everyone & @here",

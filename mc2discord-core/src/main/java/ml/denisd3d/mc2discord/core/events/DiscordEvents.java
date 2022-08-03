@@ -1,7 +1,9 @@
 package ml.denisd3d.mc2discord.core.events;
 
+import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.guild.MemberLeaveEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.MessageReference;
 import discord4j.core.object.entity.Attachment;
 import discord4j.core.object.entity.Role;
 import discord4j.core.object.entity.User;
@@ -47,14 +49,14 @@ public class DiscordEvents {
                             for (Attachment attachment : messageCreateEvent.getMessage().getAttachments()) {
                                 attachments.put(attachment.getFilename(), attachment.getUrl());
                             }
-                            Mc2Discord.INSTANCE.iMinecraft.sendMessage(Entity.replace(Mc2Discord.INSTANCE.config.style.minecraft_chat_format, Arrays.asList(member, message)), attachments);
+                            Mc2Discord.INSTANCE.iMinecraft.sendMessage(Entity.replace(Mc2Discord.INSTANCE.config.style.minecraft_chat_format, Arrays.asList(member, message)), attachments, "", null);
                         }
                     });
             return;
         }
 
         User author = messageCreateEvent.getMessage().getAuthor().get();
-        if (author.getId().asLong() == Mc2Discord.INSTANCE.botId) // The message is from ourself
+        if (author.getId().asLong() == Mc2Discord.INSTANCE.botId) // The message is from ourselves
             return;
 
         if (!Mc2Discord.INSTANCE.config.misc.relay_bot_messages && author.isBot()) // It's a bot message
@@ -145,7 +147,22 @@ public class DiscordEvents {
             for (Attachment attachment : messageCreateEvent.getMessage().getAttachments()) {
                 attachments.put(attachment.getFilename(), attachment.getUrl());
             }
-            Mc2Discord.INSTANCE.iMinecraft.sendMessage(Entity.replace(Mc2Discord.INSTANCE.config.style.minecraft_chat_format, Arrays.asList(member, message)), attachments);
+            Optional<MessageReference> messageReference = messageCreateEvent.getMessage().getMessageReference();
+            if (messageReference.isPresent()) {
+                messageReference.get()
+                        .getClient()
+                        .getMessageById(messageReference.get().getChannelId(), messageReference.get().getMessageId().orElse(Snowflake.of(0)))
+                        .flatMap(discord4j.core.object.entity.Message::getAuthorAsMember)
+                        .subscribe(member1 -> member1.getHighestRole()
+                                .map(Role::getColor)
+                                .map(Color::getRGB)
+                                .defaultIfEmpty(16777215)
+                                .subscribe(integer2 -> Mc2Discord.INSTANCE.iMinecraft.sendMessage(Entity.replace(Mc2Discord.INSTANCE.config.style.minecraft_chat_format, Arrays.asList(member, message)), attachments, Entity.replace(Optional.ofNullable(Mc2Discord.INSTANCE.config.style.reply_format).orElse(""), Collections.singletonList(new Member(member1.getUsername(), member1.getDiscriminator(), member1.getDisplayName(), member1.getAvatarUrl(), integer2))), author.getId()
+                                        .asString())));
+            } else {
+                Mc2Discord.INSTANCE.iMinecraft.sendMessage(Entity.replace(Mc2Discord.INSTANCE.config.style.minecraft_chat_format, Arrays.asList(member, message)), attachments, "", author.getId()
+                        .asString());
+            }
         });
     }
 

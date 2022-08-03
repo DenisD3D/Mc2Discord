@@ -51,7 +51,11 @@ public abstract class Entity {
                     replacement = null;
                 }
             } else {
-                replacement = replacements.get(matcher.group(1).substring(prefix != null ? prefix.length() + 1 : 0));
+                String token = matcher.group(1);
+                if (prefix != null && token.startsWith(prefix)) {
+                    token = token.substring(prefix.length() + 1);
+                }
+                replacement = replacements.get(token);
             }
 
             if (replacement != null) {

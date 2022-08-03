@@ -19,6 +19,7 @@ import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -31,10 +32,11 @@ public class MinecraftImpl implements IMinecraft {
 
     final Pattern url_pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
     final Pattern color_pattern = Pattern.compile("\\$\\{color_start_(#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})}(.+?)\\$\\{color_end}");
-    final Pattern both_pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]|\\$\\{color_start_(#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})}(.+?)\\$\\{color_end}");
+    final Pattern reply_pattern = Pattern.compile("\\$\\{reply}");
+    final Pattern both_pattern = Pattern.compile("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]|\\$\\{color_start_(#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})}(.+?)\\$\\{color_end}|\\$\\{reply}");
 
     @Override
-    public void sendMessage(String content, HashMap<String, String> attachments) {
+    public void sendMessage(String content, HashMap<String, String> attachments, String replyContent, @Nullable String senderId) {
         Matcher matcher = both_pattern.matcher(content);
         ITextComponent textComponent = new TextComponentString("");
         int previous_end = 0;
@@ -45,6 +47,7 @@ public class MinecraftImpl implements IMinecraft {
 
             Matcher url_matcher = url_pattern.matcher(content.substring(matcher.start(), matcher.end()));
             Matcher color_matcher = color_pattern.matcher(content.substring(matcher.start(), matcher.end()));
+            Matcher reply_matcher = reply_pattern.matcher(content.substring(matcher.start(), matcher.end()));
 
             if (url_matcher.matches()) {
                 textComponent.appendSibling(new TextComponentString(matcher.group()).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, matcher.group()))
@@ -52,9 +55,15 @@ public class MinecraftImpl implements IMinecraft {
                         .setUnderlined(true)));
             } else if (color_matcher.matches()) {
                 textComponent.appendSibling(new TextComponentString(color_matcher.group(2)));
+            } else if (reply_matcher.matches()) {
+                textComponent.appendSibling(new TextComponentString(replyContent));
             }
         }
         textComponent.appendSibling(new TextComponentString(content.substring(previous_end) + (attachments.isEmpty() ? "" : " ")));
+
+        if (senderId != null) {
+            textComponent.setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "<@" + senderId + "> ")));
+        }
 
         attachments.forEach((filename, url) -> textComponent.appendSibling(new TextComponentString("[" + filename + "]").setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url))
                 .setColor(TextFormatting.BLUE)

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IMinecraft {
-    void sendMessage(String content, HashMap<String, String> attachments);
+    void sendMessage(String content, HashMap<String, String> attachments, String replyContent, @Nullable String senderId);
 
     void executeCommand(String command, int permissionLevel, long messageChannelId, Channels.SendMode mode);
 

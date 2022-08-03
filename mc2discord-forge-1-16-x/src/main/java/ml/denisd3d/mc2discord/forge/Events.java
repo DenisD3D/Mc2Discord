@@ -29,7 +29,7 @@ public class Events {
     public static void onPlayerJoinEvent(PlayerEvent.PlayerLoggedInEvent event) {
         MinecraftEvents.onPlayerJoinEvent(new Player(event.getPlayer().getGameProfile().getName(), event.getPlayer()
                 .getDisplayName()
-                .getString(), Optional.ofNullable(event.getPlayer().getGameProfile().getId()).orElse(null)));
+                .getString(), event.getPlayer().getGameProfile().getId()));
     }
 
     @SubscribeEvent
