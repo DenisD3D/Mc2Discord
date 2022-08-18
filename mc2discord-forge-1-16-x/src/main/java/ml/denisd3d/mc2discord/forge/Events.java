@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.Optional;
 
-@Mod.EventBusSubscriber(modid = "mc2discord", value = Dist.DEDICATED_SERVER, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber()
 public class Events {
     @SubscribeEvent
     public static void onMinecraftChatMessageEvent(ServerChatEvent event) {

@@ -9,6 +9,7 @@
         "account.PlayerListMixin",
         "core.MixinCrashReporterExtender",
         "core.MixinMeCommand",
-        "core.MixinSayCommand"
+        "core.MixinSayCommand",
+        "core.TellRawCommandMixin"
     ]
 }

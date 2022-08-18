@@ -48,6 +48,21 @@ minecraft {
                 }
             }
         }
+        client {
+            workingDirectory file('run_client')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'info'
+            arg "-mixin.config=mixins.mc2discord.json"
+            singleInstance true
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
+
+            mods {
+                mc2discord {
+                    source sourceSets.main
+                }
+            }
+        }
     }
 }
 

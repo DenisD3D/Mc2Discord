@@ -15,29 +15,29 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.Optional;
 
-@Mod.EventBusSubscriber(modid = "mc2discord", value = Dist.DEDICATED_SERVER, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber()
 public class Events {
     @SubscribeEvent
     public static void onMinecraftChatMessageEvent(ServerChatEvent event) {
         MinecraftEvents.onMinecraftChatMessageEvent(event.getMessage(), new Player(event.getPlayer()
                 .getGameProfile()
-                .getName(), event.getPlayer().getDisplayName().getString(), Optional.ofNullable(event.getPlayer()
+                .getName(), event.getPlayer().getDisplayName().getString(), event.getPlayer()
                 .getGameProfile()
-                .getId()).orElse(null)));
+                .getId()));
     }
 
     @SubscribeEvent
     public static void onPlayerJoinEvent(PlayerEvent.PlayerLoggedInEvent event) {
         MinecraftEvents.onPlayerJoinEvent(new Player(event.getPlayer().getGameProfile().getName(), event.getPlayer()
                 .getDisplayName()
-                .getString(), Optional.ofNullable(event.getPlayer().getGameProfile().getId()).orElse(null)));
+                .getString(), event.getPlayer().getGameProfile().getId()));
     }
 
     @SubscribeEvent
     public static void onPlayerLeaveEvent(PlayerEvent.PlayerLoggedOutEvent event) {
         MinecraftEvents.onPlayerLeaveEvent(new Player(event.getPlayer().getGameProfile().getName(), event.getPlayer()
                 .getDisplayName()
-                .getString(), Optional.ofNullable(event.getPlayer().getGameProfile().getId()).orElse(null)));
+                .getString(), event.getPlayer().getGameProfile().getId()));
     }
 
     @SubscribeEvent
@@ -45,7 +45,7 @@ public class Events {
         if (event.getEntityLiving() instanceof net.minecraft.world.entity.player.Player player) {
             MinecraftEvents.onPlayerDieEvent(
                     new Player(player.getGameProfile().getName(), player.getDisplayName()
-                            .getString(), Optional.ofNullable(player.getGameProfile().getId()).orElse(null)),
+                            .getString(), player.getGameProfile().getId()),
                     new Death(event.getSource().msgId, player.getCombatTracker()
                             .getDeathMessage()
                             .getString(), player.getCombatTracker()
@@ -63,7 +63,7 @@ public class Events {
             MinecraftEvents.onAdvancementEvent(
                     new Player(event.getPlayer().getGameProfile().getName(), event.getPlayer()
                             .getDisplayName()
-                            .getString(), Optional.ofNullable(event.getPlayer().getGameProfile().getId()).orElse(null)),
+                            .getString(), event.getPlayer().getGameProfile().getId()),
                     new Advancement(event.getAdvancement().getId().getPath(), event.getAdvancement()
                             .getChatComponent()
                             .getString(), event.getAdvancement()

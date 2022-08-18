@@ -28,7 +28,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 
 @Mod("mc2discord")
-@Mod.EventBusSubscriber(Dist.DEDICATED_SERVER)
+@Mod.EventBusSubscriber()
 public class Mc2DiscordForge {
 
     private static final Logger LOGGER = LogManager.getLogger();

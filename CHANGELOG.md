@@ -1,5 +1,9 @@
-## Mc2Discord 3.2.9
+## Mc2Discord 3.2.10
 ### Added
- + 1.19.1 Support
- + Add a text when a message is a reply (you must delete the minecraft_chat_format line in the config to enjoy the feature - new default value with ${reply} variable included)
- + Add ability to click a message from discord to mention the author of that message
+ + Enable mod on client side
+ + Relay tellraw @a command on discord
+
+### Fixed
+ + Fix crash on client side
+ + 1.19 Fix message sending multiple times with chat preview enabled
+ + Updated github publish action
