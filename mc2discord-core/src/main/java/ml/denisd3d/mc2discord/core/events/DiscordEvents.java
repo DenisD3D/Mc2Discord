@@ -137,7 +137,7 @@ public class DiscordEvents {
                         .asLong() && (channel.subscriptions.contains("chat") || channel.subscriptions.contains("discord_announcement")))) // The message isn't in a chat channel or a discord_announcement channel
             return;
 
-        messageCreateEvent.getMember().get().getHighestRole().map(Role::getColor).map(Color::getRGB).defaultIfEmpty(16777215).subscribe(integer -> {
+        M2DUtils.getMemberColor(messageCreateEvent.getMember().get()).subscribe(integer -> {
             Member member = new Member(author.getUsername(), author.getDiscriminator(), messageCreateEvent.getMember()
                     .map(discord4j.core.object.entity.Member::getDisplayName)
                     .orElse(author.getUsername()), author.getAvatarUrl(), integer);
@@ -153,10 +153,7 @@ public class DiscordEvents {
                         .getClient()
                         .getMessageById(messageReference.get().getChannelId(), messageReference.get().getMessageId().orElse(Snowflake.of(0)))
                         .flatMap(discord4j.core.object.entity.Message::getAuthorAsMember)
-                        .subscribe(member1 -> member1.getHighestRole()
-                                .map(Role::getColor)
-                                .map(Color::getRGB)
-                                .defaultIfEmpty(16777215)
+                        .subscribe(member1 -> M2DUtils.getMemberColor(messageCreateEvent.getMember().get())
                                 .subscribe(integer2 -> Mc2Discord.INSTANCE.iMinecraft.sendMessage(Entity.replace(Mc2Discord.INSTANCE.config.style.minecraft_chat_format, Arrays.asList(member, message)), attachments, Entity.replace(Optional.ofNullable(Mc2Discord.INSTANCE.config.style.reply_format).orElse(""), Collections.singletonList(new Member(member1.getUsername(), member1.getDiscriminator(), member1.getDisplayName(), member1.getAvatarUrl(), integer2))), author.getId()
                                         .asString())));
             } else {
