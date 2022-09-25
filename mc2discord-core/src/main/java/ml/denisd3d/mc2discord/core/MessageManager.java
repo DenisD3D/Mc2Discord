@@ -59,9 +59,9 @@ public class MessageManager {
         Mono<TextChannel> channelMono = this.instance.client.getChannelById(Snowflake.of(channelId)).ofType(TextChannel.class);
         channelMono.flatMapMany(textChannel -> textChannel.getWebhooks())
                 .filter(webhook -> webhook.getName()
-                        .filter(s -> s.equals("Mc2Discord - " + Mc2Discord.INSTANCE.botName + "#" + Mc2Discord.INSTANCE.botDiscriminator))
+                        .filter(s -> s.equals("Mc2Dis Webhook - " + Mc2Discord.INSTANCE.botName + "#" + Mc2Discord.INSTANCE.botDiscriminator))
                         .isPresent())
-                .switchIfEmpty(Mono.defer(() -> channelMono.flatMap(textChannel -> textChannel.createWebhook(webhookCreateSpec -> webhookCreateSpec.setName("Mc2Discord - " + Mc2Discord.INSTANCE.botName + "#" + Mc2Discord.INSTANCE.botDiscriminator)))))
+                .switchIfEmpty(Mono.defer(() -> channelMono.flatMap(textChannel -> textChannel.createWebhook(webhookCreateSpec -> webhookCreateSpec.setName("Mc2Dis Webhook - " + Mc2Discord.INSTANCE.botName + "#" + Mc2Discord.INSTANCE.botDiscriminator)))))
                 .next()
                 .subscribe(webhook -> M2DUtils.breakStringToLines(content, 2000, useCodeblocks)
                         .forEach(s -> webhook.execute(WebhookExecuteSpec.builder()
