@@ -2,9 +2,13 @@ package ml.denisd3d.mc2discord.core;
 
 import discord4j.common.util.TokenUtil;
 import discord4j.core.object.entity.PartialMember;
+import discord4j.core.object.entity.Role;
+import discord4j.core.util.OrderUtil;
 import discord4j.gateway.GatewayObserver;
 import discord4j.rest.util.Color;
 import org.apache.commons.lang3.math.NumberUtils;
+import reactor.core.publisher.Mono;
+import reactor.math.MathFlux;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -195,5 +199,9 @@ public class M2DUtils {
         }
         matcher.appendTail(buffer);
         return buffer.toString();
+    }
+
+    public static Mono<Integer> getMemberColor(PartialMember member) {
+        return MathFlux.max(member.getRoles().filter(role -> role.getColor().getRGB() != 0), OrderUtil.ROLE_ORDER).map(Role::getColor).map(Color::getRGB).defaultIfEmpty(16777215);
     }
 }

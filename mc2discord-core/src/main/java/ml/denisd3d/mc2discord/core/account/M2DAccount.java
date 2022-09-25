@@ -9,6 +9,7 @@ import discord4j.core.spec.GuildMemberEditSpec;
 import discord4j.rest.http.client.ClientException;
 import discord4j.rest.util.Color;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
+import ml.denisd3d.mc2discord.core.M2DUtils;
 import ml.denisd3d.mc2discord.core.entities.Entity;
 import ml.denisd3d.mc2discord.core.entities.Member;
 import ml.denisd3d.mc2discord.core.entities.Player;
@@ -147,7 +148,7 @@ public class M2DAccount {
                         .flatMap(member::isHigher)
                         .flatMap(isHigher -> {
                             if (!isHigher) {
-                                return Mono.from(member.getHighestRole()).map(Role::getColor).map(Color::getRGB).defaultIfEmpty(16777215);
+                                return M2DUtils.getMemberColor(member);
                             } else {
                                 Mc2Discord.logger.warn("Can't change pseudo for member " + member.getDisplayName() + " (IG : " + name + ")");
                                 return Mono.empty();
