@@ -34,7 +34,7 @@ public class DiscordEvents {
                     .onErrorReturn(throwable -> true, Optional.of(""))
                     .map(s -> s.orElse(""))
                     .subscribe(s -> {
-                        if (Mc2Discord.INSTANCE.config.misc.relay_bot_messages && !s.equals("Mc2Discord - " + Mc2Discord.INSTANCE.botName + "#" + Mc2Discord.INSTANCE.botDiscriminator) && Mc2Discord.INSTANCE.config.channels.channels.stream()
+                        if (Mc2Discord.INSTANCE.config.misc.relay_bot_messages && !s.equals("Mc2Dis - " + Mc2Discord.INSTANCE.botName + "#" + Mc2Discord.INSTANCE.botDiscriminator) && Mc2Discord.INSTANCE.config.channels.channels.stream()
                                 .anyMatch(channel -> channel.channel_id == messageCreateEvent.getMessage()
                                         .getChannelId()
                                         .asLong() && (channel.subscriptions.contains("chat") || channel.subscriptions.contains("discord_announcement")))) {
