@@ -78,6 +78,7 @@ minecraft.runs.all {
 }
 
 repositories {
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     mavenCentral()
     maven { url = 'https://jitpack.io' }
 }
@@ -88,12 +89,6 @@ dependencies {
     library('ml.denisd3d:mc2discord-core')
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor' // Mixin
-
-    implementation(group: 'io.netty', name: 'netty-all') {
-        version {
-            strictly '4.1.65.Final'
-        }
-    } // Fix compatibility between Minecraft & Reactor netty version in dev
 
     //DISCORD
     library(group: 'com.discord4j', name: 'discord4j-core', version: project.discord4jVersion)

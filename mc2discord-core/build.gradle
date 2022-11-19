@@ -16,6 +16,7 @@ archivesBaseName = modid + '-core'
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 repositories {
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     mavenCentral()
     maven { url = 'https://jitpack.io' }
 }
