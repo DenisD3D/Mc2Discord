@@ -14,10 +14,10 @@ public class Misc {
     @PreserveNotNull
     public boolean relay_bot_messages = false;
 
-    @Path("relay_say_me_command")
-    @Comment("config.misc.relay_say_me_command.comment")
+    @Path("relay_say_me_tellraw_command")
+    @Comment("config.misc.relay_say_me_tellraw_command.comment")
     @PreserveNotNull
-    public boolean relay_say_me_command = true;
+    public boolean relay_say_me_tellraw_command = true;
 
     @Path("allowed_mention")
     @Comment("config.misc.allowed_mention.comment")

@@ -70,7 +70,7 @@
     "config.style.reply_format.value": "Replying to ${member_nickname}: ",
     "config.style.reply_format.comment": " Replace ${reply} in minecraft_chat_format if the message has a referenced message. You may use Global variables and Member (author of the referenced message) variables here.",
     "config.misc.relay_bot_messages.comment": " Define if other bots messages must be sent in the minecraft chat",
-    "config.misc.relay_say_me_command.comment": " Define if /say & /me command must be relayed on Discord",
+    "config.misc.relay_say_me_tellraw_command.comment": " Define if /say & /me command must be relayed on Discord",
     "config.misc.allowed_mention.comment": " List of allowed mention type. Supported value : \"EVERYONE_AND_HERE\", \"ROLE\", \"USER\"\n Eg : [\"ROLE\", \"USER\"] to allow all mention except @everyone & @here",
     "config.misc.discord_text.comment": " Message for the /discord command",
     "config.misc.discord_text.value": "Invitation link not set",

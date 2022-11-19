@@ -6,7 +6,6 @@
     "target": "@env(DEFAULT)",
     "compatibilityLevel": "JAVA_8",
     "mixins": [
-        "account.PlayerListMixin",
-        "TellRawCommandMixin"
+        "account.PlayerListMixin"
     ]
 }
