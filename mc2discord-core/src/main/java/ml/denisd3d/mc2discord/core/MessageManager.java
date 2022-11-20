@@ -12,6 +12,8 @@ import discord4j.rest.util.Color;
 import ml.denisd3d.mc2discord.core.config.core.Channels;
 import reactor.core.publisher.Mono;
 
+import java.util.HashMap;
+
 public class MessageManager {
 
     Mc2Discord instance;
@@ -34,6 +36,14 @@ public class MessageManager {
         if (type.isEmpty() || (content.isEmpty() && nonWebhookContent.isEmpty()) || username.isEmpty() || avatarUrl.isEmpty()) return;
         for (Channels.Channel channel : instance.config.channels.channels) {
             if (channel.channel_id == 0) continue;
+
+            HashMap<Long, String> channelEmojis = Mc2Discord.emojiCache.get(channel.channel_id);
+            if (channelEmojis != null) {
+                for (Long emojiId : channelEmojis.keySet()) {
+                    String emojiName = channelEmojis.get(emojiId);
+                    content = content.replaceAll(":" + emojiName + ":", "<:" + emojiName + ":" + emojiId + ">");
+                }
+            }
 
             if (channel.subscriptions.contains(type)) {
                 String message = !nonWebhookContent.isEmpty() ? nonWebhookContent : content;

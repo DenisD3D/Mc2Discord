@@ -26,6 +26,7 @@ import reactor.util.retry.Retry;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicReference;
@@ -49,6 +50,7 @@ public class Mc2Discord {
     public String botAvatar;
     public String botDisplayName;
     public long startTime;
+    public static final HashMap<Long, HashMap<Long, String>> emojiCache = new HashMap<>();
     private ConnectionObserver.State state = GatewayObserver.DISCONNECTED;
     private boolean isMinecraftStarted;
 
@@ -84,12 +86,10 @@ public class Mc2Discord {
 
         try {
             this.config = new M2DConfig(CONFIG_FILE, translationKey -> {
-                switch (translationKey) {
-                    case "config.lang.comment":
-                        return langManager.formatMessage(translationKey, String.join(", ", M2DUtils.lang_contributors), String.join(", ", M2DUtils.available_lang));
-                    default:
-                        return iMinecraft.translateKey(langManager, translationKey);
+                if ("config.lang.comment".equals(translationKey)) {
+                    return langManager.formatMessage(translationKey, String.join(", ", M2DUtils.lang_contributors), String.join(", ", M2DUtils.available_lang));
                 }
+                return iMinecraft.translateKey(langManager, translationKey);
             }).loadAndCorrect();
         } catch (ParsingException parsingException) {
             this.errors.add(langManager.formatMessage("errors.config_parsing", parsingException.getLocalizedMessage()));

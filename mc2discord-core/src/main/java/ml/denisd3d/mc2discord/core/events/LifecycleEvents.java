@@ -2,6 +2,7 @@ package ml.denisd3d.mc2discord.core.events;
 
 import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
+import discord4j.core.object.entity.Guild;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.channel.GuildChannel;
 import discord4j.rest.util.Permission;
@@ -15,6 +16,7 @@ import ml.denisd3d.mc2discord.core.entities.Entity;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
 public class LifecycleEvents {
@@ -30,8 +32,7 @@ public class LifecycleEvents {
         if (Mc2Discord.INSTANCE.config.channels.channels.get(0).channel_id != 0) {
             ArrayList<Permission> requiredPermissions = new ArrayList<>(PermissionSet.of(604359761));
 
-            Mc2Discord.INSTANCE.client
-                    .getChannelById(Snowflake.of(Mc2Discord.INSTANCE.config.channels.channels.get(0).channel_id))
+            Mc2Discord.INSTANCE.client.getChannelById(Snowflake.of(Mc2Discord.INSTANCE.config.channels.channels.get(0).channel_id))
                     .ofType(GuildChannel.class)
                     .flatMap(GuildChannel::getGuild)
                     .flatMap(guild -> Mc2Discord.INSTANCE.client.getSelfMember(guild.getId()))
@@ -60,10 +61,8 @@ public class LifecycleEvents {
     public static void bothReadyEvent() {
         if (!(Mc2Discord.INSTANCE.isDiscordRunning() && Mc2Discord.INSTANCE.isMinecraftStarted()))
             return; // This method is called by both when ready. When the last is ready it will execute the rest of the method
-        if (!M2DUtils.canHandleEvent())
-            return;
-        if (M2DPluginHelper.execute(IM2DPlugin::onReady))
-            return;
+        if (!M2DUtils.canHandleEvent()) return;
+        if (M2DPluginHelper.execute(IM2DPlugin::onReady)) return;
 
         Mc2Discord.INSTANCE.startTime = System.currentTimeMillis();
         Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(Mc2Discord.INSTANCE.config.messages.start, Collections.emptyList()));
@@ -71,16 +70,26 @@ public class LifecycleEvents {
         if (Mc2Discord.INSTANCE.m2dAccount != null) {
             Mc2Discord.INSTANCE.m2dAccount.onStart();
         }
+
+        Mc2Discord.INSTANCE.config.channels.channels.forEach(channel -> {
+            if (channel.channel_id != 0) {
+                Mc2Discord.emojiCache.put(channel.channel_id, new HashMap<>());
+                Mc2Discord.INSTANCE.client.getChannelById(Snowflake.of(channel.channel_id))
+                        .ofType(GuildChannel.class)
+                        .flatMap(GuildChannel::getGuild)
+                        .flatMapMany(Guild::getEmojis)
+                        .subscribe(emoji -> Mc2Discord.emojiCache.get(channel.channel_id).put(emoji.getId().asLong(), emoji.getName()));
+            }
+        });
+
     }
 
     public static void onShutdown() {
-        if (!M2DUtils.canHandleEvent())
-            return;
+        if (!M2DUtils.canHandleEvent()) return;
 
         Mc2Discord.INSTANCE.is_stopping = true;
 
-        if (M2DPluginHelper.execute(IM2DPlugin::onShutdown))
-            return;
+        if (M2DPluginHelper.execute(IM2DPlugin::onShutdown)) return;
 
         Mc2Discord.INSTANCE.messageManager.sendInfoMessage(Entity.replace(Mc2Discord.INSTANCE.config.messages.stop, Collections.emptyList()));
         StatusManager.stop();
