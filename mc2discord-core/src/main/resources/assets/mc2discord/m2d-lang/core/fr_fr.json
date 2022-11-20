@@ -72,6 +72,7 @@
     "config.misc.allowed_mention.comment": " Liste des types de mentions autorisé. Valeurs supportés : \"EVERYONE_AND_HERE\", \"ROLE\", \"USER\"\n Ex : [\"ROLE\", \"USER\"] pour autoriser toutes les mentions sauf @everyone & @here",
     "config.style.minecraft_chat_format.comment": " Format pour les messages envoyé dans le chat minecraft. Vous pouvez utiliser les variables globales, les variables du membre (Member) et les variables du message (Message). Vous pouvez changer la couleur avec '${color_start_COULEUR} CONTENU ${color_end}' où COULEUR est une couleur hexadecimale ou 'top_role' pour la couleur du plus haut role sur discord. ${reply} sera remplacé par reply_format si le message a un message référencé.",
     "config.style.discord_chat_format.comment": " Format pour les messages envoyé sur discord quand le mode webhook est désactivé. Vous pouvez utiliser les variables globales, les variables du joueur (Player) et les variables du message (Message)",
+    "config.style.embed_show_server_avatar.comment": " Si vrai, l'avatar du serveur sera affiché dans les embeds pour les messages 'info'",
     "config.misc.discord_text.comment": " Message pour la commande /discord",
     "config.misc.discord_text.value": "Lien d'invitation non définit",
     "config.misc.discord_link.comment": " Lien pour la commande /discord",

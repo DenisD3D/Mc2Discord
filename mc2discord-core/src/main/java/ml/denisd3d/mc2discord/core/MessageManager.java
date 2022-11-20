@@ -127,7 +127,7 @@ public class MessageManager {
             builder.color(Color.WHITE);
         }
 
-        if (!username.equals(this.instance.botDisplayName)) {
+        if (!username.equals(this.instance.botDisplayName) || Mc2Discord.INSTANCE.config.style.embed_show_server_avatar) {
             builder.author(username, null, avatarUrl);
         }
 

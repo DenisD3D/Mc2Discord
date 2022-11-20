@@ -54,4 +54,8 @@ public class Style {
     @PreserveNotNull
     public String embed_color_log = "SUMMER_SKY";
 
+    @Path("embed_show_server_avatar")
+    @Comment("config.style.embed_show_server_avatar.comment")
+    @PreserveNotNull
+    public boolean embed_show_server_avatar = false;
 }
