@@ -17,7 +17,7 @@ public class TellRawCommandMixin {
     @SuppressWarnings("target")
     @Inject(method = {"lambda$register$1(Lcom/mojang/brigadier/context/CommandContext;)I", "func_198819_a(Lcom/mojang/brigadier/context/CommandContext;)I"}, at = @At("HEAD"), remap = false)
     private static void lambda(CommandContext<CommandSource> commandContext, CallbackInfoReturnable<Integer> ci) {
-        if (Mc2Discord.INSTANCE.config.misc.relay_say_me_command && M2DUtils.canHandleEvent() && commandContext.getInput()
+        if (Mc2Discord.INSTANCE.config.misc.relay_say_me_tellraw_command && M2DUtils.canHandleEvent() && commandContext.getInput()
                 .split(" ")[1].equals("@a")) {
             ITextComponent component = ComponentArgument.getComponent(commandContext, "message");
             Mc2Discord.INSTANCE.messageManager.sendInfoMessage(component.getString());

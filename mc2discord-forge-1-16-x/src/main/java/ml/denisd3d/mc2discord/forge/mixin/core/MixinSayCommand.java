@@ -19,7 +19,7 @@ public class MixinSayCommand {
     @SuppressWarnings("target")
     @Inject(method = {"lambda$register$1(Lcom/mojang/brigadier/context/CommandContext;)I", "func_198626_a(Lcom/mojang/brigadier/context/CommandContext;)I"}, at = @At("RETURN"), remap = false)
     private static void lambda(CommandContext<CommandSource> commandContext, CallbackInfoReturnable<Integer> ci) throws CommandSyntaxException {
-        if (Mc2Discord.INSTANCE.config.misc.relay_say_me_command && M2DUtils.canHandleEvent()) {
+        if (Mc2Discord.INSTANCE.config.misc.relay_say_me_tellraw_command && M2DUtils.canHandleEvent()) {
             ITextComponent itextcomponent = MessageArgument.getMessage(commandContext, "message");
             TranslationTextComponent translationtextcomponent = new TranslationTextComponent("chat.type.announcement", commandContext.getSource()
                     .getDisplayName(), itextcomponent);
