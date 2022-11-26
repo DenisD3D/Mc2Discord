@@ -27,7 +27,7 @@ mixin {
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.19.1'
+    mappings channel: 'official', version: '1.19.2'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -78,13 +78,17 @@ minecraft.runs.all {
 }
 
 repositories {
+    flatDir {
+        dirs 'build'
+    }
+
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     mavenCentral()
     maven { url = 'https://jitpack.io' }
 }
 
 dependencies {
-    minecraft('net.minecraftforge:forge:1.19.1-42.0.1')
+    minecraft('net.minecraftforge:forge:1.19.2-43.1.55')
 
     library('ml.denisd3d:mc2discord-core')
 
@@ -101,6 +105,11 @@ dependencies {
     //UTILS
     library(group: 'com.vdurmont', name: 'emoji-java', version: '5.1.1')
     library(group: 'org.apache.commons', name: 'commons-collections4', version: '4.0') // Account
+
+
+    runtimeOnly fg.deobf("build:libs/emojiful:1.19-3.1.3")
+    runtimeOnly fg.deobf("build:libs/AutoRegLib:1.8.2-55")
+    runtimeOnly fg.deobf("build:libs/Quark:3.3-373")
 }
 
 jar {

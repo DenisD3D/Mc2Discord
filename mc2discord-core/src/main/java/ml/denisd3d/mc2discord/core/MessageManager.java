@@ -12,6 +12,7 @@ import discord4j.rest.util.Color;
 import ml.denisd3d.mc2discord.core.config.core.Channels;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 
 public class MessageManager {
@@ -30,7 +31,19 @@ public class MessageManager {
         this.sendMessageOfType("chat", content, nonWebhookContent, username, avatarUrl, null, false);
     }
 
+    public void sendInfoMessage(String content, @Nullable EmbedCreateSpec embed) {
+        this.sendMessageOfType("info", content, "", this.instance.botDisplayName, this.instance.botAvatar, null, this.instance.config.style.bot_name.isEmpty() && this.instance.config.style.bot_avatar.isEmpty(), embed);
+    }
+
+    public void sendChatMessage(String content, String nonWebhookContent, String username, String avatarUrl, @Nullable EmbedCreateSpec embed) {
+        this.sendMessageOfType("chat", content, nonWebhookContent, username, avatarUrl, null, false, embed);
+    }
+
     public void sendMessageOfType(String type, String content, String nonWebhookContent, String username, String avatarUrl, Runnable successConsumer, boolean forceChannelMessage) {
+        this.sendMessageOfType(type, content, nonWebhookContent, username, avatarUrl, successConsumer, forceChannelMessage, null);
+    }
+
+    public void sendMessageOfType(String type, String content, String nonWebhookContent, String username, String avatarUrl, Runnable successConsumer, boolean forceChannelMessage, @Nullable EmbedCreateSpec embed) {
         content = content.replaceAll("\u00A7.", "");
 
         if (type.isEmpty() || (content.isEmpty() && nonWebhookContent.isEmpty()) || username.isEmpty() || avatarUrl.isEmpty()) return;
@@ -48,28 +61,33 @@ public class MessageManager {
             if (channel.subscriptions.contains(type)) {
                 String message = !nonWebhookContent.isEmpty() ? nonWebhookContent : content;
                 if (channel.mode == Channels.SendMode.WEBHOOK) {
-                    if (!forceChannelMessage) this.sendWebhookMessage(channel.channel_id, content, username, avatarUrl, false, successConsumer);
-                    else this.sendChannelMessage(channel.channel_id, message, false, successConsumer);
+                    if (!forceChannelMessage)
+                        this.sendWebhookMessage(channel.channel_id, content, username, avatarUrl, false, successConsumer, embed);
+                    else this.sendChannelMessage(channel.channel_id, message, false, successConsumer, embed);
                 } else if (channel.mode == Channels.SendMode.PLAIN_TEXT) {
-                    this.sendChannelMessage(channel.channel_id, message, false, successConsumer);
+                    this.sendChannelMessage(channel.channel_id, message, false, successConsumer, embed);
                 } else if (channel.mode == Channels.SendMode.EMBED) {
-                    this.sendEmbedMessage(channel.channel_id, type, content, username, avatarUrl, successConsumer);
+                    this.sendEmbedMessage(channel.channel_id, type, content, username, avatarUrl, successConsumer, embed);
                 }
             }
         }
     }
 
     public void sendMessageInChannel(long channelId, String type, String content, Channels.SendMode mode, boolean useCodeblocks, Runnable successConsumer) {
+        this.sendMessageInChannel(channelId, type, content, mode, useCodeblocks, successConsumer, null);
+    }
+
+    public void sendMessageInChannel(long channelId, String type, String content, Channels.SendMode mode, boolean useCodeblocks, Runnable successConsumer, @Nullable EmbedCreateSpec embed) {
         if (mode == Channels.SendMode.WEBHOOK) {
-            this.sendWebhookMessage(channelId, content, this.instance.botDisplayName, this.instance.botAvatar, useCodeblocks, successConsumer);
+            this.sendWebhookMessage(channelId, content, this.instance.botDisplayName, this.instance.botAvatar, useCodeblocks, successConsumer, embed);
         } else if (mode == Channels.SendMode.PLAIN_TEXT) {
-            this.sendChannelMessage(channelId, content, useCodeblocks, successConsumer);
+            this.sendChannelMessage(channelId, content, useCodeblocks, successConsumer, embed);
         } else if (mode == Channels.SendMode.EMBED) {
-            this.sendEmbedMessage(channelId, type, content, this.instance.botDisplayName, this.instance.botAvatar, successConsumer);
+            this.sendEmbedMessage(channelId, type, content, this.instance.botDisplayName, this.instance.botAvatar, successConsumer, embed);
         }
     }
 
-    private void sendWebhookMessage(long channelId, String content, String username, String avatarUrl, boolean useCodeblocks, Runnable successConsumer) {
+    private void sendWebhookMessage(long channelId, String content, String username, String avatarUrl, boolean useCodeblocks, Runnable successConsumer, @Nullable EmbedCreateSpec embed) {
         Mono<TopLevelGuildMessageChannel> channelMono = this.instance.client.getChannelById(Snowflake.of(channelId))
                 .ofType(TopLevelGuildMessageChannel.class);
         channelMono.flatMapMany(TopLevelGuildMessageChannel::getWebhooks)
@@ -81,38 +99,44 @@ public class MessageManager {
                         .build()))))
                 .next()
                 .subscribe(webhook -> M2DUtils.breakStringToLines(content, 2000, useCodeblocks)
-                        .forEach(s -> webhook.execute(WebhookExecuteSpec.builder()
-                                        .content(s)
-                                        .username(username)
-                                        .avatarUrl(avatarUrl)
-                                        .allowedMentions(AllowedMentions.builder()
-                                                .parseType(Mc2Discord.INSTANCE.config.misc.allowed_mention.stream()
-                                                        .map(AllowedMentions.Type::valueOf)
-                                                        .toArray(AllowedMentions.Type[]::new))
-                                                .build())
-                                        .build())
+                        .forEach(s -> {
+                            WebhookExecuteSpec.Builder builder = WebhookExecuteSpec.builder()
+                                    .content(s)
+                                    .username(username)
+                                    .avatarUrl(avatarUrl)
+                                    .allowedMentions(AllowedMentions.builder()
+                                            .parseType(Mc2Discord.INSTANCE.config.misc.allowed_mention.stream()
+                                                    .map(AllowedMentions.Type::valueOf)
+                                                    .toArray(AllowedMentions.Type[]::new))
+                                            .build());
+                            if (embed != null) builder.addEmbed(embed);
+                            webhook.execute(builder.build())
 
-                                .doOnError(Mc2Discord.logger::error)
-                                .subscribe(unused -> successConsumer.run(), throwable -> DiscordLogging.logs = "", null)));
+                                    .doOnError(Mc2Discord.logger::error)
+                                    .subscribe(unused -> successConsumer.run(), throwable -> DiscordLogging.logs = "", null);
+                        }));
     }
 
-    private void sendChannelMessage(long channelId, String content, boolean useCodeblocks, Runnable successConsumer) {
+    private void sendChannelMessage(long channelId, String content, boolean useCodeblocks, Runnable successConsumer, @Nullable EmbedCreateSpec embed) {
         this.instance.client.getChannelById(Snowflake.of(channelId))
                 .ofType(MessageChannel.class)
                 .subscribe(textChannel -> M2DUtils.breakStringToLines(content, 2000, useCodeblocks)
-                        .forEach(s -> textChannel.createMessage(MessageCreateSpec.builder()
-                                        .content(s)
-                                        .allowedMentions(AllowedMentions.builder()
-                                                .parseType(Mc2Discord.INSTANCE.config.misc.allowed_mention.stream()
-                                                        .map(AllowedMentions.Type::valueOf)
-                                                        .toArray(AllowedMentions.Type[]::new))
-                                                .build())
-                                        .build())
-                                .doOnError(Mc2Discord.logger::error)
-                                .subscribe(unused -> successConsumer.run(), throwable -> DiscordLogging.logs = "", null)));
+                        .forEach(s -> {
+                            MessageCreateSpec.Builder builder = MessageCreateSpec.builder()
+                                    .content(s)
+                                    .allowedMentions(AllowedMentions.builder()
+                                            .parseType(Mc2Discord.INSTANCE.config.misc.allowed_mention.stream()
+                                                    .map(AllowedMentions.Type::valueOf)
+                                                    .toArray(AllowedMentions.Type[]::new))
+                                            .build());
+                            if (embed != null) builder.addEmbed(embed);
+                            textChannel.createMessage(builder.build())
+                                    .doOnError(Mc2Discord.logger::error)
+                                    .subscribe(unused -> successConsumer.run(), throwable -> DiscordLogging.logs = "", null);
+                        }));
     }
 
-    private void sendEmbedMessage(long channel_id, String type, String message, String username, String avatarUrl, Runnable successConsumer) {
+    private void sendEmbedMessage(long channel_id, String type, String message, String username, String avatarUrl, Runnable successConsumer, @Nullable EmbedCreateSpec embed) {
         EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder();
 
         if ("info".equals(type)) {
@@ -134,8 +158,12 @@ public class MessageManager {
         this.instance.client.getChannelById(Snowflake.of(channel_id))
                 .ofType(MessageChannel.class)
                 .subscribe(textChannel -> M2DUtils.breakStringToLines(message, 2000, false)
-                        .forEach(s -> textChannel.createMessage(MessageCreateSpec.builder().addEmbed(builder.description(s).build()).build())
-                                .doOnError(Mc2Discord.logger::error)
-                                .subscribe(unused -> successConsumer.run(), throwable -> DiscordLogging.logs = "", null)));
+                        .forEach(s -> {
+                            MessageCreateSpec.Builder builder1 = MessageCreateSpec.builder().addEmbed(builder.description(s).build());
+                            if (embed != null) builder1.addEmbed(embed);
+                            textChannel.createMessage(builder1.build())
+                                    .doOnError(Mc2Discord.logger::error)
+                                    .subscribe(unused -> successConsumer.run(), throwable -> DiscordLogging.logs = "", null);
+                        }));
     }
 }
