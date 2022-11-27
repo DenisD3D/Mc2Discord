@@ -1,4 +1,7 @@
-## Mc2Discord 3.2.11
+## Mc2Discord 3.3.0
 ### Fixed
- + Fix #67 `top_role` color is black when top role has no color
- + Fix Discord breaking changes to webhook names
+ + Support for /tellraw @s
+ + Support for /say /me & /tellraw in 1.12.2
+ + Better custom emoji support / Emojiful integration (#66)
+ + Option to display bot icon in info embed
+ + Support for thread and voice channels
