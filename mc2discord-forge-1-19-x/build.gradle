@@ -78,12 +78,6 @@ minecraft.runs.all {
 }
 
 repositories {
-    maven {
-        url "https://cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
-    }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     mavenCentral()
     maven { url = 'https://jitpack.io' }
@@ -108,9 +102,6 @@ dependencies {
     library(group: 'com.vdurmont', name: 'emoji-java', version: '5.1.1')
     library(group: 'org.apache.commons', name: 'commons-collections4', version: '4.0') // Account
 
-    // AutoRegLib
-    implementation fg.deobf(group: 'curse.maven', name: 'quark-243121', version: '4102873')
-    implementation fg.deobf(group: 'curse.maven', name: 'autoreglib-250363', version: '4100299')
 }
 
 jar {

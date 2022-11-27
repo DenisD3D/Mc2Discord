@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.net.SocketAddress;
-import java.util.Arrays;
 import java.util.UUID;
 
 @Mixin(net.minecraft.server.management.PlayerList.class)
@@ -20,7 +19,8 @@ public class PlayerListMixin {
     // Relaying others mods messages
     @Inject(method = "broadcastMessage(Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/util/text/ChatType;Ljava/util/UUID;)V", at = @At("HEAD"))
     public void broadcastMessage(ITextComponent component, ChatType type, UUID uuid, CallbackInfo cir) {
-        if (Thread.currentThread().getStackTrace()[3].getClassName().startsWith("net.minecraft") || Thread.currentThread().getStackTrace()[3].getClassName().startsWith("ml.denisd3d.mc2discord") || Thread.currentThread().getStackTrace()[3].getClassName().startsWith("vazkii.quark.content.management.module.ItemSharingModule")) {
+        if (Thread.currentThread().getStackTrace()[3].getClassName().startsWith("net.minecraft") || Thread.currentThread()
+                .getStackTrace()[3].getClassName().startsWith("ml.denisd3d.mc2discord")) {
             return;
         }
         Mc2Discord.INSTANCE.messageManager.sendInfoMessage(component.getString());
