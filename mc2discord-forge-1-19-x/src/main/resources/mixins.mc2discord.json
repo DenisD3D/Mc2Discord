@@ -7,6 +7,6 @@
     "compatibilityLevel": "JAVA_8",
     "mixins": [
         "ItemSharingModuleMixin",
-        "account.PlayerListMixin"
+        "PlayerListMixin"
     ]
 }
