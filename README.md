@@ -24,6 +24,8 @@
  * Hide player on Discord (useful for admins, integrate with [VanishMod](https://www.curseforge.com/minecraft/mc-mods/vanishmod))
  * Account linking (forced or optional)
  * Fully customizable, easy configuration (messages, behavior, etc.)
+ * Relay others mods announcements
+ * Works with [Emojiful](https://www.curseforge.com/minecraft/mc-mods/emojiful) to display emojis ingame
 
 ![Features](https://user-images.githubusercontent.com/35769613/176791550-6979a362-d935-415c-a970-05de09db1d38.png)
 
