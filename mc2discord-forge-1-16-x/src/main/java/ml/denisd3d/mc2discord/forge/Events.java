@@ -1,13 +1,23 @@
 package ml.denisd3d.mc2discord.forge;
 
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.context.StringRange;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import ml.denisd3d.mc2discord.core.M2DUtils;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
 import ml.denisd3d.mc2discord.core.entities.Advancement;
 import ml.denisd3d.mc2discord.core.entities.Death;
 import ml.denisd3d.mc2discord.core.entities.Player;
 import ml.denisd3d.mc2discord.core.events.MinecraftEvents;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.arguments.ComponentArgument;
+import net.minecraft.command.arguments.MessageArgument;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
@@ -15,7 +25,6 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 @Mod.EventBusSubscriber()
@@ -69,6 +78,51 @@ public class Events {
                             .getDescription()
                             .getString())
             );
+        }
+    }
+
+    @SubscribeEvent
+    public static void onCommandEvent(CommandEvent event) {
+        if (!M2DUtils.canHandleEvent() || !Mc2Discord.INSTANCE.config.misc.relay_say_me_tellraw_command)
+            return;
+
+        if (event.getParseResults().getContext().getNodes().size() == 0)
+            return;
+
+        String command_name = event.getParseResults().getContext().getNodes().get(0).getNode().getName();
+        if (command_name.equals("say") || command_name.equals("me") || command_name.equals("tellraw")) {
+            CommandContext<CommandSource> context = event.getParseResults().getContext().build(event.getParseResults().getReader().getString());
+
+            try {
+                boolean should_send_to_discord = true;
+                String message;
+                if (command_name.equals("tellraw")) {
+                    StringRange selector_range = event.getParseResults().getContext().getArguments().get("targets").getRange();
+                    String target = context.getInput().substring(selector_range.getStart(), selector_range.getEnd());
+
+                    if (target.equals("@s") && (context.getSource() == Mc2DiscordForge.commandSource)) {
+                        event.setCanceled(true); // Do not execute the vanilla command to prevent No player was found error but still return the message to discord
+                    } else if (!target.equals("@a")) {  // Else if the target is not everyone it does not target discord
+                        should_send_to_discord = false;
+                    }
+
+                    message = ComponentArgument.getComponent(context, "message").getString();
+                } else if (command_name.equals("me")) {
+                    TranslationTextComponent translationtextcomponent = new TranslationTextComponent("chat.type.emote", context.getSource()
+                            .getDisplayName(), StringArgumentType.getString(context, "action"));
+                    message = translationtextcomponent.getString();
+                } else {
+                    ITextComponent itextcomponent = MessageArgument.getMessage(context, "message");
+                    TranslationTextComponent translationtextcomponent = new TranslationTextComponent("chat.type.announcement", context.getSource()
+                            .getDisplayName(), itextcomponent);
+                    message = translationtextcomponent.getString();
+                }
+
+                if (should_send_to_discord) {
+                    Mc2Discord.INSTANCE.messageManager.sendInfoMessage(message);
+                }
+            } catch (IllegalArgumentException | CommandSyntaxException ignored) {
+            } // Ignore when the command is malformed
         }
     }
 }

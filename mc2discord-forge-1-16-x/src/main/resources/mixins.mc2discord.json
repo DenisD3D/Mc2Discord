@@ -8,9 +8,6 @@
     "mixins": [
         "ItemSharingModuleMixin",
         "PlayerListMixin",
-        "core.MixinCrashReporterExtender",
-        "core.MixinMeCommand",
-        "core.MixinSayCommand",
-        "core.TellRawCommandMixin"
+        "core.MixinCrashReporterExtender"
     ]
 }
