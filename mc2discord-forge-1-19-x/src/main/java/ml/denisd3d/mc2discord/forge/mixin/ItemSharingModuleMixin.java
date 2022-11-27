@@ -37,9 +37,8 @@ public class ItemSharingModuleMixin {
 
     @Inject(method = "shareItem", at = @At("RETURN"))
     private static void shareItem(ServerPlayer player, int slot, CallbackInfo ci) {
-        if (!ModuleLoader.INSTANCE.isModuleEnabled(ItemSharingModule.class)) {
-            return;
-        }
+        if (!ModuleLoader.INSTANCE.isModuleEnabled(ItemSharingModule.class)) return;
+
         Inventory inv = player.getInventory();
         if (slot >= 0 && slot < inv.getContainerSize()) {
             ItemStack stack = inv.getItem(slot);
@@ -47,33 +46,29 @@ public class ItemSharingModuleMixin {
                 MutableComponent component = Component.translatable("quark.misc.shared_item", player.getName());
                 Component itemComp = stack.getDisplayName();
                 component.append(itemComp);
-                if (component.getContents() instanceof TranslatableContents && ((TranslatableContents) component.getContents()).getKey()
-                        .equals("quark.misc.shared_item") && component.getSiblings().size() >= 1) { // It's a quark message with a shared item
-                    HoverEvent hoverEvent = component.getSiblings().get(0).getStyle().getHoverEvent();
-                    if (hoverEvent == null) {
-                        return;
-                    }
-
-                    HoverEvent.ItemStackInfo value = hoverEvent.getValue(HoverEvent.Action.SHOW_ITEM);
-                    if (value == null) {
-                        return;
-                    }
-
-                    ItemStack itemStack = value.getItemStack();
-
-                    EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder();
-                    builder.color(Color.of(88, 101, 242));
-                    fillEmbed(itemStack, builder);
-
-                    Mc2Discord.INSTANCE.messageManager.sendInfoMessage(component.getString(), builder.build());
+                HoverEvent hoverEvent = component.getSiblings().get(0).getStyle().getHoverEvent();
+                if (hoverEvent == null) {
+                    return;
                 }
+
+                HoverEvent.ItemStackInfo value = hoverEvent.getValue(HoverEvent.Action.SHOW_ITEM);
+                if (value == null) {
+                    return;
+                }
+
+                ItemStack itemStack = value.getItemStack();
+
+                EmbedCreateSpec.Builder builder = EmbedCreateSpec.builder();
+                builder.color(Color.of(88, 101, 242));
+                fillEmbed(itemStack, builder);
+
+                Mc2Discord.INSTANCE.messageManager.sendInfoMessage(component.getString(), builder.build());
             }
         }
     }
 
     private static void fillEmbed(ItemStack itemStack, EmbedCreateSpec.Builder builder) {
-        // Same method as getTooltipFromItem but adapted
-        TooltipFlag tooltipFlag = TooltipFlag.Default.NORMAL;
+        // Same method as getTooltipLines but adapted
         StringBuilder description = new StringBuilder();
         MutableComponent mutablecomponent = Component.empty().append(itemStack.getHoverName()).withStyle(itemStack.getRarity().getStyleModifier());
         if (itemStack.hasCustomHoverName()) {
@@ -191,25 +186,6 @@ public class ItemSharingModuleMixin {
             }
         }
 
-        if (tooltipFlag.isAdvanced()) {
-            if (itemStack.isDamaged()) {
-                description.append(Component.translatable("item.durability", itemStack.getMaxDamage() - itemStack.getDamageValue(), itemStack.getMaxDamage())
-                        .getString()).append("\n");
-            }
-
-            description.append(Component.literal(Registry.ITEM.getKey(itemStack.getItem()).toString())
-                    .withStyle(ChatFormatting.DARK_GRAY)
-                    .getString()).append("\n");
-            if (itemStack.hasTag() && itemStack.getTag() != null) {
-                description.append(Component.translatable("item.nbt_tags", itemStack.getTag().getAllKeys().size())
-                        .withStyle(ChatFormatting.DARK_GRAY)
-                        .getString()).append("\n");
-            }
-        }
-
-        List<Component> list = Lists.newArrayList();
-        net.minecraftforge.event.ForgeEventFactory.onItemTooltip(itemStack, null, list, tooltipFlag);
-        description.append(list.stream().map(Component::getString).collect(Collectors.joining("\n")));
         builder.description(description.toString());
     }
 }

@@ -46,7 +46,7 @@ public class MessageManager {
     public void sendMessageOfType(String type, String content, String nonWebhookContent, String username, String avatarUrl, Runnable successConsumer, boolean forceChannelMessage, @Nullable EmbedCreateSpec embed) {
         content = content.replaceAll("\u00A7.", "");
 
-        if (type.isEmpty() || (content.isEmpty() && nonWebhookContent.isEmpty()) || username.isEmpty() || avatarUrl.isEmpty()) return;
+        if (type.isEmpty() || (content.isEmpty() && nonWebhookContent.isEmpty() && embed == null) || username.isEmpty() || avatarUrl.isEmpty()) return;
         for (Channels.Channel channel : instance.config.channels.channels) {
             if (channel.channel_id == 0) continue;
 
@@ -101,7 +101,6 @@ public class MessageManager {
                 .subscribe(webhook -> M2DUtils.breakStringToLines(content, 2000, useCodeblocks)
                         .forEach(s -> {
                             WebhookExecuteSpec.Builder builder = WebhookExecuteSpec.builder()
-                                    .content(s)
                                     .username(username)
                                     .avatarUrl(avatarUrl)
                                     .allowedMentions(AllowedMentions.builder()
@@ -109,6 +108,7 @@ public class MessageManager {
                                                     .map(AllowedMentions.Type::valueOf)
                                                     .toArray(AllowedMentions.Type[]::new))
                                             .build());
+                            if (!s.equals("")) builder.content(s);
                             if (embed != null) builder.addEmbed(embed);
                             webhook.execute(builder.build())
 
@@ -123,12 +123,12 @@ public class MessageManager {
                 .subscribe(textChannel -> M2DUtils.breakStringToLines(content, 2000, useCodeblocks)
                         .forEach(s -> {
                             MessageCreateSpec.Builder builder = MessageCreateSpec.builder()
-                                    .content(s)
                                     .allowedMentions(AllowedMentions.builder()
                                             .parseType(Mc2Discord.INSTANCE.config.misc.allowed_mention.stream()
                                                     .map(AllowedMentions.Type::valueOf)
                                                     .toArray(AllowedMentions.Type[]::new))
                                             .build());
+                            if (!s.equals("")) builder.content(s);
                             if (embed != null) builder.addEmbed(embed);
                             textChannel.createMessage(builder.build())
                                     .doOnError(Mc2Discord.logger::error)
@@ -159,7 +159,8 @@ public class MessageManager {
                 .ofType(MessageChannel.class)
                 .subscribe(textChannel -> M2DUtils.breakStringToLines(message, 2000, false)
                         .forEach(s -> {
-                            MessageCreateSpec.Builder builder1 = MessageCreateSpec.builder().addEmbed(builder.description(s).build());
+                            MessageCreateSpec.Builder builder1 = MessageCreateSpec.builder();
+                            if (!s.equals("")) builder1.addEmbed(builder.description(s).build());
                             if (embed != null) builder1.addEmbed(embed);
                             textChannel.createMessage(builder1.build())
                                     .doOnError(Mc2Discord.logger::error)

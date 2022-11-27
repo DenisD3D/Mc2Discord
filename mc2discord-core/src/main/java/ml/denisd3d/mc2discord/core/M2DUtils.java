@@ -75,6 +75,10 @@ public class M2DUtils {
             result.add(withCodeBlocks ? CODEBLOCKS_TOKEN + str + CODEBLOCKS_TOKEN : str);
         }
 
+        if (result.isEmpty()) {
+            result.add("");
+        }
+
         // Return the resulting string
         return result;
     }

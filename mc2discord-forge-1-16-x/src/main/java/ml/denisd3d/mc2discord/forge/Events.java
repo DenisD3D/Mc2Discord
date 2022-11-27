@@ -1,5 +1,6 @@
 package ml.denisd3d.mc2discord.forge;
 
+import ml.denisd3d.mc2discord.core.Mc2Discord;
 import ml.denisd3d.mc2discord.core.entities.Advancement;
 import ml.denisd3d.mc2discord.core.entities.Death;
 import ml.denisd3d.mc2discord.core.entities.Player;
@@ -14,6 +15,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @Mod.EventBusSubscriber()
