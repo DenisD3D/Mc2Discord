@@ -182,12 +182,12 @@ jobs:
         with:
           name: build
 
-      - uses: Kir-Antipov/mc-publish@v3.1
+      - uses: Kir-Antipov/mc-publish@v3.2
         with:
-          # modrinth-id: Cfbcv7uF
-          # modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-          # modrinth-featured: true
-          # modrinth-unfeature-mode: intersection
+          modrinth-id: Cfbcv7uF
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-featured: true
+          modrinth-unfeature-mode: intersection
 
           curseforge-id: 325235
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
@@ -203,7 +203,7 @@ jobs:
           game-versions: |
             1.12.2
 
-      - uses: Kir-Antipov/mc-publish@v3.1
+      - uses: Kir-Antipov/mc-publish@v3.2
         with:
           # modrinth-id: Cfbcv7uF
           # modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
@@ -228,7 +228,7 @@ jobs:
             1.16.4
             1.16.5
 
-      - uses: Kir-Antipov/mc-publish@v3.1
+      - uses: Kir-Antipov/mc-publish@v3.2
         with:
           # modrinth-id: Cfbcv7uF
           # modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
@@ -251,7 +251,7 @@ jobs:
             1.18.1
             1.18.2
 
-      - uses: Kir-Antipov/mc-publish@v3.1
+      - uses: Kir-Antipov/mc-publish@v3.2
         with:
           # modrinth-id: Cfbcv7uF
           # modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
@@ -270,4 +270,5 @@ jobs:
             forge
 
           game-versions: |
-            1.19
+            1.19.1
+            1.19.2
