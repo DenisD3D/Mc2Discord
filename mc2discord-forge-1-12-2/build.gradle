@@ -37,6 +37,7 @@ minecraft {
 }
 
 repositories {
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     mavenCentral()
     maven { url = 'https://jitpack.io' }
 }
@@ -53,7 +54,7 @@ dependencies {
     } // Fix compatibility between Minecraft & Reactor netty version in dev
 
     //DISCORD
-    shadow(group: 'com.discord4j', name: 'discord4j-core', version: project.discord4jVersion)
+    shadow(group: 'com.discord4j', name: 'discord4j-core', version: project.discord4jVersion) {}
 
     //CONFIG
     shadow(group: 'com.github.denisd3d', name: 'config4j', version: '1.0.1') {
@@ -65,6 +66,7 @@ dependencies {
     //UTILS
     shadow(group: 'com.vdurmont', name: 'emoji-java', version: '5.1.1')
     shadow(group: 'org.apache.commons', name: 'commons-collections4', version: '4.0') // Account
+
 
     configurations.implementation.extendsFrom(configurations.shadow)
 }
