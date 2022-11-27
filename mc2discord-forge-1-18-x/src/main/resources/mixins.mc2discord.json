@@ -6,9 +6,6 @@
     "target": "@env(DEFAULT)",
     "compatibilityLevel": "JAVA_8",
     "mixins": [
-        "account.PlayerListMixin",
-        "core.MixinEmoteCommand",
-        "core.MixinSayCommand",
-        "core.TellRawCommandMixin"
+        "account.PlayerListMixin"
     ]
 }
