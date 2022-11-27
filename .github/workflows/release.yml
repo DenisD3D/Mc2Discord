@@ -205,10 +205,10 @@ jobs:
 
       - uses: Kir-Antipov/mc-publish@v3.2
         with:
-          # modrinth-id: Cfbcv7uF
-          # modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-          # modrinth-featured: true
-          # modrinth-unfeature-mode: intersection
+          modrinth-id: Cfbcv7uF
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-featured: true
+          modrinth-unfeature-mode: intersection
 
           curseforge-id: 325235
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
@@ -230,10 +230,10 @@ jobs:
 
       - uses: Kir-Antipov/mc-publish@v3.2
         with:
-          # modrinth-id: Cfbcv7uF
-          # modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-          # modrinth-featured: true
-          # modrinth-unfeature-mode: intersection
+          modrinth-id: Cfbcv7uF
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-featured: true
+          modrinth-unfeature-mode: intersection
 
           curseforge-id: 325235
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
@@ -253,10 +253,10 @@ jobs:
 
       - uses: Kir-Antipov/mc-publish@v3.2
         with:
-          # modrinth-id: Cfbcv7uF
-          # modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-          # modrinth-featured: true
-          # modrinth-unfeature-mode: intersection
+          modrinth-id: Cfbcv7uF
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-featured: true
+          modrinth-unfeature-mode: intersection
 
           curseforge-id: 325235
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
