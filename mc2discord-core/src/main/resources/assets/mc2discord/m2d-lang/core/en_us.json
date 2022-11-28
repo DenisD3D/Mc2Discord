@@ -101,5 +101,6 @@
     "config.account.messages.unlink_error.value": "Can't unlink your account",
     "config.account.messages.missing_roles.comment": " The message sent when the account is missing some roles",
     "config.account.messages.missing_roles.value": "You are missing some permissions or roles on Discord needed for Account Linking",
-    "config.features.account_linking.comment": " Enable account linking features (use /mc2discord restart to generate the associated config). Require SERVER MEMBERS INTENT to be enabled for all features to work"
+    "config.features.account_linking.comment": " Enable account linking features (use /mc2discord restart to generate the associated config). Require SERVER MEMBERS INTENT to be enabled for all features to work",
+    "config.misc.banned_mods_messages.comment": " List of class to prevent from being sent to discord. You may use a package or a fully qualified class name. Eg: [\"net.minecraft\", \"com.asupermod.somepackage.AClassToBan\"]"
 }

@@ -44,4 +44,9 @@ public class Misc {
     @Comment("config.misc.logs_level.comment")
     @PreserveNotNull
     public String logs_level = "INFO";
+
+    @Path("banned_mods_messages")
+    @Comment("config.misc.banned_mods_messages.comment")
+    @PreserveNotNull
+    public List<String> banned_mods_messages = new ArrayList<>();
 }

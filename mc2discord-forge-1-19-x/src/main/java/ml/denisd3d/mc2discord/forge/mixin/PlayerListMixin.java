@@ -20,10 +20,19 @@ public class PlayerListMixin {
     // Relaying others mods messages
     @Inject(method = "broadcastSystemMessage(Lnet/minecraft/network/chat/Component;Ljava/util/function/Function;Z)V", at = @At("HEAD"))
     public void broadcastMessage(Component component, Function<ServerPlayer, Component> p_240594_, boolean p_240648_, CallbackInfo ci) {
-        if (Thread.currentThread().getStackTrace()[3].getClassName().startsWith("net.minecraft") || Thread.currentThread()
-                .getStackTrace()[3].getClassName().startsWith("ml.denisd3d.mc2discord")) {
+        if (Thread.currentThread().getStackTrace()[3].getClassName().startsWith("net.minecraft")
+                || Thread.currentThread().getStackTrace()[3].getClassName().startsWith("ml.denisd3d.mc2discord")) {
             return;
         }
+
+        if (Mc2Discord.INSTANCE == null)
+            return;
+
+        if (Mc2Discord.INSTANCE.config.misc.banned_mods_messages.stream()
+                .anyMatch(Thread.currentThread().getStackTrace()[3].getClassName()::startsWith)) {
+            return;
+        }
+
         Mc2Discord.INSTANCE.messageManager.sendInfoMessage(component.getString());
     }
 
