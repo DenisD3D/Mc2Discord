@@ -1,5 +1,5 @@
 ext {
-        projectVersion = '3.3.0'
+        projectVersion = '3.3.1-pre'
         projectGroup = 'ml.denisd3d'
         modid = 'mc2discord'
         repackGroup = 'ml.denisd3d.mc2discord.repack.'
