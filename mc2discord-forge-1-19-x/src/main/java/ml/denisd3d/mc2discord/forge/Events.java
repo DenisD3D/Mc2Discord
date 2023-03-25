@@ -27,7 +27,7 @@ import java.util.Optional;
 @Mod.EventBusSubscriber()
 public class Events {
     @SubscribeEvent
-    public static void onMinecraftChatMessageEvent(ServerChatEvent.Submitted event) {
+    public static void onMinecraftChatMessageEvent(ServerChatEvent event) {
         if (event.getPlayer() == null) {
             if (!M2DUtils.canHandleEvent()) return;
             Mc2Discord.INSTANCE.messageManager.sendInfoMessage(event.getMessage().getString());
@@ -56,7 +56,7 @@ public class Events {
     public static void onPlayerDieEvent(LivingDeathEvent event) {
         if (event.getEntity() instanceof net.minecraft.world.entity.player.Player player) {
             MinecraftEvents.onPlayerDieEvent(new Player(player.getGameProfile().getName(), player.getDisplayName()
-                    .getString(), player.getGameProfile().getId()), new Death(event.getSource().msgId, player.getCombatTracker()
+                    .getString(), player.getGameProfile().getId()), new Death(event.getSource().getMsgId(), player.getCombatTracker()
                     .getDeathMessage()
                     .getString(), player.getCombatTracker().getCombatDuration(), Optional.ofNullable(player.getCombatTracker().getKiller())
                     .map(livingEntity -> livingEntity.getDisplayName().getString())
@@ -106,7 +106,7 @@ public class Events {
                     message = ComponentArgument.getComponent(context, "message").getString();
                 } else if (command_name.equals("me")) {
                     message = ChatType.bind(ChatType.EMOTE_COMMAND, context.getSource())
-                            .decorate(MessageArgument.getChatMessage(context, "action").signedArgument().signedBody().content().decorated())
+                            .decorate(MessageArgument.getMessage(context, "action"))
                             .getString();
                 } else {
                     message = ChatType.bind(ChatType.SAY_COMMAND, context.getSource())

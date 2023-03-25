@@ -27,7 +27,7 @@ mixin {
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.19.2'
+    mappings channel: 'official', version: '1.19.4'
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -84,7 +84,7 @@ repositories {
 }
 
 dependencies {
-    minecraft('net.minecraftforge:forge:1.19.2-43.1.55')
+    minecraft('net.minecraftforge:forge:1.19.4-45.0.24')
 
     library('ml.denisd3d:mc2discord-core')
 
@@ -102,6 +102,7 @@ dependencies {
     library(group: 'com.vdurmont', name: 'emoji-java', version: '5.1.1')
     library(group: 'org.apache.commons', name: 'commons-collections4', version: '4.0') // Account
 
+    library("io.netty:netty-all:4.1.68.Final")
 }
 
 jar {

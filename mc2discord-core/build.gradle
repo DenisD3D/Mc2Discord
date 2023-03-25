@@ -30,8 +30,7 @@ dependencies {
     compileOnly(group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.17.1') // Shipped in Minecraft
 
     //CONFIG
-    compileOnly(group: 'com.electronwill.night-config', name: 'toml', version: '3.6.0')
-    // Shipped in Forge 1.13+ need to be shipped for other framework
+    compileOnly(group: 'com.electronwill.night-config', name: 'toml', version: '3.6.0') // Shipped in Forge 1.13+ need to be shipped for other framework
     compileOnly(group: 'com.github.denisd3d', name: 'config4j', version: '1.0.1')
 
     //UTILS
