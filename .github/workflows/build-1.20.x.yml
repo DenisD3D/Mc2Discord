@@ -3,11 +3,11 @@ name: 'Build 1.20.x'
 on: workflow_dispatch
 
 jobs:
-  build-1-20-x:
+  build-1.20.x:
     runs-on: ubuntu-latest
     defaults:
         run:
-            working-directory: mc2discord-forge-1-20-x 
+            working-directory: mc2discord-forge-1.20.x
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
@@ -32,7 +32,7 @@ jobs:
         run: ./gradlew build
       - uses: actions/upload-artifact@v3
         with:
-          name: build-1-20-x
+          name: build-1.20.x
           path: |
-              ${{ github.workspace }}/mc2discord-forge-1-20-x/build/libs/
-              !${{ github.workspace }}/mc2discord-forge-1-20-x/build/libs/*-slim.jar
+              ${{ github.workspace }}/mc2discord-forge-1.20.x/build/libs/
+              !${{ github.workspace }}/mc2discord-forge-1.20.x/build/libs/*-slim.jar
