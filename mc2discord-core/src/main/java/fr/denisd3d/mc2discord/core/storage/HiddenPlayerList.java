@@ -21,10 +21,6 @@ public class HiddenPlayerList extends UserStorageList<HiddenPlayerEntry> {
         }
     }
 
-    public List<String> getUserList() {
-        return Arrays.stream(getPlayerList()).map(UUID::toString).toList();
-    }
-
     @Override
     protected HiddenPlayerEntry createEntry(JsonObject entryData) {
         return new HiddenPlayerEntry(UUID.fromString(entryData.get("uuid").getAsString()));

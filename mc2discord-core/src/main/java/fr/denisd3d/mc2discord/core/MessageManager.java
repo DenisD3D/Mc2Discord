@@ -51,11 +51,11 @@ public class MessageManager {
                 .map(channel -> Tuples.of(channel, M2DUtils.transformToMention(message, channel.channel_id)))
                 .flatMap(channelStringTuple2 -> switch (channelStringTuple2.getT1().mode) {
                     case WEBHOOK -> username.isAbsent() || avatarUrl.isAbsent() ?
-                            createPlainTextMessage(channelStringTuple2.getT1().channel_id, channelStringTuple2.getT2(), username, surroundWithCodeBlock) :
+                            createPlainTextMessage(channelStringTuple2.getT1().channel_id, channelStringTuple2.getT2(), surroundWithCodeBlock) :
                             createWebhookMessage(channelStringTuple2.getT1().channel_id, channelStringTuple2.getT2(), username, avatarUrl, surroundWithCodeBlock);
                     case PLAIN_TEXT -> {
                         String formatted_message = Entity.replace(Mc2Discord.INSTANCE.config.style.discord_chat_format, List.of(new MessageEntity(channelStringTuple2.getT2()), new PlayerEntity(username.toOptional().orElse(Mc2Discord.INSTANCE.vars.mc2discord_display_name), username.toOptional().orElse(Mc2Discord.INSTANCE.vars.mc2discord_display_name), new UUID(0L, 0L))));
-                        yield createPlainTextMessage(channelStringTuple2.getT1().channel_id, formatted_message, username, surroundWithCodeBlock);
+                        yield createPlainTextMessage(channelStringTuple2.getT1().channel_id, formatted_message, surroundWithCodeBlock);
                     }
                     case EMBED ->
                             createEmbedMessage(channelStringTuple2.getT1().channel_id, channelStringTuple2.getT2(), username, avatarUrl, types);
@@ -63,7 +63,7 @@ public class MessageManager {
                 .then();
     }
 
-    private static Mono<Void> createPlainTextMessage(Snowflake channel, String message, Possible<String> username, boolean surroundWithCodeBlock) {
+    private static Mono<Void> createPlainTextMessage(Snowflake channel, String message, boolean surroundWithCodeBlock) {
         return Mc2Discord.INSTANCE.client.getChannelById(channel)
                 .ofType(MessageChannel.class)
                 .flatMapMany(messageChannel -> Flux.fromIterable(M2DUtils.breakStringInMessages(message, 2000, surroundWithCodeBlock))

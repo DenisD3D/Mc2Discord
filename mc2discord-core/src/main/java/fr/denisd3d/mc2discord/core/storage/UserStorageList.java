@@ -24,10 +24,6 @@ public abstract class UserStorageList<T extends UserStorageEntry> {
         this.file = file;
     }
 
-    public File getFile() {
-        return this.file;
-    }
-
     /**
      * Adds an entry to the list
      */
