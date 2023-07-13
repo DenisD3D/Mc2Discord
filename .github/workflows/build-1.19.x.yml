@@ -3,7 +3,7 @@ name: 'Build 1.19.x'
 on: workflow_dispatch
 
 jobs:
-  build-1.19.x:
+  build-1-19-x:
     runs-on: ubuntu-latest
     defaults:
         run:
