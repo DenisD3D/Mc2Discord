@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 public class LangManager {
     public static final List<String> AVAILABLE_LANG = Arrays.asList("en_us", "fr_fr", "ru_ru", "ko_kr", "zh_cn" );
-    public static final List<String> LANG_CONTRIBUTORS = Arrays.asList("Morty#0273 (ru_ru)", "PixelVoxel#4327 (ko_kr)");
+    public static final List<String> LANG_CONTRIBUTORS = Arrays.asList("Morty#0273 (ru_ru)", "PixelVoxel#4327 (ko_kr)", "thearchy.helios (zh_cn)");
     private static final Gson GSON = new Gson();
     private static final Pattern FLOAT_REPLACE_PATTERN = Pattern.compile("%(\\d+\\$)?[\\d.]*[df]");
 
