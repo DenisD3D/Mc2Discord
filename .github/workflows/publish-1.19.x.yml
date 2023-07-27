@@ -16,12 +16,10 @@ on:
 
 jobs:
   build-1-19-x:
-    name: Build 1.19.x-${{ inputs.version }}
     uses: ./.github/workflows/build-1.19.x.yml
     with:
       version: ${{ inputs.version }}
   publish-1-19-x:
-    name: Publish 1.19.x-${{ inputs.version }}
     runs-on: ubuntu-latest
     needs: build-1-19-x
     steps:
