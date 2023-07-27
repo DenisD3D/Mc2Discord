@@ -1,0 +1,19 @@
+{
+    "config.messages.start.value": "服务器已启动",
+    "config.messages.stop.value": "服务器已关闭",
+    "config.messages.join.value": "${player_display_name} 加入了游戏",
+    "config.messages.leave.value": "${player_display_name} 离开了游戏",
+    "config.messages.death.value": "${death_message}",
+    "config.messages.advancement.value": "${player_display_name} 获得了成就：${advancement_title}. ${advancement_description}.",
+    "config.account.discord_pseudo_format.value": "${member_name} (IG: ${player_name})",
+    "config.account.messages.link_get_code.value": "请发送命令：${command} 至机器人：${bot_name}#${bot_discriminator} 的Discord私密对话，以获取绑定代码",
+    "config.account.messages.link_successful.value": "您已成功链接了您的账户",
+    "config.account.messages.link_invalid_code.value": "您发送的代码无效",
+    "config.account.messages.link_error_already.value": "您已经绑定了一个账户",
+    "config.account.messages.unlink_successful.value": "您已成功解绑了您的账户",
+    "config.account.messages.unlink_error.value": "解绑失败",
+    "config.account.messages.missing_roles.value": "您没有足够的权限来绑定您的账户",
+    "config.style.reply_format.value": "回复给 ${member_nickname}: ",
+    "config.style.presence.message.value": "当前有 ${online_players} / ${max_players} 个玩家",
+    "config.misc.discord_text.value": "尚未设置邀请链接"
+}
