@@ -30,7 +30,7 @@ jobs:
           modrinth-id: Cfbcv7uF
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
-          modrinth-unfeature-mode: game-version-intersection | loaders-subset
+          modrinth-unfeature-mode: intersection
 
           files: build-1.19.x-${{ inputs.version }}/mc2discord-forge-1.19.x-${{ inputs.version }}.jar
           changelog-file: CHANGELOG.md
