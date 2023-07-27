@@ -16,6 +16,6 @@ jobs:
         mc-version:
           - '1.20.x'
           - '1.19.x'
-      uses: ./.github/workflows/build-${{ matrix.mc-version }}.yml
-      with:
-        version: ${{ inputs.version }}
+    uses: ./.github/workflows/build-${{ matrix.mc-version }}.yml
+    with:
+      version: ${{ inputs.version }}
