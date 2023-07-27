@@ -16,7 +16,7 @@ on:
 
 jobs:
   build-1-19-x:
-    uses: ./.github/workflows/build/build-1.19.x.yml
+    uses: ./.github/workflows/build-1.19.x.yml
     with:
       version: ${{ inputs.version }}
   publish-1-19-x:
