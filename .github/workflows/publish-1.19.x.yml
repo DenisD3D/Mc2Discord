@@ -33,7 +33,7 @@ jobs:
           modrinth-unfeature-mode: intersection
 
           files: build-1.19.x-${{ inputs.version }}/mc2discord-forge-1.19.x-${{ inputs.version }}.jar
-          name: [Forge 1.19.x] Mc2Discord ${{ inputs.version }}
+          name: '[Forge 1.19.x] Mc2Discord ${{ inputs.version }}'
           changelog-file: CHANGELOG.md
           loaders: |
             forge
