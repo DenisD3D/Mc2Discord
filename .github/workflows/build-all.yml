@@ -8,13 +8,18 @@ on:
         description: 'Version'
         required: true
         default: 'dev'
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
 
 jobs:
   build-1-19-x:
-    uses: ./.github/workflows/build-1.19.x.yml
+    uses: ./.github/workflows/build/build-1.19.x.yml
     with:
       version: ${{ inputs.version }}
   build-1-20-x:
-    uses: ./.github/workflows/build-1.20.x.yml
+    uses: ./.github/workflows/build/build-1.20.x.yml
     with:
       version: ${{ inputs.version }}

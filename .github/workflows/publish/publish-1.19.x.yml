@@ -1,0 +1,39 @@
+name: 'Build 1.20.x'
+run-name: Build 1.20.x-${{ inputs.version }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'
+        required: true
+        default: 'dev'
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+
+jobs:
+  build-1-19-x:
+    uses: ./.github/workflows/build/build-1.19.x.yml
+    with:
+      version: ${{ inputs.version }}
+  publish-1-19-x:
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/download-artifact@v3
+      - uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: Cfbcv7uF
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+          modrinth-unfeature-mode: game-version-intersection | loaders-subset
+
+          files-primary: build-1.19.x-${{ inputs.version }}/mc2discord-forge-1.19.x-${{ inputs.version }}.jar
+          changelog-file: CHANGELOG.md
+          loaders: |
+            forge
+          game-versions: |
+            1.19.3
+            1.19.4

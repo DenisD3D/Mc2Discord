@@ -1,0 +1,22 @@
+name: 'Publish all'
+run-name: Publish all-${{ inputs.version }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'
+        required: true
+        default: 'dev'
+
+jobs:
+  publish-1-19-x:
+    uses: ./.github/workflows/publish/publish-1.19.x.yml
+    with:
+      version: ${{ inputs.version }}
+
+  publish-1-20-x:
+    uses: ./.github/workflows/publish/publish-1.20.x.yml
+    needs: publish-1-19-x
+    with:
+      version: ${{ inputs.version }}
