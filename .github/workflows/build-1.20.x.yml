@@ -1,5 +1,5 @@
 name: 'Build 1.20.x'
-run-name: Build 1.19.x-${{ inputs.version }}
+run-name: Build 1.20.x-${{ inputs.version }}
 
 on:
   workflow_dispatch:
