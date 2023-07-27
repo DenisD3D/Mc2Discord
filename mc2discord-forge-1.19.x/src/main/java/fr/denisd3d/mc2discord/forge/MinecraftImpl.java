@@ -176,7 +176,7 @@ public class MinecraftImpl implements IMinecraft {
 
     @Override
     public String getPlayerNameFromUUID(UUID uuid) {
-        return ServerLifecycleHooks.getCurrentServer().getProfileCache().get(UUID.randomUUID()).map(GameProfile::getName).orElse(uuid.toString());
+        return Optional.of(ServerLifecycleHooks.getCurrentServer().getProfileCache()).flatMap(gameProfileCache -> gameProfileCache.get(uuid)).map(GameProfile::getName).orElse(uuid.toString());
     }
 
     @Override

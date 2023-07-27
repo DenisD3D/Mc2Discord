@@ -11,11 +11,11 @@ import fr.denisd3d.mc2discord.core.entities.DeathEntity;
 import fr.denisd3d.mc2discord.core.entities.Entity;
 import fr.denisd3d.mc2discord.core.entities.PlayerEntity;
 import fr.denisd3d.mc2discord.core.events.MinecraftEvents;
-import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.ComponentArgument;
 import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.ServerChatEvent;
@@ -82,7 +82,7 @@ public class ForgeEvents {
         if (M2DUtils.isNotConfigured())
             return;
 
-        if (event.getParseResults().getContext().getNodes().size() == 0)
+        if (event.getParseResults().getContext().getNodes().isEmpty())
             return;
 
         if (!event.getParseResults().getExceptions().isEmpty())
@@ -104,7 +104,7 @@ public class ForgeEvents {
                         yield null;
                     }
 
-                    yield ComponentArgument.getComponent(context, "message").getString();
+                    yield ComponentUtils.updateForEntity(context.getSource(), ComponentArgument.getComponent(context, "message"), null, 0).getString();
                 }
                 case "say" -> ChatType.bind(ChatType.SAY_COMMAND, context.getSource())
                         .decorate(MessageArgument.getMessage(context, "message"))
