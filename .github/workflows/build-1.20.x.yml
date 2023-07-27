@@ -33,7 +33,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-1.19.x-${{ runner.os }}-${{ hashFiles('**/gradle.properties', '**/build.gradle.kts', '**/settings.gradle', '**/gradle-wrapper.jar') }}
+          key: gradle-1.20.x-${{ runner.os }}-${{ hashFiles('**/gradle.properties', '**/build.gradle.kts', '**/settings.gradle', '**/gradle-wrapper.jar') }}
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
