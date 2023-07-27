@@ -10,12 +10,11 @@ on:
         default: 'dev'
 
 jobs:
-  build-all:
-    strategy:
-      matrix:
-        mc-version:
-          - '1.20.x'
-          - '1.19.x'
-    uses: ./.github/workflows/build-${{ matrix.mc-version }}.yml
+  build-1-19-x:
+    uses: ./.github/workflows/build-1.19.x.yml
+    with:
+      version: ${{ inputs.version }}
+  build-1-20-x:
+    uses: ./.github/workflows/build-1.20.x.yml
     with:
       version: ${{ inputs.version }}
