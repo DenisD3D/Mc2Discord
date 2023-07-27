@@ -16,6 +16,8 @@ on:
     secrets:
       MODRINTH_TOKEN:
         required: true
+      CURSEFORGE_TOKEN:
+        required: true
       WEBHOOK_URL:
         required: true
 
@@ -34,11 +36,13 @@ jobs:
         with:
           modrinth-id: Cfbcv7uF
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-id: 325235
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
           modrinth-unfeature-mode: intersection
 
           files: build-1.20.x-${{ inputs.version }}/mc2discord-forge-1.20.x-${{ inputs.version }}.jar
-          name: '[Forge 1.20.x] Mc2Discord ${{ inputs.version }}'
+          name: '[Forge 1.20.x] ${{ inputs.version }}'
           changelog-file: CHANGELOG.md
           loaders: |
             forge
@@ -48,4 +52,4 @@ jobs:
       - uses: tsickert/discord-webhook@v5.3.0
         with:
           webhook-url: ${{ secrets.WEBHOOK_URL }}
-          content: 'New Mc2Discord version released: ${{ inputs.version }} for Forge 1.20.x'
+          content: 'New Mc2Discord version released: [Forge 1.20.x] ${{ inputs.version }}'
