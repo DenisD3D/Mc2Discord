@@ -25,8 +25,12 @@ jobs:
           cache: 'gradle'
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+      - name: xx
+        run: env
       - name: Build with Gradle
         run: ./gradlew build
+        env:
+          TESTVAR: ${{ inputs.version }}
       - uses: actions/upload-artifact@v3
         with:
           name: build-1.20.x-${{ inputs.version }}

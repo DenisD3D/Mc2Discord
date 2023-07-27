@@ -10,7 +10,7 @@ plugins {
 val modId: String by extra
 val modName: String by extra
 val modGroup: String by extra
-val modVersion: String = System.getenv("INPUT_VERSION") ?: "dev"
+val modVersion: String = System.getenv("TESTVAR") ?: "dev"
 val modMinecraftVersion: String by extra
 val modAuthors: String by extra
 val modDescription: String by extra
