@@ -14,8 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        mc-version: [ "1.19.x", "1.20.x" ]
+        mcversion: [ "1.19.x", "1.20.x" ]
     steps:
-      - uses: ./.github/workflows/build-${{ matrix.mc-version }}.yml
+      - uses: ./.github/workflows/build-${{ matrix.mcversion }}.yml
         with:
           version: ${{ inputs.version }}
