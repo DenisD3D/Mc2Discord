@@ -31,7 +31,7 @@ jobs:
 
           modrinth-unfeature-mode: game-version-intersection | loaders-subset
 
-          files-primary: build-1.19.x-${{ inputs.version }}/mc2discord-forge-1.19.x-${{ inputs.version }}.jar
+          files: build-1.19.x-${{ inputs.version }}/mc2discord-forge-1.19.x-${{ inputs.version }}.jar
           changelog-file: CHANGELOG.md
           loaders: |
             forge
