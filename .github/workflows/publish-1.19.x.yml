@@ -13,7 +13,11 @@ on:
       version:
         required: true
         type: string
-
+    secrets:
+      MODRINTH_TOKEN:
+        required: true
+      WEBHOOK_URL:
+        required: true
 jobs:
   build-1-19-x:
     uses: ./.github/workflows/build-1.19.x.yml
