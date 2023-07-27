@@ -11,11 +11,11 @@ on:
 
 jobs:
   build-all:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: ./.github/workflows/build-1.19.x.yml
-        with:
-          version: ${{ inputs.version }}
-      - uses: ./.github/workflows/build-1.20.x.yml
-        with:
-          version: ${{ inputs.version }}
+    strategy:
+      matrix:
+        mc-version:
+          - '1.20.x'
+          - '1.19.x'
+      uses: ./.github/workflows/build-${{ matrix.mc-version }}.yml
+      with:
+        version: ${{ inputs.version }}
