@@ -1,6 +1,12 @@
 name: 'Build 1.19.x'
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'
+        required: true
+        default: 'dev'
 
 jobs:
   build-1-19-x:
@@ -32,7 +38,7 @@ jobs:
         run: ./gradlew build
       - uses: actions/upload-artifact@v3
         with:
-          name: build-1.19.x
+          name: build-1.19.x-${{github.event.inputs.version}}
           path: |
               ${{ github.workspace }}/mc2discord-forge-1.19.x/build/libs/
               !${{ github.workspace }}/mc2discord-forge-1.19.x/build/libs/*-slim.jar

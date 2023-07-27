@@ -118,7 +118,7 @@ public class MinecraftImpl implements IMinecraft {
             }
             if (node != null) {
                 Map<CommandNode<CommandSourceStack>, String> smartUsage = commandDispatcher.getSmartUsage(node, Mc2DiscordForge.commandSource);
-                if (smartUsage.size() > 0) {
+                if (!smartUsage.isEmpty()) {
                     for (String string : smartUsage.values()) {
                         response.append(prefix).append(command).append(" ").append(string).append("\n");
                     }

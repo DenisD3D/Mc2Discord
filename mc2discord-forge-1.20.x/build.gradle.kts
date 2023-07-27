@@ -10,7 +10,8 @@ plugins {
 val modId: String by extra
 val modName: String by extra
 val modGroup: String by extra
-val modVersion: String by extra
+val modVersion: String = System.getenv("github.event.inputs.version") ?: "dev"
+val modMinecraftVersion: String by extra
 val modAuthors: String by extra
 val modDescription: String by extra
 val modIssueTrackerUrl: String by extra
@@ -85,7 +86,7 @@ minecraft {
 
 tasks {
     jar {
-        archiveBaseName.set("${modId}-forge-${minecraftVersion}-${modVersion}-forge")
+        archiveBaseName.set("${modId}-forge-${modMinecraftVersion}-${modVersion}-forge")
         archiveClassifier.set("slim")
         manifest {
             attributes(mapOf("Specification-Title" to modName, "Specification-Vendor" to modAuthors, "Specification-Version" to "1", "Implementation-Title" to project.name, "Implementation-Version" to modVersion, "Implementation-Vendor" to modAuthors))
@@ -94,7 +95,7 @@ tasks {
     }
 
     shadowJar {
-        archiveBaseName.set("${modId}-forge-${minecraftVersion}-${modVersion}")
+        archiveBaseName.set("${modId}-forge-${modMinecraftVersion}-${modVersion}")
         archiveClassifier.set("")
         configurations = listOf(shadowMinecraftLibrary)
         val relocateLocation = "$modGroup.shadow"
