@@ -8,13 +8,18 @@ on:
         description: 'Version'
         required: true
         default: 'dev'
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
 
 jobs:
   build-1-19-x:
     runs-on: ubuntu-latest
     defaults:
-        run:
-            working-directory: mc2discord-forge-1.19.x
+      run:
+        working-directory: mc2discord-forge-1.19.x
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
@@ -27,9 +32,11 @@ jobs:
         run: chmod +x gradlew
       - name: Build with Gradle
         run: ./gradlew build
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
       - uses: actions/upload-artifact@v3
         with:
           name: build-1.19.x-${{ inputs.version }}
           path: |
-              ${{ github.workspace }}/mc2discord-forge-1.19.x/build/libs/
-              !${{ github.workspace }}/mc2discord-forge-1.19.x/build/libs/*-slim.jar
+            ${{ github.workspace }}/mc2discord-forge-1.19.x/build/libs/
+            !${{ github.workspace }}/mc2discord-forge-1.19.x/build/libs/*-slim.jar
