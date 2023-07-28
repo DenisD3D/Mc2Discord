@@ -7,7 +7,7 @@ on:
       version:
         description: 'Version'
         required: true
-        default: 'dev'
+        default: '0.0.0-dev'
 
 jobs:
   publish-1-19-x:
