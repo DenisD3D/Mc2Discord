@@ -7,7 +7,6 @@ plugins {
     id("com.github.johnrengelman.shadow") version ("7.1.2")
 }
 
-
 fun readProperties(propertiesFile: File) = Properties().apply {
     propertiesFile.inputStream().use { fis ->
         load(fis)
@@ -51,6 +50,7 @@ repositories {
     mavenCentral()
 }
 
+configurations.implementation.get().extendsFrom(configurations.shadow.get())
 dependencies {
     minecraft(group = "com.mojang", name = "minecraft", version = minecraftVersion)
     mappings(loom.officialMojangMappings())

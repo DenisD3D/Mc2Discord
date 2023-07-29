@@ -71,7 +71,7 @@ public class FabricEvents {
     /**
      * Commands fixes for Discord
      */
-    public static InteractionResult onCommandEvent(ParseResults<CommandSourceStack> parseResults, String command) {
+    public static InteractionResult onCommandEvent(ParseResults<CommandSourceStack> parseResults) {
         if (M2DUtils.isNotConfigured()) return InteractionResult.PASS;
 
         if (parseResults.getContext().getNodes().isEmpty()) return InteractionResult.PASS;

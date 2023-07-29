@@ -15,7 +15,7 @@ public class CommandsMixin {
 
     @Inject(method = "performCommand", at = @At("HEAD"), cancellable = true)
     private void execute(ParseResults<CommandSourceStack> parseResults, String command, CallbackInfoReturnable<Integer> cir) {
-        InteractionResult result = CommandExecuteCallback.EVENT.invoker().onCommandExecute(parseResults, command);
+        InteractionResult result = CommandExecuteCallback.EVENT.invoker().onCommandExecute(parseResults);
 
         if(result == InteractionResult.FAIL) {
             cir.setReturnValue(0);

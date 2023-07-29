@@ -7,9 +7,9 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.world.InteractionResult;
 
 public interface CommandExecuteCallback {
-    Event<CommandExecuteCallback> EVENT = EventFactory.createArrayBacked(CommandExecuteCallback.class, (listeners) -> (parseResults, command) -> {
+    Event<CommandExecuteCallback> EVENT = EventFactory.createArrayBacked(CommandExecuteCallback.class, (listeners) -> (parseResults) -> {
         for (CommandExecuteCallback listener : listeners) {
-            InteractionResult result = listener.onCommandExecute(parseResults, command);
+            InteractionResult result = listener.onCommandExecute(parseResults);
 
             if(result != InteractionResult.PASS) {
                 return result;
@@ -19,5 +19,5 @@ public interface CommandExecuteCallback {
         return InteractionResult.PASS;
     });
 
-    InteractionResult onCommandExecute(ParseResults<CommandSourceStack> parseResults, String command);
+    InteractionResult onCommandExecute(ParseResults<CommandSourceStack> parseResults);
 }

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("java")
     id("idea")
@@ -7,16 +9,25 @@ plugins {
     id("org.spongepowered.mixin") version ("0.7.+")
 }
 
-val modId: String by extra
-val modName: String by extra
-val modGroup: String by extra
+fun readProperties(propertiesFile: File) = Properties().apply {
+    propertiesFile.inputStream().use { fis ->
+        load(fis)
+    }
+}
+
+val sharedProperties = readProperties(file("../shared.properties"))
+
+val modId: String by sharedProperties
+val modName: String by sharedProperties
+val modGroup: String by sharedProperties
 val modVersion: String = System.getenv("INPUT_VERSION") ?: "0.0.0-dev"
-val modMinecraftVersion: String by extra
-val modAuthors: String by extra
-val modDescription: String by extra
-val modIssueTrackerUrl: String by extra
-val modUpdateJsonUrl: String by extra
-val modDisplayUrl: String by extra
+val modMinecraftVersion: String by sharedProperties
+val modAuthors: String by sharedProperties
+val modDescription: String by sharedProperties
+val modIssueTrackerUrl: String by sharedProperties
+val modUpdateJsonUrl: String by sharedProperties
+val modDisplayUrl: String by sharedProperties
+val discord4jVersion: String by sharedProperties
 
 val javaVersion: String by extra
 val forgeVersion: String by extra
@@ -24,6 +35,13 @@ val forgeVersionRange: String by extra
 val minecraftVersion: String by extra
 val minecraftVersionRange: String by extra
 val parchmentMappingVersion: String by extra
+
+version = modVersion
+group = modGroup
+
+base {
+    archivesName.set("${modId}-forge-${modMinecraftVersion}")
+}
 
 mixin {
     add(sourceSets.main.get(), "${modId}.refmap.json")
@@ -60,7 +78,7 @@ dependencies {
     @Suppress("VulnerableDependency")
     minecraftLibrary(group = "io.netty", name = "netty-all", version = "4.1.68.Final") // Fix compatibility with Discord4J in dev
 
-    compileOnly(group = "com.discord4j", name = "discord4j-core", version = "3.3.0-M2")
+    compileOnly(group = "com.discord4j", name = "discord4j-core", version = discord4jVersion)
 }
 
 minecraft {
@@ -86,16 +104,19 @@ minecraft {
 
 tasks {
     jar {
-        archiveBaseName.set("${modId}-forge-${modMinecraftVersion}-${modVersion}-forge")
         archiveClassifier.set("slim")
         manifest {
-            attributes(mapOf("Specification-Title" to modName, "Specification-Vendor" to modAuthors, "Specification-Version" to "1", "Implementation-Title" to project.name, "Implementation-Version" to modVersion, "Implementation-Vendor" to modAuthors))
+            attributes(mapOf("Specification-Title" to modName,
+                    "Specification-Vendor" to modAuthors,
+                    "Specification-Version" to "1",
+                    "Implementation-Title" to project.name,
+                    "Implementation-Version" to modVersion,
+                    "Implementation-Vendor" to modAuthors))
         }
 
     }
 
     shadowJar {
-        archiveBaseName.set("${modId}-forge-${modMinecraftVersion}-${modVersion}")
         archiveClassifier.set("")
         configurations = listOf(shadowMinecraftLibrary)
         val relocateLocation = "$modGroup.shadow"
@@ -116,7 +137,25 @@ tasks {
 
     val resourceTargets = listOf("META-INF/mods.toml", "pack.mcmeta", "${modId}.mixins.json")
     val intoTargets = listOf("$rootDir/out/production/resources/", "$rootDir/out/production/${project.name}.main/", "$rootDir/bin/main/")
-    val replaceProperties = mapOf("modId" to modId, "modName" to modName, "modVersion" to modVersion, "modAuthors" to modAuthors, "modDescription" to modDescription, "modIssueTrackerUrl" to modIssueTrackerUrl, "modUpdateJsonUrl" to modUpdateJsonUrl, "modDisplayUrl" to modDisplayUrl, "minecraftVersionRange" to minecraftVersionRange, "forgeVersionRange" to forgeVersionRange)
+    val replaceProperties = mapOf("modId" to modId,
+            "modName" to modName,
+            "modGroup" to modGroup,
+            "modVersion" to modVersion,
+            "modMinecraftVersion" to modMinecraftVersion,
+            "modAuthors" to modAuthors,
+            "modDescription" to modDescription,
+            "modIssueTrackerUrl" to modIssueTrackerUrl,
+            "modUpdateJsonUrl" to modUpdateJsonUrl,
+            "modDisplayUrl" to modDisplayUrl,
+            "discord4jVersion" to discord4jVersion,
+
+            "javaVersion" to javaVersion,
+            "forgeVersion" to forgeVersion,
+            "forgeVersionRange" to forgeVersionRange,
+            "minecraftVersion" to minecraftVersion,
+            "minecraftVersionRange" to minecraftVersionRange,
+            "parchmentMappingVersion" to parchmentMappingVersion)
+
     processResources {
         inputs.properties(replaceProperties)
 
