@@ -45,4 +45,4 @@ jobs:
           name: mc2discord-fabric-1.20.x-${{ inputs.version }}
           path: |
             ${{ github.workspace }}/mc2discord-fabric-1.20.x/build/libs/
-            !${{ github.workspace }}/mc2discord-fabric-1.20.x/build/libs/*-slim.jar
+            !${{ github.workspace }}/mc2discord-fabric-1.20.x/build/libs/*-all.jar
