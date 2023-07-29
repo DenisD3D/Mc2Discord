@@ -1,2 +1,3 @@
-## Mc2Discord 4.0.0
-Complete rewrite of the mod
+## Mc2Discord 4.0.1
++ Fabric support
++ Improved lang files

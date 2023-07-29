@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +65,10 @@ public class Mc2Discord {
 
     private boolean loadConfig() {
         try {
+            if (new File("config").mkdir()) {
+                LOGGER.info("Created config folder");
+            }
+
             this.config = new M2DConfig(M2DUtils.CONFIG_FILE, translationKey -> {
                 if ("config.lang.comment".equals(translationKey)) {
                     return langManager.formatMessage(translationKey, String.join(", ", LangManager.LANG_CONTRIBUTORS), String.join(", ", LangManager.AVAILABLE_LANG));

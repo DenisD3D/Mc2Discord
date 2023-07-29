@@ -91,7 +91,6 @@ tasks {
         manifest {
             attributes(mapOf("Specification-Title" to modName, "Specification-Vendor" to modAuthors, "Specification-Version" to "1", "Implementation-Title" to project.name, "Implementation-Version" to modVersion, "Implementation-Vendor" to modAuthors))
         }
-
     }
 
     shadowJar {

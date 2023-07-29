@@ -1,4 +1,4 @@
-package fr.denisd3d.mc2discord.forge;
+package fr.denisd3d.mc2discord.fabric;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
@@ -8,17 +8,14 @@ import fr.denisd3d.mc2discord.core.IMinecraft;
 import fr.denisd3d.mc2discord.core.Mc2Discord;
 import fr.denisd3d.mc2discord.core.entities.Entity;
 import fr.denisd3d.mc2discord.core.entities.GlobalEntity;
-import fr.denisd3d.mc2discord.forge.commands.AccountCommands;
-import fr.denisd3d.mc2discord.forge.commands.DiscordCommandSource;
+import fr.denisd3d.mc2discord.fabric.commands.AccountCommands;
+import fr.denisd3d.mc2discord.fabric.commands.DiscordCommandSource;
 import net.minecraft.ChatFormatting;
 import net.minecraft.CrashReport;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.VersionChecker;
-import net.minecraftforge.server.ServerLifecycleHooks;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -87,24 +84,20 @@ public class MinecraftImpl implements IMinecraft {
             component.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "@" + senderUsername)).withInsertion("@" + senderUsername));
         }
 
-        ServerLifecycleHooks.getCurrentServer()
-                .getPlayerList()
-                .broadcastSystemMessage(component, false);
+        Mc2DiscordFabric.server.getPlayerList().broadcastSystemMessage(component, false);
     }
 
     @Override
     public String executeHelpCommand(Integer permissionLevel, List<String> commands) {
         String prefix = Mc2Discord.INSTANCE.config.commands.prefix;
 
-        CommandDispatcher<CommandSourceStack> commandDispatcher = ServerLifecycleHooks.getCurrentServer()
-                .getCommands()
-                .getDispatcher();
+        CommandDispatcher<CommandSourceStack> commandDispatcher = Mc2DiscordFabric.server.getCommands().getDispatcher();
 
         StringBuilder response = new StringBuilder();
         response.append("Available commands:\n").append(prefix).append("help\n");
 
         if (permissionLevel >= 0) {
-            Map<CommandNode<CommandSourceStack>, String> map = commandDispatcher.getSmartUsage(commandDispatcher.getRoot(), Mc2DiscordForge.commandSource.withPermission(permissionLevel));
+            Map<CommandNode<CommandSourceStack>, String> map = commandDispatcher.getSmartUsage(commandDispatcher.getRoot(), Mc2DiscordFabric.commandSource.withPermission(permissionLevel));
 
             for (String string : map.values()) {
                 response.append(prefix).append(string).append("\n");
@@ -117,7 +110,7 @@ public class MinecraftImpl implements IMinecraft {
                 node = node.getChild(child);
             }
             if (node != null) {
-                Map<CommandNode<CommandSourceStack>, String> smartUsage = commandDispatcher.getSmartUsage(node, Mc2DiscordForge.commandSource);
+                Map<CommandNode<CommandSourceStack>, String> smartUsage = commandDispatcher.getSmartUsage(node, Mc2DiscordFabric.commandSource);
                 if (!smartUsage.isEmpty()) {
                     for (String string : smartUsage.values()) {
                         response.append(prefix).append(command).append(" ").append(string).append("\n");
@@ -134,17 +127,13 @@ public class MinecraftImpl implements IMinecraft {
     @Override
     public void executeCommand(String command, int permissionLevel, Snowflake channelId) {
         DiscordCommandSource.channelId = channelId;
-        ServerLifecycleHooks.getCurrentServer().getCommands()
-                .performPrefixedCommand(Mc2DiscordForge.commandSource.withPermission(permissionLevel), command);
+        Mc2DiscordFabric.server.getCommands()
+                .performPrefixedCommand(Mc2DiscordFabric.commandSource.withPermission(permissionLevel), command);
     }
 
     @Override
     public String getNewVersion() {
-        VersionChecker.CheckResult versionChecker = VersionChecker.getResult(ModList.get()
-                .getModContainerById("mc2discord")
-                .orElseThrow(() -> new RuntimeException("Where is Mc2Discord???!"))
-                .getModInfo());
-        return versionChecker.target() == null ? null : versionChecker.target().toString();
+        return null;
     }
 
     @Override
@@ -155,13 +144,13 @@ public class MinecraftImpl implements IMinecraft {
     @Override
     public GlobalEntity getServerData() {
         int onlinePlayerCount = 0;
-        for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
+        for (ServerPlayer player : Mc2DiscordFabric.server.getPlayerList().getPlayers()) {
             if (!Mc2Discord.INSTANCE.hiddenPlayerList.contains(player.getUUID())) {
                 onlinePlayerCount++;
             }
         }
 
-        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        MinecraftServer server = Mc2DiscordFabric.server;
         return new GlobalEntity(onlinePlayerCount,
                 server.getMaxPlayers(),
                 Optional.of(server.playerDataStorage.getSeenPlayers())
@@ -175,11 +164,11 @@ public class MinecraftImpl implements IMinecraft {
 
     @Override
     public String getPlayerNameFromUUID(UUID uuid) {
-        return Optional.ofNullable(ServerLifecycleHooks.getCurrentServer().getProfileCache()).flatMap(gameProfileCache -> gameProfileCache.get(uuid)).map(GameProfile::getName).orElse(uuid.toString());
+        return Optional.ofNullable(Mc2DiscordFabric.server.getProfileCache()).flatMap(gameProfileCache -> gameProfileCache.get(uuid)).map(GameProfile::getName).orElse(uuid.toString());
     }
 
     @Override
     public void registerAccountCommands() {
-        AccountCommands.register(ServerLifecycleHooks.getCurrentServer().getCommands().getDispatcher());
+        AccountCommands.register(Mc2DiscordFabric.server.getCommands().getDispatcher());
     }
 }
