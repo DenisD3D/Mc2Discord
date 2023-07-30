@@ -16,6 +16,7 @@ jobs:
       version: ${{ inputs.version }}
 
   publish-forge-1-19-x:
+    needs: build-all
     uses: ./.github/workflows/publish-forge-1.19.x.yml
     with:
       version: ${{ inputs.version }}
