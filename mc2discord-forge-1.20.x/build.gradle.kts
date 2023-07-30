@@ -21,7 +21,6 @@ val modId: String by sharedProperties
 val modName: String by sharedProperties
 val modGroup: String by sharedProperties
 val modVersion: String = System.getenv("INPUT_VERSION") ?: "0.0.0-dev"
-val modMinecraftVersion: String by sharedProperties
 val modAuthors: String by sharedProperties
 val modDescription: String by sharedProperties
 val modIssueTrackerUrl: String by sharedProperties
@@ -34,13 +33,14 @@ val forgeVersion: String by extra
 val forgeVersionRange: String by extra
 val minecraftVersion: String by extra
 val minecraftVersionRange: String by extra
+val minecraftDisplayVersion: String by extra
 val parchmentMappingVersion: String by extra
 
 version = modVersion
 group = modGroup
 
 base {
-    archivesName.set("${modId}-forge-${modMinecraftVersion}")
+    archivesName.set("${modId}-forge-${minecraftDisplayVersion}")
 }
 
 mixin {
@@ -140,7 +140,6 @@ tasks {
             "modName" to modName,
             "modGroup" to modGroup,
             "modVersion" to modVersion,
-            "modMinecraftVersion" to modMinecraftVersion,
             "modAuthors" to modAuthors,
             "modDescription" to modDescription,
             "modIssueTrackerUrl" to modIssueTrackerUrl,
@@ -153,6 +152,7 @@ tasks {
             "forgeVersionRange" to forgeVersionRange,
             "minecraftVersion" to minecraftVersion,
             "minecraftVersionRange" to minecraftVersionRange,
+            "minecraftDisplayVersion" to minecraftDisplayVersion,
             "parchmentMappingVersion" to parchmentMappingVersion)
 
     processResources {
