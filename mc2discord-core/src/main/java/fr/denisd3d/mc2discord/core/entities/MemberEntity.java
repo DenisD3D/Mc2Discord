@@ -31,6 +31,7 @@ public class MemberEntity extends Entity {
         replacements.put(prefix + "nickname", this.nickname);
         replacements.put(prefix + "avatar_url", this.avatarUrl);
         replacements.put(prefix + "top_role_color", this.top_role_color);
-        replacements.put("color_start|top_role", "${color_start|" + this.top_role_color + "}");
+
+        formatters.put("color_start", (format, value) -> "${color_start|" + (format.equals("top_role") ? this.top_role_color : format) + "}");
     }
 }

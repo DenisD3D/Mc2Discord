@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Channels {
-    @Path("Channels")
+    @Path("Channel")
     @PreserveNotNull
     public List<Channel> channels = new ArrayList<>();
 

@@ -1,4 +1,4 @@
-## Mc2Discord 4.0.1
-+ Fabric support
-+ Improved lang files
-+ Fixed datapack commands not being relayed to discord
+## Mc2Discord 4.0.2
++ Add support for more formatting in Minecraft messages
++ Fix config files issues
++ Fix ${color_start|top_color} not working

@@ -55,8 +55,8 @@
     "config.commands.comment": " Commands configuration",
     "config.commands.prefix.comment": " Prefix before each command. Minecraft default one is '/' (eg : /help)",
     "config.commands.use_codeblocks.comment": " If true, commands result are sent in a code block (```result```)",
-    "config.commands.command.comment": " Commands permissions configuration.\n One [[Commands.Permission]] block should be created per Discord channel you want to setup",
-    "config.commands.permission.id.comment": " Id of the Discord member or Discord role the permission apply to",
+    "config.commands.permission.comment": " Commands permissions configuration.\n One [[Commands.Permission]] block should be created per Discord channel you want to setup",
+    "config.commands.permission.id.comment": " Id of the Discord member or Discord role the permission apply to (0 <=> everyone)",
     "config.commands.permission.permission_level.comment": " Minecraft permission level that will be allowed, all commands up to that level will be available (-1 <=> No commands, 0 <=> all non-op commands, 3 <=> all op commands)",
     "config.commands.permission.commands.comment": " List of commands that will be allowed in addition of the permission level",
 

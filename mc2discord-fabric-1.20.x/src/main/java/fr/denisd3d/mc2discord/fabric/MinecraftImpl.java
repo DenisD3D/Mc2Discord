@@ -47,6 +47,16 @@ public class MinecraftImpl implements IMinecraft {
                 switch (variable_name) {
                     case "color_start" -> baseStyle = baseStyle.withColor(TextColor.parseColor(matcher.group(2)));
                     case "color_end" -> baseStyle = baseStyle.withColor(ChatFormatting.WHITE);
+                    case "bold_start" -> baseStyle = baseStyle.withBold(true);
+                    case "bold_end" -> baseStyle = baseStyle.withBold(false);
+                    case "italic_start" -> baseStyle = baseStyle.withItalic(true);
+                    case "italic_end" -> baseStyle = baseStyle.withItalic(false);
+                    case "underlined_start" -> baseStyle = baseStyle.withUnderlined(true);
+                    case "underlined_end" -> baseStyle = baseStyle.withUnderlined(false);
+                    case "strikethrough_start" -> baseStyle = baseStyle.withStrikethrough(true);
+                    case "strikethrough_end" -> baseStyle = baseStyle.withStrikethrough(false);
+                    case "obfuscated_start" -> baseStyle = baseStyle.withObfuscated(true);
+                    case "obfuscated_end" -> baseStyle = baseStyle.withObfuscated(false);
                     default -> {
                         MutableComponent replacement = replacements.get(variable_name);
                         if (replacement != null) {
