@@ -16,10 +16,15 @@ public class Style {
     @PreserveNotNull
     public String bot_avatar = "";
 
-    @Path("avatar_api")
-    @Comment("config.style.avatar_api.comment")
+    @Path("webhook_display_name")
+    @Comment("config.style.webhook_display_name.comment")
     @PreserveNotNull
-    public String avatar_api = "https://mc-heads.net/head/${player_uuid}/right";
+    public String webhook_display_name = "${player_display_name}";
+
+    @Path("webhook_avatar_api")
+    @Comment("config.style.webhook_avatar_api.comment")
+    @PreserveNotNull
+    public String webhook_avatar_api = "https://mc-heads.net/head/${player_uuid}/right";
 
     @Path("minecraft_chat_format")
     @Comment("config.style.minecraft_chat_format.comment")

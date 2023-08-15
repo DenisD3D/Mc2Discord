@@ -122,7 +122,7 @@ public class ForgeEvents {
             if (event.getParseResults().getContext().getSource().getPlayer() != null) {
                 PlayerEntity player = new PlayerEntity(event.getParseResults().getContext().getSource().getPlayer().getGameProfile().getName(), event.getParseResults().getContext().getSource().getPlayer().getDisplayName()
                         .getString(), event.getParseResults().getContext().getSource().getPlayer().getGameProfile().getId());
-                MessageManager.sendChatMessage(message, player.displayName, Entity.replace(Mc2Discord.INSTANCE.config.style.avatar_api, List.of(player))).subscribe();
+                MessageManager.sendChatMessage(message, Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_display_name, List.of(player)), Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_avatar_api, List.of(player))).subscribe();
             } else {
                 MessageManager.sendChatMessage(message, Mc2Discord.INSTANCE.vars.mc2discord_display_name, Mc2Discord.INSTANCE.vars.mc2discord_avatar).subscribe();
             }

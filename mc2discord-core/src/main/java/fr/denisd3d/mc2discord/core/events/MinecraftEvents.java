@@ -18,7 +18,7 @@ public class MinecraftEvents {
         if (Mc2Discord.INSTANCE.hiddenPlayerList.contains(player.uuid))
             return;
 
-        MessageManager.sendChatMessage(message, player.displayName, Entity.replace(Mc2Discord.INSTANCE.config.style.avatar_api, List.of(player))).subscribe();
+        MessageManager.sendChatMessage(message, Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_display_name, List.of(player)), Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_avatar_api, List.of(player))).subscribe();
     }
 
     public static void onPlayerConnectEvent(PlayerEntity player) {
