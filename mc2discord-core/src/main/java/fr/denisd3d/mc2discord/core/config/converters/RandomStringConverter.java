@@ -26,7 +26,9 @@ public class RandomStringConverter implements Converter<RandomString, Object> {
 
     @Override
     public Object convertFromField(RandomString value) {
-        if (value.getValues().size() == 1)
+        if (value == null)
+            return null;
+        else if (value.getValues().size() == 1)
             return value.getValues().get(0);
         else
             return value.getValues();
