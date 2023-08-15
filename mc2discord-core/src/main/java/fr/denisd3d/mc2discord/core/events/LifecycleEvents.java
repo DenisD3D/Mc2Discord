@@ -165,14 +165,14 @@ public class LifecycleEvents {
         LoggingManager.init();
         AccountManager.init();
 
-        MessageManager.sendInfoMessage("server_start", Entity.replace(Mc2Discord.INSTANCE.config.messages.start, Collections.emptyList())).subscribe();
+        MessageManager.sendInfoMessage("server_start", Entity.replace(Mc2Discord.INSTANCE.config.messages.start.asString(), Collections.emptyList())).subscribe();
     }
 
     public static void onShutdown() {
         if (M2DUtils.isNotConfigured())
             return;
 
-        MessageManager.sendInfoMessage("server_stop", Entity.replace(Mc2Discord.INSTANCE.config.messages.stop, Collections.emptyList()))
+        MessageManager.sendInfoMessage("server_stop", Entity.replace(Mc2Discord.INSTANCE.config.messages.stop.asString(), Collections.emptyList()))
                 .then(Mc2Discord.INSTANCE.shutdown())
                 .subscribe();
     }

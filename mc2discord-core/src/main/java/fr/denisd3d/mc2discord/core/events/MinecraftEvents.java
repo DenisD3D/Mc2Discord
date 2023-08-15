@@ -27,7 +27,7 @@ public class MinecraftEvents {
 
         if (Mc2Discord.INSTANCE.hiddenPlayerList.contains(player.uuid))
             return;
-        MessageManager.sendInfoMessage("player_connect", Entity.replace(Mc2Discord.INSTANCE.config.messages.join, List.of(player))).subscribe();
+        MessageManager.sendInfoMessage("player_connect", Entity.replace(Mc2Discord.INSTANCE.config.messages.join.asString(), List.of(player))).subscribe();
     }
 
     public static void onPlayerDisconnectEvent(PlayerEntity player) {
@@ -36,7 +36,7 @@ public class MinecraftEvents {
 
         if (Mc2Discord.INSTANCE.hiddenPlayerList.contains(player.uuid))
             return;
-        MessageManager.sendInfoMessage("player_disconnect", Entity.replace(Mc2Discord.INSTANCE.config.messages.leave, List.of(player))).subscribe();
+        MessageManager.sendInfoMessage("player_disconnect", Entity.replace(Mc2Discord.INSTANCE.config.messages.leave.asString(), List.of(player))).subscribe();
     }
 
     public static void onPlayerDeathEvent(PlayerEntity player, DeathEntity death) {
@@ -46,7 +46,7 @@ public class MinecraftEvents {
         if (Mc2Discord.INSTANCE.hiddenPlayerList.contains(player.uuid))
             return;
 
-        MessageManager.sendInfoMessage("player_death", Entity.replace(Mc2Discord.INSTANCE.config.messages.death, List.of(player, death))).subscribe();
+        MessageManager.sendInfoMessage("player_death", Entity.replace(Mc2Discord.INSTANCE.config.messages.death.asString(), List.of(player, death))).subscribe();
     }
 
     public static void onAdvancementEvent(PlayerEntity player, AdvancementEntity advancement) {
@@ -56,6 +56,6 @@ public class MinecraftEvents {
         if (Mc2Discord.INSTANCE.hiddenPlayerList.contains(player.uuid))
             return;
 
-        MessageManager.sendInfoMessage("player_advancement", Entity.replace(Mc2Discord.INSTANCE.config.messages.advancement, List.of(player, advancement))).subscribe();
+        MessageManager.sendInfoMessage("player_advancement", Entity.replace(Mc2Discord.INSTANCE.config.messages.advancement.asString(), List.of(player, advancement))).subscribe();
     }
 }
