@@ -8,12 +8,12 @@ public class RandomString {
     private final List<String> values;
     private final Random rand = new Random();
 
-    RandomString(String value) {
+    public RandomString(String value) {
         this.values = new ArrayList<>();
         this.values.add(value);
     }
 
-    RandomString(List<String> values) {
+    public RandomString(List<String> values) {
         this.values = values;
     }
 

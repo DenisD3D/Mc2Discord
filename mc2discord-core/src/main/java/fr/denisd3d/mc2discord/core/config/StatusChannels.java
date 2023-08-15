@@ -5,6 +5,8 @@ import com.electronwill.nightconfig.core.conversion.Path;
 import com.electronwill.nightconfig.core.conversion.PreserveNotNull;
 import discord4j.common.util.Snowflake;
 import fr.denisd3d.mc2discord.core.M2DUtils;
+import fr.denisd3d.mc2discord.core.config.converters.RandomString;
+import fr.denisd3d.mc2discord.core.config.converters.RandomStringConverter;
 import fr.denisd3d.mc2discord.core.config.converters.SnowflakeConverter;
 import ml.denisd3d.config4j.Comment;
 
@@ -26,13 +28,15 @@ public class StatusChannels {
 
         @Path("name_message")
         @Comment("config.status_channels.name_message.comment")
+        @Conversion(RandomStringConverter.class)
         @PreserveNotNull
-        public String name_message = "${online_players} / ${max_players}";
+        public RandomString name_message = new RandomString("${online_players} / ${max_players}");
 
         @Path("topic_message")
         @Comment("config.status_channels.topic_message.comment")
+        @Conversion(RandomStringConverter.class)
         @PreserveNotNull
-        public String topic_message = "${online_players} / ${max_players}";
+        public RandomString topic_message = new RandomString("${online_players} / ${max_players}");
 
         @Path("update_period")
         @Comment("config.status_channels.update_period.comment")

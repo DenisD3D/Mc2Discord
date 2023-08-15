@@ -6,6 +6,7 @@ import discord4j.core.object.presence.ClientPresence;
 import discord4j.discordjson.json.ChannelModifyRequest;
 import discord4j.discordjson.possible.Possible;
 import fr.denisd3d.mc2discord.core.config.StatusChannels;
+import fr.denisd3d.mc2discord.core.config.converters.RandomString;
 import fr.denisd3d.mc2discord.core.entities.Entity;
 
 import java.time.Duration;
@@ -20,12 +21,12 @@ public class StatusManager {
     public static void init() {
         timer = new Timer(true);
 
-        if (!Mc2Discord.INSTANCE.config.style.presence.message.isEmpty() && Mc2Discord.INSTANCE.config.style.presence.update != 0) {
+        if (!Mc2Discord.INSTANCE.config.style.presence.message.getValues().get(0).isEmpty() && Mc2Discord.INSTANCE.config.style.presence.update != 0) {
             timer.schedule(new PresenceUpdateTask(Mc2Discord.INSTANCE.config.style.presence.message, Mc2Discord.INSTANCE.config.style.presence.type, Mc2Discord.INSTANCE.config.style.presence.link), 0, Mc2Discord.INSTANCE.config.style.presence.update * 1000);
         }
 
         for (StatusChannels.StatusChannel statusChannel : Mc2Discord.INSTANCE.config.statusChannels.channels) {
-            if (statusChannel.channel_id.equals(M2DUtils.NIL_SNOWFLAKE) || statusChannel.update_period == 0 || (statusChannel.name_message.isEmpty() && statusChannel.topic_message.isEmpty()))
+            if (statusChannel.channel_id.equals(M2DUtils.NIL_SNOWFLAKE) || statusChannel.update_period == 0 || (statusChannel.name_message.getValues().get(0).isEmpty() && statusChannel.topic_message.getValues().get(0).isEmpty()))
                 continue;
             timer.schedule(new ChannelUpdateTask(statusChannel), 0, statusChannel.update_period * 1000);
         }
@@ -49,12 +50,14 @@ public class StatusManager {
             try {
                 if (M2DUtils.isNotConfigured()) // Check if mod is configured
                     return;
+                String nameMessage = this.statusChannel.name_message.asString();
+                String topicMessage = this.statusChannel.topic_message.asString();
 
                 Mc2Discord.INSTANCE.client.rest()
                         .getChannelById(this.statusChannel.channel_id)
                         .modify(ChannelModifyRequest.builder()
-                                .name(!this.statusChannel.name_message.isEmpty() ? Possible.of(Entity.replace(this.statusChannel.name_message, Collections.emptyList())) : Possible.absent())
-                                .topic(!this.statusChannel.topic_message.isEmpty() ? Possible.of(Entity.replace(this.statusChannel.topic_message, Collections.emptyList())) : Possible.absent())
+                                .name(!nameMessage.isEmpty() ? Possible.of(Entity.replace(nameMessage, Collections.emptyList())) : Possible.absent())
+                                .topic(!topicMessage.isEmpty() ? Possible.of(Entity.replace(topicMessage, Collections.emptyList())) : Possible.absent())
                                 .build(), null)
                         .timeout(Duration.ofSeconds(3))
                         .doOnError(throwable -> {
@@ -76,11 +79,11 @@ public class StatusManager {
     }
 
     private static class PresenceUpdateTask extends TimerTask {
-        private final String presence_message;
+        private final RandomString presence_message;
         private final String presence_type;
         private final String presence_link;
 
-        public PresenceUpdateTask(String presence_message, String presence_type, String presence_link) {
+        public PresenceUpdateTask(RandomString presence_message, String presence_type, String presence_link) {
             this.presence_message = presence_message;
             this.presence_type = presence_type;
             this.presence_link = presence_link;
@@ -92,7 +95,7 @@ public class StatusManager {
                 if (M2DUtils.isNotConfigured()) // Check if mod is configured
                     return;
 
-                Mc2Discord.INSTANCE.client.updatePresence(ClientPresence.online(ClientActivity.of(Activity.Type.valueOf(presence_type), Entity.replace(presence_message, Collections.emptyList()), !presence_link.isEmpty() && Activity.Type.valueOf(presence_type) == Activity.Type.STREAMING ? presence_link : null)))
+                Mc2Discord.INSTANCE.client.updatePresence(ClientPresence.online(ClientActivity.of(Activity.Type.valueOf(presence_type), Entity.replace(presence_message.asString(), Collections.emptyList()), !presence_link.isEmpty() && Activity.Type.valueOf(presence_type) == Activity.Type.STREAMING ? presence_link : null)))
                         .timeout(Duration.ofSeconds(3))
                         .doOnError(throwable -> {
                             if (throwable instanceof TimeoutException) {

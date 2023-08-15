@@ -1,7 +1,10 @@
 package fr.denisd3d.mc2discord.core.config;
 
+import com.electronwill.nightconfig.core.conversion.Conversion;
 import com.electronwill.nightconfig.core.conversion.Path;
 import com.electronwill.nightconfig.core.conversion.PreserveNotNull;
+import fr.denisd3d.mc2discord.core.config.converters.RandomString;
+import fr.denisd3d.mc2discord.core.config.converters.RandomStringConverter;
 import ml.denisd3d.config4j.Comment;
 import ml.denisd3d.config4j.DefaultValue;
 
@@ -9,8 +12,9 @@ public class Presence {
     @Path("message")
     @Comment("config.style.presence.message.comment")
     @DefaultValue("config.style.presence.message.value")
+    @Conversion(RandomStringConverter.class)
     @PreserveNotNull
-    public String message;
+    public RandomString message;
 
     @Path("type")
     @Comment("config.status.presence.type.comment")

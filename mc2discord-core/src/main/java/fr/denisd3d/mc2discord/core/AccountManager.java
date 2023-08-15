@@ -119,7 +119,7 @@ public class AccountManager {
         UUID player_uuid = codes.entrySet().stream().filter(entry -> entry.getValue().equals(code)).map(PassiveExpiringMap.Entry::getKey).findFirst().orElse(null);
 
         if (player_uuid == null) {
-            event.getMessage().getRestChannel().createMessage(Mc2Discord.INSTANCE.config.account.messages.link_invalid_code).subscribe();
+            event.getMessage().getRestChannel().createMessage(Mc2Discord.INSTANCE.config.account.messages.link_invalid_code.asString()).subscribe();
         } else {
             codes.remove(player_uuid);
 
@@ -132,7 +132,7 @@ public class AccountManager {
                                         .size() != 0 && member.getRoleIds().containsAll(policy.required_roles_id)))
                                 .switchIfEmpty(event.getMessage()
                                         .getRestChannel()
-                                        .createMessage(Mc2Discord.INSTANCE.config.account.messages.missing_roles)
+                                        .createMessage(Mc2Discord.INSTANCE.config.account.messages.missing_roles.asString())
                                         .then(Mono.empty()))
                                 .doOnNext(accountPolicy -> validate_link(player_uuid, event))
                                 .map(policy -> policy.roles_id_to_give)
@@ -157,7 +157,7 @@ public class AccountManager {
 
         Mc2Discord.INSTANCE.linkedPlayerList.add(new LinkedPlayerEntry(uuid, event.getMessage().getAuthor().get().getId()));
 
-        event.getMessage().getRestChannel().createMessage(Mc2Discord.INSTANCE.config.account.messages.link_successful).subscribe();
+        event.getMessage().getRestChannel().createMessage(Mc2Discord.INSTANCE.config.account.messages.link_successful.asString()).subscribe();
         codes.remove(uuid);
 
         if (!Mc2Discord.INSTANCE.config.account.guild_id.equals(M2DUtils.NIL_SNOWFLAKE)) {
