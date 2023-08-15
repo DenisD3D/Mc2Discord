@@ -28,7 +28,7 @@ public class AccountCommands {
                             if (code != null) {
                                 context.getSource().sendSuccess(getLinkTextComponent(code), false);
                             } else {
-                                context.getSource().sendFailure(MinecraftImpl.convertToComponent(Mc2Discord.INSTANCE.config.account.messages.link_error_already));
+                                context.getSource().sendFailure(MinecraftImpl.convertToComponent(Mc2Discord.INSTANCE.config.account.messages.link_error_already.asString()));
                             }
                             return 1;
                         }))
@@ -40,12 +40,12 @@ public class AccountCommands {
                             ServerPlayer player = context.getSource().getPlayerOrException();
                             if (AccountManager.unlinkAccount(player.getUUID())) {
                                 if (Mc2Discord.INSTANCE.config.account.force_link) {
-                                    player.connection.disconnect(MinecraftImpl.convertToComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_successful));
+                                    player.connection.disconnect(MinecraftImpl.convertToComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_successful.asString()));
                                 } else {
-                                    context.getSource().sendSuccess(MinecraftImpl.convertToComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_successful), false);
+                                    context.getSource().sendSuccess(MinecraftImpl.convertToComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_successful.asString()), false);
                                 }
                             } else {
-                                context.getSource().sendFailure(MinecraftImpl.convertToComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_error));
+                                context.getSource().sendFailure(MinecraftImpl.convertToComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_error.asString()));
                             }
 
                             return 1;
@@ -61,6 +61,6 @@ public class AccountCommands {
                         .withColor(ChatFormatting.BLUE)
                         .withUnderlined(true)));
 
-        return MinecraftImpl.convertToComponent(Entity.replace(Mc2Discord.INSTANCE.config.account.messages.link_get_code), replacements);
+        return MinecraftImpl.convertToComponent(Entity.replace(Mc2Discord.INSTANCE.config.account.messages.link_get_code.asString()), replacements);
     }
 }
