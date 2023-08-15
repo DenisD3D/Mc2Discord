@@ -1,6 +1,7 @@
 package fr.denisd3d.mc2discord.core;
 
 import com.electronwill.nightconfig.core.io.ParsingException;
+import discord4j.common.close.CloseException;
 import discord4j.core.DiscordClientBuilder;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.guild.MemberJoinEvent;
@@ -50,9 +51,13 @@ public class Mc2Discord {
                 .gateway()
                 .setEnabledIntents(IntentSet.all().andNot(IntentSet.of(Intent.GUILD_PRESENCES)))
                 .login()
-                .doOnError(throwable -> {
-                    LOGGER.error("Can't start Discord bot", throwable);
-                    this.errors.add("Error while connecting to Discord");
+                .doOnError(CloseException.class, throwable -> {
+                    Mc2Discord.LOGGER.error("Error while starting Discord bot: " + throwable.getCloseStatus().getReason().orElse("") + " (code " + throwable.getCloseStatus().getCode() + ")");
+                    if (throwable.getCloseStatus().getCode() == 4014)
+                    {
+                        Mc2Discord.LOGGER.error("Make sure all required intents are enabled on Discord developper website");
+                    }
+                    this.errors.add("Error while starting Discord bot: " + throwable.getCloseStatus().getReason().orElse("") + " (code " + throwable.getCloseStatus().getCode() + ")");
                 })
                 .subscribe(gatewayDiscordClient -> {
                     this.client = gatewayDiscordClient;

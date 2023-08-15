@@ -7,6 +7,8 @@ import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.channel.GuildChannel;
 import discord4j.core.object.entity.channel.ThreadChannel;
 import discord4j.discordjson.possible.Possible;
+import discord4j.rest.http.client.ClientException;
+import discord4j.rest.json.response.ErrorResponse;
 import discord4j.rest.util.AllowedMentions;
 import discord4j.rest.util.Permission;
 import discord4j.rest.util.PermissionSet;
@@ -20,6 +22,7 @@ import reactor.util.function.Tuples;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 
 public class LifecycleEvents {
     public static boolean minecraftReady = false;
@@ -44,6 +47,11 @@ public class LifecycleEvents {
 
             Mc2Discord.INSTANCE.client.getChannelById(channel.channel_id)
                     .ofType(GuildChannel.class)
+                    .doOnError(ClientException.class, e -> {
+                        Map<String, Object> stringObjectMap = e.getErrorResponse().map(ErrorResponse::getFields).orElse(Collections.emptyMap());
+                        Mc2Discord.LOGGER.warn(stringObjectMap.getOrDefault("message", "") + " (code " + stringObjectMap.getOrDefault("code", "xxx") + ") for channel " + channel.channel_id.asString());
+                        Mc2Discord.INSTANCE.errors.add(stringObjectMap.getOrDefault("message", "") + " (code " + stringObjectMap.getOrDefault("code", "xxx") + ") for channel " + channel.channel_id.asString());
+                    })
                     .flatMap(guildChannel -> guildChannel.getEffectivePermissions(Mc2Discord.INSTANCE.vars.bot_id).map(permissions -> Tuples.of(guildChannel, permissions)))
                     .subscribe(tuple -> {
                         GuildChannel guildChannel = tuple.getT1();
@@ -75,13 +83,18 @@ public class LifecycleEvents {
         if (Mc2Discord.INSTANCE.config.features.status_channels) {
             for (StatusChannels.StatusChannel channel : Mc2Discord.INSTANCE.config.statusChannels.channels) {
                 if (channel.channel_id.equals(M2DUtils.NIL_SNOWFLAKE)) {
-                    Mc2Discord.LOGGER.warn("Invalid status channel id for channel " + channel.channel_id.asString());
-                    Mc2Discord.INSTANCE.errors.add("Invalid status channel id for channel " + channel.channel_id.asString());
+                    Mc2Discord.LOGGER.warn("Invalid channel id for status channel " + channel.channel_id.asString());
+                    Mc2Discord.INSTANCE.errors.add("Invalid channel id for status channel " + channel.channel_id.asString());
                     continue;
                 }
 
                 Mc2Discord.INSTANCE.client.getChannelById(channel.channel_id)
                         .ofType(GuildChannel.class)
+                        .doOnError(ClientException.class, e -> {
+                            Map<String, Object> stringObjectMap = e.getErrorResponse().map(ErrorResponse::getFields).orElse(Collections.emptyMap());
+                            Mc2Discord.LOGGER.warn(stringObjectMap.getOrDefault("message", "") + " (code " + stringObjectMap.getOrDefault("code", "xxx") + ") for status channel " + channel.channel_id.asString());
+                            Mc2Discord.INSTANCE.errors.add(stringObjectMap.getOrDefault("message", "") + " (code " + stringObjectMap.getOrDefault("code", "xxx") + ") for status channel " + channel.channel_id.asString());
+                        })
                         .flatMap(guildChannel -> guildChannel.getEffectivePermissions(Mc2Discord.INSTANCE.vars.bot_id))
                         .subscribe(permissionSet -> {
                             ArrayList<String> missingPermissions = new ArrayList<>();
