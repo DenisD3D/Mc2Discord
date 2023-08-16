@@ -6,15 +6,18 @@ import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import fr.denisd3d.mc2discord.core.M2DCommands;
 import fr.denisd3d.mc2discord.core.Mc2Discord;
+import fr.denisd3d.mc2discord.core.MessageManager;
 import fr.denisd3d.mc2discord.core.storage.HiddenPlayerList;
 import fr.denisd3d.mc2discord.core.storage.LinkedPlayerList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.ComponentArgument;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.players.PlayerList;
 import reactor.util.function.Tuple2;
@@ -30,7 +33,7 @@ public class M2DCommandImpl {
     private static final SimpleCommandExceptionType PLAYER_NOT_LINKED = new SimpleCommandExceptionType(Component.literal("Player isn't linked"));
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("mc2discord").requires(commandSource -> commandSource.hasPermission(3))
+        dispatcher.register(Commands.literal("mc2discord").requires(commandSource -> commandSource.hasPermission(2))
                 .then(Commands.literal("status").executes(context -> {
                     List<String> result = M2DCommands.getStatus();
                     result.forEach(s -> context.getSource().sendSuccess(() -> Component.literal(s), false));
@@ -143,7 +146,11 @@ public class M2DCommandImpl {
                                 }
                             }, false);
                             return 1;
-                        }))));
-
+                        })))
+                .then(Commands.literal("tellraw").then(Commands.argument("message", ComponentArgument.textComponent()).executes((context) -> {
+                    MessageManager.sendChatMessage(ComponentUtils.updateForEntity(context.getSource(), ComponentArgument.getComponent(context, "message"), null, 0).getString(), Mc2Discord.INSTANCE.vars.mc2discord_display_name, Mc2Discord.INSTANCE.vars.mc2discord_avatar).subscribe();
+                    context.getSource().sendSuccess(() -> Component.literal("Message sent to Discord"), false);
+                    return 1;
+                }))));
     }
 }

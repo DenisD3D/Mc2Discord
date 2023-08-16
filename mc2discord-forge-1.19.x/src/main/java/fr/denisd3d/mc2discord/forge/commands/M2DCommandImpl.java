@@ -6,15 +6,18 @@ import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import fr.denisd3d.mc2discord.core.M2DCommands;
 import fr.denisd3d.mc2discord.core.Mc2Discord;
+import fr.denisd3d.mc2discord.core.MessageManager;
 import fr.denisd3d.mc2discord.core.storage.HiddenPlayerList;
 import fr.denisd3d.mc2discord.core.storage.LinkedPlayerList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.ComponentArgument;
 import net.minecraft.commands.arguments.GameProfileArgument;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.players.PlayerList;
 import reactor.util.function.Tuple2;
@@ -139,7 +142,11 @@ public class M2DCommandImpl {
                             } catch (IOException e) {
                                 throw new RuntimeException(e);
                             }
-                        }))));
-
+                        })))
+                .then(Commands.literal("tellraw").then(Commands.argument("message", ComponentArgument.textComponent()).executes((context) -> {
+                    MessageManager.sendChatMessage(ComponentUtils.updateForEntity(context.getSource(), ComponentArgument.getComponent(context, "message"), null, 0).getString(), Mc2Discord.INSTANCE.vars.mc2discord_display_name, Mc2Discord.INSTANCE.vars.mc2discord_avatar).subscribe();
+                    context.getSource().sendSuccess(Component.literal("Message sent to Discord"), false);
+                    return 1;
+                }))));
     }
 }
