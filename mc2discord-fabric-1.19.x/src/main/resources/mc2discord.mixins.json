@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "fr.denisd3d.mc2discord.fabric.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "CommandFunctionCommandEntryMixin",
+    "CommandsMixin",
+    "PlayerAdvancementsMixin",
+    "PlayerListMixin",
+    "ServerPlayerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

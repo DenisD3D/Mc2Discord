@@ -43,6 +43,8 @@ public class MessageManager {
     public static Mono<Void> sendMessage(List<String> types, String message, Possible<String> username, Possible<String> avatarUrl, Snowflake forced_channel, boolean surroundWithCodeBlock) {
         if (M2DUtils.isNotConfigured()) // Check if mod is configured
             return Mono.empty();
+        if (message.isEmpty())
+            return Mono.empty();
 
         return Flux.fromIterable(Mc2Discord.INSTANCE.config.channels.channels)
                 .filter(channel -> !channel.channel_id.equals(M2DUtils.NIL_SNOWFLAKE)) // Remove channels with id 0
