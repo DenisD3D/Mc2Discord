@@ -12,7 +12,7 @@ dependencies {
     implementation(group = "com.discord4j", name = "discord4j-core", version = "3.3.0-M2")
 
     // Config
-    implementation(group = "com.github.denisd3d", name = "config4j", version = "1.0.4")
+    implementation(group = "com.github.denisd3d", name = "config4j", version = "1.0.5")
     implementation(group = "com.electronwill.night-config", name = "toml", version = "3.6.0") // Shipped in Forge
 
     // Messages
