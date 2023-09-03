@@ -90,6 +90,8 @@ public class ForgeEvents {
 
         String command_name = event.getParseResults().getContext().getNodes().get(0).getNode().getName();
 
+        if (!Mc2Discord.INSTANCE.config.misc.broadcast_commands.contains(command_name)) return;
+
         CommandContext<CommandSourceStack> context = event.getParseResults().getContext().build(event.getParseResults().getReader().getString());
 
         try {

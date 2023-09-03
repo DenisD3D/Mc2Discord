@@ -80,6 +80,8 @@ public class FabricEvents {
 
         String command_name = parseResults.getContext().getNodes().get(0).getNode().getName();
 
+        if (!Mc2Discord.INSTANCE.config.misc.broadcast_commands.contains(command_name)) return InteractionResult.PASS;
+
         CommandContext<CommandSourceStack> context = parseResults.getContext().build(parseResults.getReader().getString());
 
         try {

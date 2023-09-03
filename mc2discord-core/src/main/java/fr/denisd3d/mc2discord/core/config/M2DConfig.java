@@ -8,6 +8,7 @@ import fr.denisd3d.config4j.Config4J;
 import fr.denisd3d.config4j.OnlyIf;
 
 import java.io.File;
+import java.util.List;
 import java.util.function.Function;
 
 public class M2DConfig extends Config4J {
@@ -84,6 +85,14 @@ public class M2DConfig extends Config4J {
 
         if (this.statusChannels.channels.isEmpty()) {
             this.statusChannels.channels.add(new StatusChannels.StatusChannel());
+        }
+
+        if (this.misc.allowed_mention == null) {
+            this.misc.allowed_mention = List.of("ROLE", "USER");
+        }
+
+        if (this.misc.broadcast_commands == null) {
+            this.misc.broadcast_commands = List.of("say", "me", "tellraw");
         }
 
         if (this.misc.other_mods_messages.isEmpty()) {

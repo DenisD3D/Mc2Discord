@@ -16,6 +16,7 @@ import net.minecraft.commands.arguments.ComponentArgument;
 import net.minecraft.commands.arguments.MessageArgument;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.ServerChatEvent;
@@ -89,6 +90,8 @@ public class ForgeEvents {
             return;
 
         String command_name = event.getParseResults().getContext().getNodes().get(0).getNode().getName();
+
+        if (!Mc2Discord.INSTANCE.config.misc.broadcast_commands.contains(command_name)) return;
 
         CommandContext<CommandSourceStack> context = event.getParseResults().getContext().build(event.getParseResults().getReader().getString());
 

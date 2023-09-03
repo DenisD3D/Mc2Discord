@@ -17,7 +17,7 @@ public class Misc {
     @Path("allowed_mention")
     @Comment("config.misc.allowed_mention.comment")
     @PreserveNotNull
-    public List<String> allowed_mention = List.of("ROLE", "USER");
+    public List<String> allowed_mention = null;
 
     @Path("discord_text")
     @Comment("config.misc.discord_text.comment")
@@ -39,6 +39,11 @@ public class Misc {
     @Comment("config.misc.logs_level.comment")
     @PreserveNotNull
     public String logs_level = "INFO";
+
+    @Path("broadcast_commands")
+    @Comment("config.misc.broadcast_commands.comment")
+    @PreserveNotNull
+    public List<String> broadcast_commands;
 
     @Path("verbose_other_mods_messages")
     @Comment("config.misc.verbose_other_mods_messages.comment")

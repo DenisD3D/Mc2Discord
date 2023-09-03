@@ -122,6 +122,7 @@
     "config.misc.discord_link.comment": " Link of the /discord command",
     "config.misc.logs_format.comment": " Format for server logs on Discord",
     "config.misc.logs_level.comment": " Level for server logs on Discord (supported values: FATAL, ERROR, WARN, INFO, DEBUG, TRACE, ALL)",
+    "config.misc.broadcast_commands.comment": " List of commands to broadcast to Discord. If absent message will only be sent to Minecraft (supported values: say, me, tellraw)",
     "config.misc.verbose_other_mods_messages.comment": " If true, any message sent by another mod will be logged to the console (used only for configuration of [[Misc.OtherModMessage]], must be disabled after)",
     "config.misc.other_mods_messages.comment": " Configuration for messages from others mods\n Values may be found on the wiki (https://github.com/DenisD3D/Mc2Discord/wiki/Other-Mods-Messages) or by enabling verbose_other_mods_messages",
     "config.misc.other_mods_messages.class_name.comment": " Name of the Java class the message is comming from",
