@@ -65,6 +65,9 @@ public class M2DConfig extends Config4J {
     @PreserveNotNull()
     public Misc misc = new Misc();
 
+    @Path("comment")
+    public String comment;
+
     public M2DConfig(File file, Function<String, String> translator) {
         super(file, translator);
     }

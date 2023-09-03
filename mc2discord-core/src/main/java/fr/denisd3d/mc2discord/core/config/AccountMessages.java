@@ -57,4 +57,7 @@ public class AccountMessages {
     @Conversion(RandomStringConverter.class)
     @PreserveNotNull
     public RandomString missing_roles;
+
+    @Path("comment")
+    public String comment;
 }

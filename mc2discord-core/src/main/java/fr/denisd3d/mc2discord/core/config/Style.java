@@ -57,6 +57,9 @@ public class Style {
     @PreserveNotNull
     public Presence presence = new Presence();
 
+    @Path("comment")
+    public String comment;
+
     public static class EmbedColors {
         @Path("info")
         @PreserveNotNull
@@ -73,5 +76,8 @@ public class Style {
         @Path("log")
         @PreserveNotNull
         public String log = "SUMMER_SKY";
+
+        @Path("comment")
+        public String comment;
     }
 }

@@ -46,6 +46,8 @@ public class Account {
     @PreserveNotNull
     public List<AccountPolicy> policies = new ArrayList<>();
 
+    @Path("comment")
+    public String comment;
 
     public static class AccountPolicy {
         @Path("required_roles_id")
@@ -59,6 +61,9 @@ public class Account {
         @Conversion(SnowflakeArrayConverter.class)
         @PreserveNotNull
         public List<Snowflake> roles_id_to_give = new ArrayList<>();
+
+        @Path("comment")
+        public String comment;
 
         public AccountPolicy() {
         }

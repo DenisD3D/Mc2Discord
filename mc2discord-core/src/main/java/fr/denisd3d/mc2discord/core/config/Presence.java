@@ -30,4 +30,7 @@ public class Presence {
     @Comment("config.status.presence.link.comment")
     @PreserveNotNull
     public String link = "";
+
+    @Path("comment")
+    public String comment;
 }

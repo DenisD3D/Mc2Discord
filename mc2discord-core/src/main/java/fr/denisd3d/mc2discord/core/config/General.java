@@ -9,4 +9,7 @@ public class General {
     @Comment("config.general.token.comment")
     @PreserveNotNull
     public String token = "";
+
+    @Path("comment")
+    public String comment;
 }

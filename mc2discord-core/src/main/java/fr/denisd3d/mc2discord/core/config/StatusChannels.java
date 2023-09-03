@@ -19,6 +19,9 @@ public class StatusChannels {
     @PreserveNotNull
     public List<StatusChannel> channels = new ArrayList<>();
 
+    @Path("comment")
+    public String comment;
+
     public static class StatusChannel {
         @Path("id")
         @Comment("config.status_channels.id.comment")
@@ -42,5 +45,8 @@ public class StatusChannels {
         @Comment("config.status_channels.update_period.comment")
         @PreserveNotNull
         public long update_period = 610;
+
+        @Path("comment")
+        public String comment;
     }
 }

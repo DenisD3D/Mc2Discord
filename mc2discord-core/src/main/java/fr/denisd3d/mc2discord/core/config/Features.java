@@ -14,4 +14,7 @@ public class Features {
     @Comment("config.features.account_linking.comment")
     @PreserveNotNull
     public boolean account_linking = false;
+
+    @Path("comment")
+    public String comment;
 }

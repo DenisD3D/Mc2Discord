@@ -50,4 +50,7 @@ public class Messages {
     @Conversion(RandomStringConverter.class)
     @PreserveNotNull
     public RandomString advancement;
+
+    @Path("comment")
+    public String comment;
 }

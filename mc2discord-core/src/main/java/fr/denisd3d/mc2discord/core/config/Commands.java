@@ -28,6 +28,9 @@ public class Commands {
     @PreserveNotNull
     public List<CommandPermission> permissions = new ArrayList<>();
 
+    @Path("comment")
+    public String comment;
+
     public static class CommandPermission {
         @Path("id")
         @Comment("config.commands.permission.id.comment")
@@ -45,6 +48,8 @@ public class Commands {
         @PreserveNotNull
         public List<String> commands = new ArrayList<>();
 
+        @Path("comment")
+        public String comment;
 
         public CommandPermission(String... commands) {
             this.commands.addAll(Arrays.asList(commands));

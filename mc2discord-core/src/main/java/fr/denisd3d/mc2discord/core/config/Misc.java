@@ -50,6 +50,9 @@ public class Misc {
     @PreserveNotNull
     public List<OtherModMessage> other_mods_messages = new ArrayList<>();
 
+    @Path("comment")
+    public String comment;
+
 
     public static class OtherModMessage {
         @Path("class_name")
@@ -66,5 +69,8 @@ public class Misc {
         @Comment("config.misc.other_mods_messages.type.comment")
         @PreserveNotNull
         public String type = "info";
+
+        @Path("comment")
+        public String comment;
     }
 }

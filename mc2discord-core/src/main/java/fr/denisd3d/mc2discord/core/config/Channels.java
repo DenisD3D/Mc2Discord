@@ -34,6 +34,9 @@ public class Channels {
         @PreserveNotNull
         public SendMode mode = SendMode.WEBHOOK;
 
+        @Path("comment")
+        public String comment;
+
         public Channel(String... subscriptions) {
             this.subscriptions.addAll(Arrays.asList(subscriptions));
         }
