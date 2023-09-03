@@ -7,8 +7,8 @@ import discord4j.common.util.Snowflake;
 import fr.denisd3d.mc2discord.core.M2DUtils;
 import fr.denisd3d.mc2discord.core.config.converters.SnowflakeArrayConverter;
 import fr.denisd3d.mc2discord.core.config.converters.SnowflakeConverter;
-import ml.denisd3d.config4j.Comment;
-import ml.denisd3d.config4j.DefaultValue;
+import fr.denisd3d.config4j.Comment;
+import fr.denisd3d.config4j.DefaultValue;
 
 import java.util.ArrayList;
 import java.util.List;

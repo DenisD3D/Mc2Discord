@@ -2,7 +2,7 @@ package fr.denisd3d.mc2discord.core.config;
 
 import com.electronwill.nightconfig.core.conversion.Path;
 import com.electronwill.nightconfig.core.conversion.PreserveNotNull;
-import ml.denisd3d.config4j.Comment;
+import fr.denisd3d.config4j.Comment;
 
 public class Features {
     @Path("status_channels")

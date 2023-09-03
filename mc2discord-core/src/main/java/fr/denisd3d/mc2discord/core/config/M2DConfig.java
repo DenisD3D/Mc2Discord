@@ -3,9 +3,9 @@ package fr.denisd3d.mc2discord.core.config;
 
 import com.electronwill.nightconfig.core.conversion.Path;
 import com.electronwill.nightconfig.core.conversion.PreserveNotNull;
-import ml.denisd3d.config4j.Comment;
-import ml.denisd3d.config4j.Config4J;
-import ml.denisd3d.config4j.OnlyIf;
+import fr.denisd3d.config4j.Comment;
+import fr.denisd3d.config4j.Config4J;
+import fr.denisd3d.config4j.OnlyIf;
 
 import java.io.File;
 import java.util.function.Function;

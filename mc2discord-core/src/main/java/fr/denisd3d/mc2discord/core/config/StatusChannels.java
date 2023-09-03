@@ -8,7 +8,7 @@ import fr.denisd3d.mc2discord.core.M2DUtils;
 import fr.denisd3d.mc2discord.core.config.converters.RandomString;
 import fr.denisd3d.mc2discord.core.config.converters.RandomStringConverter;
 import fr.denisd3d.mc2discord.core.config.converters.SnowflakeConverter;
-import ml.denisd3d.config4j.Comment;
+import fr.denisd3d.config4j.Comment;
 
 import java.util.ArrayList;
 import java.util.List;

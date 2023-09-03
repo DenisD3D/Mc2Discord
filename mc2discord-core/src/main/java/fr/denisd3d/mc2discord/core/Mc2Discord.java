@@ -27,9 +27,9 @@ public class Mc2Discord {
     public static final Logger LOGGER = LoggerFactory.getLogger("Mc2Discord");
     public static Mc2Discord INSTANCE;
     public GatewayDiscordClient client;
-    public M2DConfig config;
     public final IMinecraft minecraft;
-    public final LangManager langManager;
+    public final LangManager langManager = new LangManager();
+    public M2DConfig config;
     public final List<String> errors = new ArrayList<>();
     public final Vars vars = new Vars();
     public final HiddenPlayerList hiddenPlayerList = new HiddenPlayerList();
@@ -37,7 +37,6 @@ public class Mc2Discord {
 
     public Mc2Discord(IMinecraft minecraft) {
         this.minecraft = minecraft;
-        this.langManager = new LangManager();
         if (!loadConfig()) return;
 
         if (!M2DUtils.isTokenValid(this.config.general.token)) {
@@ -53,8 +52,7 @@ public class Mc2Discord {
                 .login()
                 .doOnError(CloseException.class, throwable -> {
                     Mc2Discord.LOGGER.error("Error while starting Discord bot: " + throwable.getCloseStatus().getReason().orElse("") + " (code " + throwable.getCloseStatus().getCode() + ")");
-                    if (throwable.getCloseStatus().getCode() == 4014)
-                    {
+                    if (throwable.getCloseStatus().getCode() == 4014) {
                         Mc2Discord.LOGGER.error("Make sure all required intents are enabled on Discord developper website");
                     }
                     this.errors.add("Error while starting Discord bot: " + throwable.getCloseStatus().getReason().orElse("") + " (code " + throwable.getCloseStatus().getCode() + ")");
@@ -73,17 +71,18 @@ public class Mc2Discord {
             if (new File("config").mkdir()) {
                 LOGGER.info("Created config folder");
             }
-
             this.config = new M2DConfig(M2DUtils.CONFIG_FILE, translationKey -> {
                 if ("config.lang.comment".equals(translationKey)) {
                     return langManager.formatMessage(translationKey, String.join(", ", LangManager.LANG_CONTRIBUTORS), String.join(", ", LangManager.AVAILABLE_LANG));
                 }
                 return minecraft.translateKey(langManager, translationKey);
-            }).loadAndCorrect();
+            });
+
+            this.config.loadAndCorrect();
         } catch (ParsingException parsingException) {
             config = null;
-            this.errors.add("Config file has errors. See logs for more.");
-            LOGGER.error("Config file has errors", parsingException);
+            this.errors.add("Config file is invalid: " + parsingException.getMessage());
+            LOGGER.error("Config file is invalid:", parsingException);
         }
 
         return config != null;
