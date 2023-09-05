@@ -1,5 +1,6 @@
 plugins {
-    id("java")
+    id("java-library")
+    id("idea")
 }
 
 repositories {
@@ -9,7 +10,7 @@ repositories {
 
 dependencies {
     // Discord4J
-    implementation(group = "com.discord4j", name = "discord4j-core", version = "3.3.0-M2")
+    api(group = "com.discord4j", name = "discord4j-core", version = "3.3.0-M2")
 
     // Config
     implementation(group = "com.github.denisd3d", name = "config4j", version = "1.1.6")

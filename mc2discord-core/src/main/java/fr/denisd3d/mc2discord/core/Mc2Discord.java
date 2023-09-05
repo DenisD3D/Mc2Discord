@@ -52,10 +52,11 @@ public class Mc2Discord {
                 .login()
                 .doOnError(CloseException.class, throwable -> {
                     Mc2Discord.LOGGER.error("Error while starting Discord bot: " + throwable.getCloseStatus().getReason().orElse("") + " (code " + throwable.getCloseStatus().getCode() + ")");
-                    if (throwable.getCloseStatus().getCode() == 4014) {
-                        Mc2Discord.LOGGER.error("Make sure all required intents are enabled on Discord developper website");
-                    }
                     this.errors.add("Error while starting Discord bot: " + throwable.getCloseStatus().getReason().orElse("") + " (code " + throwable.getCloseStatus().getCode() + ")");
+                    if (throwable.getCloseStatus().getCode() == 4014) {
+                        Mc2Discord.LOGGER.error("Make sure all required intents are enabled on Discord developer website (MESSAGE CONTENT & SERVER MEMBERS)");
+                        this.errors.add("Make sure all required intents are enabled on Discord developer website (MESSAGE CONTENT & SERVER MEMBERS)");
+                    }
                 })
                 .subscribe(gatewayDiscordClient -> {
                     this.client = gatewayDiscordClient;
