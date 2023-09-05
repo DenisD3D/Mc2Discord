@@ -3,8 +3,8 @@ package fr.denisd3d.mc2discord.forge;
 import fr.denisd3d.mc2discord.minecraft.Mc2DiscordMinecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.IExtensionPoint;
@@ -28,7 +28,7 @@ public class Mc2DiscordForge {
     }
 
     @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
+    public void onServerAboutToStart(ServerAboutToStartEvent event) {
         Mc2DiscordMinecraft.onServerStarting(event.getServer());
     }
 

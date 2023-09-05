@@ -23,8 +23,8 @@ public class DiscordEvent {
     public static void onMessageCreate(MessageCreateEvent event) {
         if (!Mc2Discord.INSTANCE.vars.missingMessageContentIntent && event.getMessage().getContent().isEmpty() && event.getMessage().getEmbeds().isEmpty() && event.getMessage().getAttachments().isEmpty() && event.getMessage().getComponents().isEmpty() && !event.getMember().map(User::isBot).orElse(true)) { // Missing message content intent
             Mc2Discord.INSTANCE.vars.missingMessageContentIntent = true;
-            Mc2Discord.LOGGER.warn("Missing message content intent");
-            Mc2Discord.INSTANCE.errors.add("Missing message content intent");
+            Mc2Discord.LOGGER.warn("Missing MESSAGE CONTENT intent");
+            Mc2Discord.INSTANCE.errors.add("Missing MESSAGE CONTENT intent");
         }
 
         if (AccountManager.onMessageCreate(event)) return; // Handled by account manager
