@@ -3,10 +3,10 @@ package fr.denisd3d.mc2discord.core.config;
 import com.electronwill.nightconfig.core.conversion.Conversion;
 import com.electronwill.nightconfig.core.conversion.Path;
 import com.electronwill.nightconfig.core.conversion.PreserveNotNull;
-import fr.denisd3d.mc2discord.core.config.converters.RandomString;
-import fr.denisd3d.mc2discord.core.config.converters.RandomStringConverter;
 import fr.denisd3d.config4j.Comment;
 import fr.denisd3d.config4j.DefaultValue;
+import fr.denisd3d.mc2discord.core.config.converters.RandomString;
+import fr.denisd3d.mc2discord.core.config.converters.RandomStringConverter;
 
 public class AccountMessages {
     @Path("link_get_code")

@@ -4,9 +4,9 @@ import com.electronwill.nightconfig.core.conversion.Conversion;
 import com.electronwill.nightconfig.core.conversion.Path;
 import com.electronwill.nightconfig.core.conversion.PreserveNotNull;
 import discord4j.common.util.Snowflake;
+import fr.denisd3d.config4j.Comment;
 import fr.denisd3d.mc2discord.core.M2DUtils;
 import fr.denisd3d.mc2discord.core.config.converters.SnowflakeConverter;
-import fr.denisd3d.config4j.Comment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
