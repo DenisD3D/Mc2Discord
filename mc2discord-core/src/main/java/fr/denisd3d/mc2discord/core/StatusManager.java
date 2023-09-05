@@ -95,7 +95,19 @@ public class StatusManager {
                 if (M2DUtils.isNotConfigured()) // Check if mod is configured
                     return;
 
-                Mc2Discord.INSTANCE.client.updatePresence(ClientPresence.online(ClientActivity.of(Activity.Type.valueOf(presence_type), Entity.replace(presence_message.asString(), Collections.emptyList()), !presence_link.isEmpty() && Activity.Type.valueOf(presence_type) == Activity.Type.STREAMING ? presence_link : null)))
+                ClientActivity clientActivity = switch (this.presence_type) {
+                    case "PLAYING":
+                    case "LISTENING":
+                    case "WATCHING":
+                        yield ClientActivity.of(Activity.Type.valueOf(presence_type), Entity.replace(this.presence_message.asString(), Collections.emptyList()), null);
+                    case "STREAMING":
+                        yield ClientActivity.streaming(Entity.replace(this.presence_message.asString(), Collections.emptyList()), this.presence_link.isEmpty() ? null : this.presence_link);
+                    case "CUSTOM":
+                        yield ClientActivity.custom(Entity.replace(this.presence_message.asString(), Collections.emptyList()));
+                    default:
+                        yield ClientActivity.playing(Entity.replace(this.presence_message.asString(), Collections.emptyList()));
+                };
+                Mc2Discord.INSTANCE.client.updatePresence(ClientPresence.online(clientActivity))
                         .timeout(Duration.ofSeconds(3))
                         .doOnError(throwable -> {
                             if (throwable instanceof TimeoutException) {
