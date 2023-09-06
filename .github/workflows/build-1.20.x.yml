@@ -1,5 +1,5 @@
-name: 'Build forge 1.19.x'
-run-name: Build forge-1.19.x-${{ inputs.version }}
+name: 'Build 1.20.x'
+run-name: Build 1.20.x-${{ inputs.version }}
 
 on:
   workflow_dispatch:
@@ -15,11 +15,11 @@ on:
         type: string
 
 jobs:
-  build-forge-1-19-x:
+  build-1-20-x:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: mc2discord-forge-1.19.x
+        working-directory: mc2discord-1.20.x
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK 17
@@ -33,7 +33,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-forge-1.19.x-${{ runner.os }}-${{ hashFiles('**/gradle.properties', '**/build.gradle.kts', '**/settings.gradle', '**/gradle-wrapper.jar') }}
+          key: gradle-1.20.x-${{ runner.os }}-${{ hashFiles('**/gradle.properties', '**/build.gradle.kts', '**/settings.gradle', '**/gradle-wrapper.jar') }}
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
@@ -42,7 +42,13 @@ jobs:
           INPUT_VERSION: ${{ inputs.version }}
       - uses: actions/upload-artifact@v3
         with:
-          name: mc2discord-forge-1.19.x-${{ inputs.version }}
+          name: mc2discord-forge-1.20.x-${{ inputs.version }}
           path: |
-            ${{ github.workspace }}/mc2discord-forge-1.19.x/build/libs/
-            !${{ github.workspace }}/mc2discord-forge-1.19.x/build/libs/*-slim.jar
+            ${{ github.workspace }}/forge/build/libs/
+            !${{ github.workspace }}/forge/build/libs/*-slim.jar
+      - uses: actions/upload-artifact@v3
+        with:
+          name: mc2discord-fabric-1.20.x-${{ inputs.version }}
+          path: |
+            ${{ github.workspace }}/fabric/build/libs/
+            !${{ github.workspace }}/fabric/build/libs/*-all.jar
