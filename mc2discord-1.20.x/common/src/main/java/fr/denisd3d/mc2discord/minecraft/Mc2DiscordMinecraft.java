@@ -39,12 +39,12 @@ public class Mc2DiscordMinecraft {
 
     public static void onServerStarting(MinecraftServer minecraftServer) {
         server = minecraftServer;
+        Vars.startTime = System.currentTimeMillis();
         Mc2Discord.INSTANCE = new Mc2Discord(new MinecraftImpl());
     }
 
     public static void onServerStarted(MinecraftServer minecraftServer) {
         LifecycleEvents.minecraftReady = true;
-        Vars.startTime = System.currentTimeMillis();
         commandSource = new CommandSourceStack(new DiscordCommandSource(), Vec3.ZERO, Vec2.ZERO, minecraftServer.overworld(), Integer.MAX_VALUE, "Discord", Component.literal("Discord"), minecraftServer, null);
         LifecycleEvents.mcOrDiscordReady();
     }

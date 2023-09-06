@@ -63,8 +63,8 @@ public class StatusManager {
                         .doOnError(throwable -> {
                             if (throwable instanceof TimeoutException) {
                                 if (this.shouldStopNextTimeout) {
-                                    Mc2Discord.LOGGER.error("Seem that the channel " + this.statusChannel.channel_id + " is updated too quickly. Try increasing the update period");
-                                    Mc2Discord.INSTANCE.errors.add("Seem that the channel " + this.statusChannel.channel_id + " is updated too quickly. Try increasing the update period");
+                                    Mc2Discord.LOGGER.error("Seem that the channel " + this.statusChannel.channel_id.asString() + " is updated too quickly. Try increasing the update period");
+                                    Mc2Discord.INSTANCE.errors.add("Seem that the channel " + this.statusChannel.channel_id.asString() + " is updated too quickly. Try increasing the update period");
                                     this.cancel();
                                 } else {
                                     this.shouldStopNextTimeout = true;
