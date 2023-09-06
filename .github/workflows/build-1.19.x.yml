@@ -44,8 +44,8 @@ jobs:
         with:
           name: mc2discord-forge-1.19.x-${{ inputs.version }}
           path: |
-            ${{ github.workspace }}/forge/build/libs/
-            !${{ github.workspace }}/forge/build/libs/*-slim.jar
+            ${{ github.workspace }}/mc2discord-1.19.x/forge/build/libs/
+            !${{ github.workspace }}/mc2discord-1.19.x/forge/build/libs/*-slim.jar
       - uses: actions/upload-artifact@v3
         with:
           name: mc2discord-fabric-1.19.x-${{ inputs.version }}
