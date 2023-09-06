@@ -50,5 +50,5 @@ jobs:
         with:
           name: mc2discord-fabric-1.20.x-${{ inputs.version }}
           path: |
-            ${{ github.workspace }}/fabric/build/libs/
-            !${{ github.workspace }}/fabric/build/libs/*-all.jar
+            ${{ github.workspace }}/mc2discord-1.20.x/fabric/build/libs/
+            !${{ github.workspace }}/mc2discord-1.20.x/fabric/build/libs/*-all.jar
