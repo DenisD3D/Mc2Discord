@@ -11,7 +11,7 @@ base {
 
 minecraft {
     version(rootProject.extra["minecraftVersion"] as String)
-    accessWideners(file("src/main/resources/${sharedProperties["modName"]}.accesswidener"))
+    accessWideners(file("src/main/resources/${sharedProperties["modId"]}.accesswidener"))
 }
 
 repositories {
