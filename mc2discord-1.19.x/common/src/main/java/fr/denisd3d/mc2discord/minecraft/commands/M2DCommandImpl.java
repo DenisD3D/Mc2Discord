@@ -3,7 +3,9 @@ package fr.denisd3d.mc2discord.minecraft.commands;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.LongArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import discord4j.discordjson.possible.Possible;
 import fr.denisd3d.mc2discord.core.M2DCommands;
 import fr.denisd3d.mc2discord.core.Mc2Discord;
 import fr.denisd3d.mc2discord.core.MessageManager;
@@ -143,10 +145,11 @@ public class M2DCommandImpl {
                                 throw new RuntimeException(e);
                             }
                         })))
-                .then(Commands.literal("tellraw").then(Commands.argument("message", ComponentArgument.textComponent()).executes((context) -> {
-                    MessageManager.sendChatMessage(ComponentUtils.updateForEntity(context.getSource(), ComponentArgument.getComponent(context, "message"), null, 0).getString(), Mc2Discord.INSTANCE.vars.mc2discord_display_name, Mc2Discord.INSTANCE.vars.mc2discord_avatar).subscribe();
-                    context.getSource().sendSuccess(Component.literal("Message sent to Discord"), false);
-                    return 1;
-                }))));
+                .then(Commands.literal("tellraw").then(Commands.argument("type", StringArgumentType.word()).suggests((context, suggestionsBuilder) -> SharedSuggestionProvider.suggest(List.of("chat", "info", "custom"), suggestionsBuilder))
+                        .then(Commands.argument("message", ComponentArgument.textComponent()).executes((context) -> {
+                            MessageManager.sendMessage(List.of(StringArgumentType.getString(context, "type")), ComponentUtils.updateForEntity(context.getSource(), ComponentArgument.getComponent(context, "message"), null, 0).getString(), Possible.of(Mc2Discord.INSTANCE.vars.mc2discord_display_name), Possible.of(Mc2Discord.INSTANCE.vars.mc2discord_avatar)).subscribe();
+                            context.getSource().sendSuccess(Component.literal("Message sent to Discord"), false);
+                            return 1;
+                        })))));
     }
 }
