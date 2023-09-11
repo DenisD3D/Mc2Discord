@@ -2,6 +2,7 @@ package fr.denisd3d.mc2discord.minecraft;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.context.StringRange;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -18,10 +19,9 @@ import fr.denisd3d.mc2discord.minecraft.commands.M2DCommandImpl;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.ComponentArgument;
 import net.minecraft.commands.arguments.MessageArgument;
-import net.minecraft.network.chat.ChatType;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.network.chat.*;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 
@@ -45,7 +45,7 @@ public class Mc2DiscordMinecraft {
 
     public static void onServerStarted(MinecraftServer minecraftServer) {
         LifecycleEvents.minecraftReady = true;
-        commandSource = new CommandSourceStack(new DiscordCommandSource(), Vec3.ZERO, Vec2.ZERO, minecraftServer.overworld(), Integer.MAX_VALUE, "Discord", Component.literal("Discord"), minecraftServer, null);
+        commandSource = new CommandSourceStack(new DiscordCommandSource(), Vec3.ZERO, Vec2.ZERO, minecraftServer.overworld(), Integer.MAX_VALUE, "Discord", new TextComponent("Discord"), minecraftServer, null);
         LifecycleEvents.mcOrDiscordReady();
     }
 
@@ -82,10 +82,8 @@ public class Mc2DiscordMinecraft {
 
                     yield ComponentUtils.updateForEntity(context.getSource(), ComponentArgument.getComponent(context, "message"), null, 0).getString();
                 }
-                case "say" ->
-                        ChatType.bind(ChatType.SAY_COMMAND, context.getSource()).decorate(MessageArgument.getMessage(context, "message")).getString();
-                case "me" ->
-                        ChatType.bind(ChatType.EMOTE_COMMAND, context.getSource()).decorate(MessageArgument.getMessage(context, "action")).getString();
+                case "say" -> new TranslatableComponent("chat.type.announcement", context.getSource().getDisplayName(), MessageArgument.getMessage(context, "message")).getString();
+                case "me" -> new TranslatableComponent("chat.type.emote", context.getSource().getDisplayName(), StringArgumentType.getString(context, "action")).getString();
                 default -> "";
             };
 
@@ -93,8 +91,8 @@ public class Mc2DiscordMinecraft {
             if (message.isEmpty()) return;
 
 
-            if (parseResults.getContext().getSource().getPlayer() != null) {
-                PlayerEntity player = new PlayerEntity(parseResults.getContext().getSource().getPlayer().getGameProfile().getName(), parseResults.getContext().getSource().getPlayer().getDisplayName().getString(), parseResults.getContext().getSource().getPlayer().getGameProfile().getId());
+            if (parseResults.getContext().getSource().getEntity() instanceof ServerPlayer serverPlayer) {
+                PlayerEntity player = new PlayerEntity(serverPlayer.getGameProfile().getName(), serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().getId());
                 MessageManager.sendChatMessage(message, Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_display_name, List.of(player)), Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_avatar_api, List.of(player))).subscribe();
             } else {
                 MessageManager.sendChatMessage(message, Mc2Discord.INSTANCE.vars.mc2discord_display_name, Mc2Discord.INSTANCE.vars.mc2discord_avatar).subscribe();

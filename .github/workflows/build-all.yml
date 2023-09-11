@@ -15,6 +15,11 @@ on:
         type: string
 
 jobs:
+  build-1-18-x:
+    uses: ./.github/workflows/build-1.18.x.yml
+    with:
+      version: ${{ inputs.version }}
+
   build-1-19-x:
     uses: ./.github/workflows/build-1.19.x.yml
     with:

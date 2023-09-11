@@ -50,7 +50,7 @@ public class Mc2DiscordMinecraft {
     }
 
 
-    public static void onServerStopped(MinecraftServer minecraftServer) {
+    public static void onServerStopped(MinecraftServer ignoredMinecraftServer) {
         LifecycleEvents.onShutdown();
         server = null;
     }
