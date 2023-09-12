@@ -110,7 +110,7 @@
     "config.style.presence.comment": " Presence configuration",
     "config.style.presence.message.comment": " Message to display under the bot in the member list on Discord (\"global\" variables are available)",
     "config.style.presence.message.value": "${online_players} / ${max_players} players",
-    "config.status.presence.type.comment": " The type of presence (PLAYING, STREAMING, LISTENING, WATCHING, COMPETING)",
+    "config.status.presence.type.comment": " The type of presence (PLAYING, STREAMING, LISTENING, WATCHING, COMPETING or CUSTOM)",
     "config.status.presence.update.comment": " Delay between to update of the channel (in seconds, any value below 610 may cause issues)",
     "config.status.presence.link.comment": " Only if type is STREAMING, ignored for others type, must be a valid youtube or twitch link.",
 

@@ -10,7 +10,7 @@
 <br>
 <br>
 
-/!\ This mod needs configuration to work properly. Please take a look to the wiki: https://github.com/DenisD3D/Mc2Discord/wiki
+⚠️ This mod needs configuration to work properly. Please take a look to the wiki: https://github.com/DenisD3D/Mc2Discord/wiki
 
 ## Features
  * Send Minecraft chat message to your Discord server
