@@ -97,7 +97,7 @@ public class Mc2DiscordMinecraft {
                 PlayerEntity player = new PlayerEntity(parseResults.getContext().getSource().getPlayer().getGameProfile().getName(), parseResults.getContext().getSource().getPlayer().getDisplayName().getString(), parseResults.getContext().getSource().getPlayer().getGameProfile().getId());
                 MessageManager.sendChatMessage(message, Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_display_name, List.of(player)), Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_avatar_api, List.of(player))).subscribe();
             } else {
-                MessageManager.sendChatMessage(message, Mc2Discord.INSTANCE.vars.mc2discord_display_name, Mc2Discord.INSTANCE.vars.mc2discord_avatar).subscribe();
+                MessageManager.sendChatMessage(message, MessageManager.default_username, MessageManager.default_avatar).subscribe();
             }
         } catch (CommandSyntaxException ignored) {
         }

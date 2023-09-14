@@ -99,6 +99,13 @@ public class M2DConfig extends Config4J {
             this.misc.other_mods_messages.add(new Misc.OtherModMessage());
         }
 
+        if (this.style.embed_colors.isEmpty()) {
+            this.style.embed_colors.add("info", "SUMMER_SKY");
+            this.style.embed_colors.add("chat", "MEDIUM_SEA_GREEN");
+            this.style.embed_colors.add("command", "MEDIUM_SEA_GREEN");
+            this.style.embed_colors.add("log", "SUMMER_SKY");
+        }
+
         if (this.account.policies.isEmpty()) {
             this.account.policies.add(new Account.AccountPolicy());
         }

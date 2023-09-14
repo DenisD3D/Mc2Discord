@@ -1,7 +1,9 @@
 package fr.denisd3d.mc2discord.core.config;
 
+import com.electronwill.nightconfig.core.Config;
 import com.electronwill.nightconfig.core.conversion.Path;
 import com.electronwill.nightconfig.core.conversion.PreserveNotNull;
+import com.electronwill.nightconfig.toml.TomlFormat;
 import fr.denisd3d.config4j.Comment;
 import fr.denisd3d.config4j.DefaultValue;
 
@@ -45,7 +47,7 @@ public class Style {
     @Path("EmbedColors")
     @Comment("config.style.embed_colors.comment")
     @PreserveNotNull
-    public EmbedColors embed_colors = new EmbedColors();
+    public Config embed_colors = TomlFormat.newConfig();
 
     @Path("embed_show_bot_avatar")
     @Comment("config.style.embed_show_bot_avatar.comment")
@@ -59,25 +61,4 @@ public class Style {
 
     @Path("comment")
     public String comment;
-
-    public static class EmbedColors {
-        @Path("info")
-        @PreserveNotNull
-        public String info = "SUMMER_SKY";
-
-        @Path("chat")
-        @PreserveNotNull
-        public String chat = "MEDIUM_SEA_GREEN";
-
-        @Path("command")
-        @PreserveNotNull
-        public String command = "MEDIUM_SEA_GREEN";
-
-        @Path("log")
-        @PreserveNotNull
-        public String log = "SUMMER_SKY";
-
-        @Path("comment")
-        public String comment;
-    }
 }

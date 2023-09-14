@@ -10,6 +10,7 @@ import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.gateway.intent.Intent;
 import discord4j.gateway.intent.IntentSet;
+import discord4j.rest.http.client.ClientException;
 import fr.denisd3d.mc2discord.core.config.M2DConfig;
 import fr.denisd3d.mc2discord.core.events.DiscordEvent;
 import fr.denisd3d.mc2discord.core.events.LifecycleEvents;
@@ -57,6 +58,10 @@ public class Mc2Discord {
                         Mc2Discord.LOGGER.error("Make sure all required intents are enabled on Discord developer website (MESSAGE CONTENT & SERVER MEMBERS)");
                         this.errors.add("Make sure all required intents are enabled on Discord developer website (MESSAGE CONTENT & SERVER MEMBERS)");
                     }
+                })
+                .doOnError(ClientException.class, throwable -> {
+                    Mc2Discord.LOGGER.error("Error while starting Discord bot: " + throwable.getStatus().reasonPhrase() + " (code " + throwable.getStatus().code() + ")");
+                    this.errors.add("Error while starting Discord bot: " + throwable.getStatus().reasonPhrase() + " (code " + throwable.getStatus().code() + ")");
                 })
                 .subscribe(gatewayDiscordClient -> {
                     this.client = gatewayDiscordClient;

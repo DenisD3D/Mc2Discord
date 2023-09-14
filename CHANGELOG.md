@@ -1,7 +1,5 @@
-## Mc2Discord 4.2.0
-+ Update Minecraft 1.18.x to Mc2Discord 4.x
-+ Support for custom activity type (custom status message instead of Playing xxx)
-+ Improve server startup
-+ New comment field that can be added anywhere in the configuration file
-+ Option to select command broadcast to Discord (say, me, tellraw) (broadcast_commands)
-+ Support for channel type in /mc2discord tellraw
+## Mc2Discord 4.2.1
++ Improved embed colors choice (allow custom type values)
++ Better MessageManager API for mods
++ Don't display bot name in PLAIN_TEXT message type (restored behavior of 3.x)
++ Improved error handling
