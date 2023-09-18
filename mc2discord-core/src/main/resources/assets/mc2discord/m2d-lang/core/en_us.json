@@ -96,9 +96,9 @@
     "config.account.policies.roles_id_to_give.comment": " List of Discord roles id that will be given to a member when he link his account",
 
     "config.style.comment": " Style configuration",
-    "config.style.bot_name.comment": " Override the bot name in webhook mode (\"global\" variables are available)",
-    "config.style.bot_avatar.comment": " Override the bot avatar in webhook mode, must be a valid URL to an image (\"player\" and \"global\" variables are available)",
-    "config.style.webhook_display_name.comment": " Set the name appearing next to the message when using webhook mode (\"global\" variables are available)",
+    "config.style.bot_name.comment": " Override the bot name in webhook and embed mode (\"global\" variables are available)",
+    "config.style.bot_avatar.comment": " Override the bot avatar in webhook and embed mode, must be a valid URL to an image (\"global\" variables are available)",
+    "config.style.webhook_display_name.comment": " Set the format of the player name appearing next to chat message when using webhook mode (\"player\" and \"global\" variables are available)",
     "config.style.webhook_avatar_api.comment": " URL used to get players head, must be a valid URL to an image (\"player\" and \"global\" variables are available)",
     "config.style.minecraft_chat_format.comment": " Format used for messages sent in minecraft chat. (\"${reply}\", \"${attachements}\", \"member\", \"message\", \"global\" and minecraft formatting variables are available)",
     "config.style.reply_format.comment": " Replace ${reply} in minecraft_chat_format if the message has a referenced message. (\"member\" (author of the referenced message) and \"global\" variables are available).",

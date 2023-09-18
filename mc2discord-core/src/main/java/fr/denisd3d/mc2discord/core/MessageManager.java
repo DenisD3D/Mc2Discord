@@ -23,8 +23,8 @@ public class MessageManager {
     public static Possible<String> default_avatar = Possible.absent();
 
     public static void init() {
-        default_username = Mc2Discord.INSTANCE.config.style.bot_name.isEmpty() ? Possible.absent() : Possible.of(Mc2Discord.INSTANCE.config.style.bot_name);
-        default_avatar = Mc2Discord.INSTANCE.config.style.bot_avatar.isEmpty() ? Possible.absent() : Possible.of(Mc2Discord.INSTANCE.config.style.bot_avatar);
+        default_username = Mc2Discord.INSTANCE.config.style.bot_name.isEmpty() ? Possible.absent() : Possible.of(Entity.replace(Mc2Discord.INSTANCE.config.style.bot_name));
+        default_avatar = Mc2Discord.INSTANCE.config.style.bot_avatar.isEmpty() ? Possible.absent() : Possible.of(Entity.replace(Mc2Discord.INSTANCE.config.style.bot_avatar));
     }
 
     public static Mono<Void> sendInfoMessage(String type, String message) {
