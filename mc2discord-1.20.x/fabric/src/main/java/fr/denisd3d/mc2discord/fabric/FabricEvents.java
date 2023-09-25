@@ -12,9 +12,10 @@ import fr.denisd3d.mc2discord.minecraft.Mc2DiscordMinecraft;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -52,9 +53,15 @@ public class FabricEvents {
         MinecraftEvents.onPlayerDeathEvent(new PlayerEntity(serverPlayer.getGameProfile().getName(), serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().getId()), new DeathEntity(damageSource.getMsgId(), serverPlayer.getCombatTracker().getDeathMessage().getString(), serverPlayer.getCombatTracker().getCombatDuration(), Optional.of(serverPlayer.getCombatTracker().mob).map(livingEntity -> livingEntity.getDisplayName().getString()).orElse(""), Optional.of(serverPlayer.getCombatTracker().mob).map(LivingEntity::getHealth).orElse(0.0f)));
     }
 
-    public static void onAdvancementEvent(ServerPlayer serverPlayer, Advancement advancement) {
-        if (advancement.getDisplay() != null && advancement.getDisplay().shouldAnnounceChat()) {
-            MinecraftEvents.onAdvancementEvent(new PlayerEntity(serverPlayer.getGameProfile().getName(), serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().getId()), new AdvancementEntity(advancement.getId().getPath(), advancement.getChatComponent().getString(), advancement.getDisplay().getTitle().getString(), advancement.getDisplay().getDescription().getString()));
+    public static void onAdvancementEvent(ServerPlayer serverPlayer, AdvancementHolder advancement) {
+        if (advancement.value().display().isPresent() && advancement.value().display().get().shouldAnnounceChat()) {
+            MinecraftEvents.onAdvancementEvent(new PlayerEntity(serverPlayer.getGameProfile().getName(),
+                            serverPlayer.getDisplayName().getString(),
+                            serverPlayer.getGameProfile().getId()),
+                    new AdvancementEntity(advancement.id().toString(),
+                            advancement.value().name().map(Component::getString).orElse(""),
+                            advancement.value().display().get().getTitle().getString(),
+                            advancement.value().display().get().getDescription().getString()));
         }
     }
 

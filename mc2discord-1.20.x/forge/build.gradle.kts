@@ -15,7 +15,6 @@ mixin {
 
     config("${sharedProperties["modId"]}.mixins.json")
     config("${sharedProperties["modId"]}.forge.mixins.json")
-    println("test")
 }
 
 repositories {

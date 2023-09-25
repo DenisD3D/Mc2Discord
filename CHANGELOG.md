@@ -1,5 +1,3 @@
-## Mc2Discord 4.2.1
-+ Improved embed colors choice (allow custom type values)
-+ Better MessageManager API for mods
-+ Don't display bot name in PLAIN_TEXT message type (restored behavior of 3.x)
-+ Improved error handling
+## Mc2Discord 4.2.2
++ Support for 1.20.2
++ Fix issue where only 1.1x.latest is loading (other 1.1x.y were broken)

@@ -5,6 +5,7 @@ import fr.denisd3d.mc2discord.core.entities.DeathEntity;
 import fr.denisd3d.mc2discord.core.entities.PlayerEntity;
 import fr.denisd3d.mc2discord.core.events.MinecraftEvents;
 import fr.denisd3d.mc2discord.minecraft.Mc2DiscordMinecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.event.ServerChatEvent;
@@ -52,13 +53,15 @@ public class ForgeEvents {
 
     @SubscribeEvent
     public static void onAdvancementEvent(AdvancementEvent.AdvancementEarnEvent event) {
-        if (event.getAdvancement().getDisplay() != null && event.getAdvancement().getDisplay().shouldAnnounceChat()) {
-            MinecraftEvents.onAdvancementEvent(new PlayerEntity(event.getEntity().getGameProfile().getName(), event.getEntity().getDisplayName().getString(), event.getEntity()
-                    .getGameProfile()
-                    .getId()), new AdvancementEntity(event.getAdvancement().getId().getPath(), event.getAdvancement().getChatComponent().getString(), event.getAdvancement()
-                    .getDisplay()
-                    .getTitle()
-                    .getString(), event.getAdvancement().getDisplay().getDescription().getString()));
+        if (event.getAdvancement().value().display().isPresent() && event.getAdvancement().value().display().get().shouldAnnounceChat()) {
+            MinecraftEvents.onAdvancementEvent(
+                    new PlayerEntity(event.getEntity().getGameProfile().getName(),
+                            event.getEntity().getDisplayName().getString(),
+                            event.getEntity().getGameProfile().getId()),
+                    new AdvancementEntity(event.getAdvancement().id().toString(),
+                            event.getAdvancement().value().name().map(Component::getString).orElse(""),
+                            event.getAdvancement().value().display().get().getTitle().getString(),
+                            event.getAdvancement().value().display().get().getDescription().getString()));
         }
     }
 

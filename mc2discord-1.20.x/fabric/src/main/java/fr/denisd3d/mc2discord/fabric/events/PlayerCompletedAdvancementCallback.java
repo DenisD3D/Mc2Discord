@@ -2,7 +2,7 @@ package fr.denisd3d.mc2discord.fabric.events;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.server.level.ServerPlayer;
 
 public interface PlayerCompletedAdvancementCallback {
@@ -12,5 +12,5 @@ public interface PlayerCompletedAdvancementCallback {
         }
     });
 
-    void onPlayerAdvancement(ServerPlayer playerEntity, Advancement advancement);
+    void onPlayerAdvancement(ServerPlayer playerEntity, AdvancementHolder advancement);
 }

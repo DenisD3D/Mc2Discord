@@ -1,7 +1,7 @@
 package fr.denisd3d.mc2discord.fabric.mixin;
 
 import fr.denisd3d.mc2discord.fabric.events.PlayerCompletedAdvancementCallback;
-import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,14 +19,14 @@ public class PlayerAdvancementsMixin {
 
     @SuppressWarnings("SameReturnValue")
     @Shadow
-    public AdvancementProgress getOrStartProgress(Advancement advancement) {
+    public AdvancementProgress getOrStartProgress(AdvancementHolder advancementHolder) {
         return null;
     }
 
     @Inject(method = "award", at = @At("RETURN"))
-    private void grantCriterion(Advancement advancement, String string, CallbackInfoReturnable<Boolean> cir) {
-        AdvancementProgress advancementProgress = this.getOrStartProgress(advancement);
+    private void grantCriterion(AdvancementHolder advancementHolder, String string, CallbackInfoReturnable<Boolean> cir) {
+        AdvancementProgress advancementProgress = this.getOrStartProgress(advancementHolder);
         if (!advancementProgress.isDone()) return;
-        PlayerCompletedAdvancementCallback.EVENT.invoker().onPlayerAdvancement(player, advancement);
+        PlayerCompletedAdvancementCallback.EVENT.invoker().onPlayerAdvancement(player, advancementHolder);
     }
 }
