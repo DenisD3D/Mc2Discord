@@ -32,7 +32,7 @@
 Join the official demo server hosted by MtxServ
  * Join the demo discord channel [#access-demo](https://discord.gg/rzzd76c)
  * Start the sever with /start command (server is usually stopped)
- * Connect to GAME-FR-163.MTXSERV.COM:27190 with minecraft 1.20.2 Vanilla
+ * Connect to m2d-demo.denisd3d.fr with minecraft 1.20.2 Vanilla
 
 ## Installation
 A quick configuration is mandatory for the mod to work. Steps are described on the wiki: https://github.com/DenisD3D/Mc2Discord/wiki
