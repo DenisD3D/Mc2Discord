@@ -158,7 +158,7 @@ public class MinecraftImpl implements IMinecraft {
         }
 
         MinecraftServer server = Mc2DiscordMinecraft.server;
-        return new GlobalEntity(onlinePlayerCount, server.getMaxPlayers(), Optional.of(server.playerDataStorage.getSeenPlayers()).map(strings -> strings.length).orElse(0), server.getMotd(), server.getServerVersion(), server.getLocalIp(), String.valueOf(server.getPort()));
+        return new GlobalEntity(onlinePlayerCount, server.getMaxPlayers(), Optional.ofNullable(server.playerDataStorage.playerDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".dat"))).map(files -> files.length).orElse(0), server.getMotd(), server.getServerVersion(), server.getLocalIp(), String.valueOf(server.getPort()));
     }
 
     @Override
