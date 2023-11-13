@@ -1,14 +1,15 @@
 {
-    "required": true,
-    "minVersion": "0.8",
-    "package": "fr.denisd3d.mc2discord.minecraft.mixin",
-    "compatibilityLevel": "JAVA_17",
-    "refmap": "${modId}.refmap.json",
-    "mixins": [
-        "PlayerListMixin"
-    ],
-    "injectors": {
-        "defaultRequire": 1
-    }
+  "required": true,
+  "minVersion": "0.8",
+  "package": "fr.denisd3d.mc2discord.minecraft.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "${modId}.refmap.json",
+  "mixins": [
+    "CommandFunctionCommandEntryMixin",
+    "PlayerListMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }
 
