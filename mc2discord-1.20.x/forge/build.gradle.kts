@@ -114,4 +114,10 @@ tasks {
     reobf {
         create("shadowJar")
     }
+
+    // Workaround for SpongePowered/MixinGradle#38
+    afterEvaluate {
+        getByName("configureReobfTaskForReobfShadowJar").mustRunAfter("compileJava")
+        getByName("configureReobfTaskForReobfJar").mustRunAfter("compileJava")
+    }
 }
