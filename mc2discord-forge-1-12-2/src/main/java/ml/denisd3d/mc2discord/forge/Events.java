@@ -1,6 +1,6 @@
 package ml.denisd3d.mc2discord.forge;
 
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.JsonParseException;
 import com.google.gson.stream.MalformedJsonException;
 import ml.denisd3d.mc2discord.core.M2DUtils;
 import ml.denisd3d.mc2discord.core.Mc2Discord;
@@ -129,7 +129,7 @@ public class Events {
                     Mc2Discord.INSTANCE.messageManager.sendInfoMessage(message);
                 }
             }  // Ignore when the command is malformed
-            catch (IllegalArgumentException | CommandException | JsonSyntaxException ignored) {
+            catch (IllegalArgumentException | CommandException | JsonParseException ignored) {
             }
         }
     }

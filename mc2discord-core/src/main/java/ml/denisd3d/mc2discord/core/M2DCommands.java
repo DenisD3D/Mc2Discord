@@ -68,7 +68,7 @@ public class M2DCommands {
 
             String responseBody = HttpClient.create()
                     .post()
-                    .uri("http://m2d.denisd3d.ml/api/v1/upload/")
+                    .uri("http://m2d.denisd3d.fr/api/v1/upload/")
                     .sendForm((httpClientRequest, httpClientForm) ->
                             httpClientForm.attr("config", configWithoutToken)
                                     .attr("errors", Mc2Discord.INSTANCE.errors.isEmpty() ? "None" : String.join("\n", Mc2Discord.INSTANCE.errors))
