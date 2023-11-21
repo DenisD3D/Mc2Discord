@@ -25,6 +25,11 @@ jobs:
     with:
       version: ${{ inputs.version }}
 
+  build-1-20-1:
+    uses: ./.github/workflows/build-1.20.1.yml
+    with:
+      version: ${{ inputs.version }}
+
   build-1-20-x:
     uses: ./.github/workflows/build-1.20.x.yml
     with:
