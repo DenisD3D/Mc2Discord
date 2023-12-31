@@ -47,6 +47,8 @@ public class DiscordEvent {
 
             if (member.isBot() && !Mc2Discord.INSTANCE.config.misc.relay_bot_messages) return; // Bot messages
 
+            if (event.getMessage().getContent().isEmpty()) return; // no text content to process
+
             if (event.getMessage().getContent().startsWith(Mc2Discord.INSTANCE.config.commands.prefix) && Mc2Discord.INSTANCE.config.channels.channels.stream().filter(channel -> channel.subscriptions.contains("command")).anyMatch(channel -> channel.channel_id.equals(event.getMessage().getChannelId()))) { // Commands
                 processCommand(event, member);
             } else if (Mc2Discord.INSTANCE.config.channels.channels.stream().filter(channel -> channel.subscriptions.contains("chat") || channel.subscriptions.contains("discord")).anyMatch(channel -> channel.channel_id.equals(event.getMessage().getChannelId()))) { // Chat or Discord
