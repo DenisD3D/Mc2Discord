@@ -30,13 +30,14 @@ jobs:
 
           modrinth-unfeature-mode: intersection
 
-          files: mc2discord-forge-1.20.x-${{ inputs.version }}/mc2discord-forge-1.20.2-${{ inputs.version }}.jar
-          name: '[Forge 1.20.2] ${{ inputs.version }}'
+          files: mc2discord-forge-1.20.x-${{ inputs.version }}/mc2discord-forge-1.20.6-${{ inputs.version }}.jar
+          name: '[Forge 1.20.6] ${{ inputs.version }}'
           changelog-file: CHANGELOG.md
           loaders: |
             forge
           game-versions: |
-            1.20.2
+            1.20.5
+            1.20.6
       - uses: tsickert/discord-webhook@v5.3.0
         with:
           webhook-url: ${{ secrets.WEBHOOK_URL }}
