@@ -45,7 +45,7 @@ public class MinecraftImpl implements IMinecraft {
 
             if (variable_name != null) {
                 switch (variable_name) {
-                    case "color_start" -> baseStyle = baseStyle.withColor(TextColor.parseColor(matcher.group(2)));
+                    case "color_start" -> baseStyle = baseStyle.withColor(TextColor.parseColor(matcher.group(2)).getOrThrow());
                     case "color_end" -> baseStyle = baseStyle.withColor(ChatFormatting.WHITE);
                     case "bold_start" -> baseStyle = baseStyle.withBold(true);
                     case "bold_end" -> baseStyle = baseStyle.withBold(false);

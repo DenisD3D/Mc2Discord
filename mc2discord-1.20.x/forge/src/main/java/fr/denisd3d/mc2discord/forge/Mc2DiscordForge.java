@@ -23,7 +23,7 @@ public class Mc2DiscordForge {
 
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
-        Mc2DiscordMinecraft.onRegisterCommands(event.getDispatcher());
+        Mc2DiscordMinecraft.onRegisterCommands(event.getDispatcher(), event.getBuildContext());
     }
 
     @SubscribeEvent

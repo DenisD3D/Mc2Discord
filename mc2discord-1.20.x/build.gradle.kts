@@ -10,10 +10,10 @@ plugins {
     id("com.github.johnrengelman.shadow") version ("8.1.1") apply (false)
 
     // Fabric
-    id("fabric-loom") version ("1.3-SNAPSHOT") apply (false)
+    id("fabric-loom") version ("1.6-SNAPSHOT") apply (false)
 
     // Forge
-    id("net.minecraftforge.gradle") version ("[6.0,6.2)") apply (false)
+    id("net.minecraftforge.gradle") version ("[6.0.24,6.2)") apply (false)
     id("org.spongepowered.mixin") version ("0.7.+") apply (false)
 }
 

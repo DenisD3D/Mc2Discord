@@ -12,7 +12,7 @@ public class Mc2DiscordFabric implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTING.register(Mc2DiscordMinecraft::onServerStarting);
         ServerLifecycleEvents.SERVER_STARTED.register(Mc2DiscordMinecraft::onServerStarted);
         ServerLifecycleEvents.SERVER_STOPPED.register(Mc2DiscordMinecraft::onServerStopped);
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> Mc2DiscordMinecraft.onRegisterCommands(dispatcher));
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> Mc2DiscordMinecraft.onRegisterCommands(dispatcher, registryAccess));
 
         FabricEvents.register();
     }

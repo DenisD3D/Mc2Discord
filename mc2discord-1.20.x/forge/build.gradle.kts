@@ -32,13 +32,18 @@ dependencies {
     shadowMinecraftLibrary(project(":mc2discord-core"))
 
     annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
+
+    implementation("net.sf.jopt-simple:jopt-simple:5.0.4") {
+        version {
+            strictly("5.0.4")
+        }
+    }
 }
 
 // Fix for running Discord4J on Forge in dev. Exclude forge netty and use the one from Discord4J
 configurations.minecraft {
     exclude(group = "io.netty")
 }
-
 
 minecraft {
     mappings("official", "${rootProject.extra["minecraftVersion"]}")

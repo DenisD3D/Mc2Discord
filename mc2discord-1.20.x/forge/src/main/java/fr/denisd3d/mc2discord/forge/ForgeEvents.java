@@ -64,12 +64,4 @@ public class ForgeEvents {
                             event.getAdvancement().value().display().get().getDescription().getString()));
         }
     }
-
-    /**
-     * Commands fixes for Discord
-     */
-    @SubscribeEvent
-    public static void onCommandEvent(CommandEvent event) {
-        Mc2DiscordMinecraft.onCommand(event.getParseResults());
-    }
 }

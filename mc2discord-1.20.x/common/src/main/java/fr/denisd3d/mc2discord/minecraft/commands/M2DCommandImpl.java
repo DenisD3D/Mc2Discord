@@ -12,6 +12,7 @@ import fr.denisd3d.mc2discord.core.MessageManager;
 import fr.denisd3d.mc2discord.core.storage.HiddenPlayerList;
 import fr.denisd3d.mc2discord.core.storage.LinkedPlayerList;
 import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -34,7 +35,7 @@ public class M2DCommandImpl {
     private static final SimpleCommandExceptionType PLAYER_ALREADY_LINKED = new SimpleCommandExceptionType(Component.literal("Player is already linked"));
     private static final SimpleCommandExceptionType PLAYER_NOT_LINKED = new SimpleCommandExceptionType(Component.literal("Player isn't linked"));
 
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
         dispatcher.register(Commands.literal("mc2discord").requires(commandSource -> commandSource.hasPermission(2))
                 .then(Commands.literal("status").executes(context -> {
                     List<String> result = M2DCommands.getStatus();
@@ -150,7 +151,7 @@ public class M2DCommandImpl {
                             return 1;
                         })))
                 .then(Commands.literal("tellraw").then(Commands.argument("type", StringArgumentType.word()).suggests((context, suggestionsBuilder) -> SharedSuggestionProvider.suggest(List.of("chat", "info", "custom"), suggestionsBuilder))
-                        .then(Commands.argument("message", ComponentArgument.textComponent()).executes((context) -> {
+                        .then(Commands.argument("message", ComponentArgument.textComponent(buildContext)).executes((context) -> {
                     MessageManager.sendMessage(List.of(StringArgumentType.getString(context, "type")), ComponentUtils.updateForEntity(context.getSource(), ComponentArgument.getComponent(context, "message"), null, 0).getString(), Possible.of(Mc2Discord.INSTANCE.vars.mc2discord_display_name), Possible.of(Mc2Discord.INSTANCE.vars.mc2discord_avatar)).subscribe();
                     context.getSource().sendSuccess(() -> Component.literal("Message sent to Discord"), false);
                     return 1;

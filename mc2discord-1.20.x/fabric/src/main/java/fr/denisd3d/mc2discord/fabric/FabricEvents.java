@@ -34,7 +34,6 @@ public class FabricEvents {
         ServerPlayConnectionEvents.DISCONNECT.register(FabricEvents::onPlayerDisconnectEvent);
         PlayerDeathCallback.EVENT.register(FabricEvents::onPlayerDeathEvent);
         PlayerCompletedAdvancementCallback.EVENT.register(FabricEvents::onAdvancementEvent);
-        CommandExecuteCallback.EVENT.register(FabricEvents::onCommandEvent);
     }
 
     public static void onChatMessageEvent(PlayerChatMessage playerChatMessage, ServerPlayer serverPlayer, ChatType.Bound bound) {
@@ -63,13 +62,5 @@ public class FabricEvents {
                             advancement.value().display().get().getTitle().getString(),
                             advancement.value().display().get().getDescription().getString()));
         }
-    }
-
-    /**
-     * Commands fixes for Discord
-     */
-    public static InteractionResult onCommandEvent(ParseResults<CommandSourceStack> parseResults) {
-        Mc2DiscordMinecraft.onCommand(parseResults);
-        return InteractionResult.PASS;
     }
 }
