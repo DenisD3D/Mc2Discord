@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public class M2DUtils {
     public static final File CONFIG_FILE = new File("config", "mc2discord.toml");
     public static final Snowflake NIL_SNOWFLAKE = Snowflake.of(0);
-    private static final Pattern ANY_DISCORD_MENTION_PATTERN = Pattern.compile("<(?::\\w+:|@&*|#)\\d+>");
+    private static final Pattern ANY_DISCORD_MENTION_PATTERN = Pattern.compile("<(?:a?:\\w+:|@&*|#)\\d+>");
     private static final Pattern ANY_DISCORD_NAMED_PATTERN = Pattern.compile("@\\w+|#\\w+|:\\w+:");
 
 
@@ -83,7 +83,7 @@ public class M2DUtils {
             output.append(word);
             lineLen += word.length();
         }
-        if (output.length() > 0) {
+        if (!output.isEmpty()) {
             if (surroundWithCodeBlock) {
                 output.insert(0, "```");
                 output.append("```");
@@ -108,8 +108,8 @@ public class M2DUtils {
 
         while (matcher.find()) {
             String replacement = matcher.group(0);
-            if (replacement.matches("<(:\\w+:)\\d+>")) { // Emojis
-                matcher.appendReplacement(builder, Matcher.quoteReplacement(":" + replacement.split(":")[1] + ":"));
+            if (replacement.matches("<a?(:\\w+:)\\d+>")) { // Emojis
+                matcher.appendReplacement(builder, Matcher.quoteReplacement(":" + replacement.split(":")[1].toLowerCase() + ":"));
             } else if (replacement.matches("<@(\\d+)>")) { // Users
                 users.stream().filter(partialMember -> partialMember.getId().asString().equals(replacement.substring(2, replacement.length() - 1))).findFirst().ifPresent(user -> matcher.appendReplacement(builder, Matcher.quoteReplacement("@" + user.getUsername())));
             } else if (replacement.matches("<@&(\\d+)>")) { // Roles
