@@ -137,7 +137,7 @@ public class MessageManager {
         return channelMono.flatMapMany(TopLevelGuildMessageChannel::getWebhooks)
                 .filter(webhook -> webhook.getName().isPresent() && webhook.getName().get().equals(Mc2Discord.INSTANCE.vars.mc2discord_webhook_name))
                 .switchIfEmpty(channelMono.flatMap(channel1 -> channel1.createWebhook(Mc2Discord.INSTANCE.vars.mc2discord_webhook_name)))
-                .single();
+                .next();
     }
 
     /**
