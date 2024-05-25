@@ -20,6 +20,7 @@ import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -31,8 +32,11 @@ import static net.minecraft.command.CommandBase.getChatComponentFromNthArg;
 
 @Mod.EventBusSubscriber(modid = "mc2discord", value = Side.SERVER)
 public class Events {
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onMinecraftChatMessageEvent(ServerChatEvent event) {
+        if (event.isCanceled()) {
+            return;
+        }
         MinecraftEvents.onMinecraftChatMessageEvent(event.getMessage(), new Player(event.getPlayer().getGameProfile().getName(), event.getPlayer()
                 .getDisplayName()
                 .getUnformattedText(), Optional.ofNullable(event.getPlayer().getGameProfile().getId()).orElse(null)));
