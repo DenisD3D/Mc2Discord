@@ -2,7 +2,7 @@ package fr.denisd3d.mc2discord.core;
 
 import com.electronwill.nightconfig.core.io.ParsingException;
 import discord4j.common.close.CloseException;
-import discord4j.core.DiscordClientBuilder;
+import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.guild.MemberJoinEvent;
 import discord4j.core.event.domain.guild.MemberLeaveEvent;
@@ -11,6 +11,8 @@ import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.gateway.intent.Intent;
 import discord4j.gateway.intent.IntentSet;
 import discord4j.rest.http.client.ClientException;
+import discord4j.rest.request.RouteMatcher;
+import discord4j.rest.response.ResponseFunction;
 import fr.denisd3d.mc2discord.core.config.M2DConfig;
 import fr.denisd3d.mc2discord.core.events.DiscordEvent;
 import fr.denisd3d.mc2discord.core.events.LifecycleEvents;
@@ -19,8 +21,11 @@ import fr.denisd3d.mc2discord.core.storage.LinkedPlayerList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
+import reactor.retry.Retry;
+import reactor.util.retry.RetrySpec;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,13 +51,18 @@ public class Mc2Discord {
             return;
         }
 
-        DiscordClientBuilder.create(this.config.general.token)
+        DiscordClient.builder(this.config.general.token)
+                .onClientResponse(
+                        ResponseFunction.retryWhen(
+                                RouteMatcher.any(),
+                                RetrySpec.withThrowable(Retry.anyOf(IOException.class)))
+                )
                 .build()
                 .gateway()
                 .setEnabledIntents(IntentSet.all().andNot(IntentSet.of(Intent.GUILD_PRESENCES)))
                 .login()
                 .doOnError(CloseException.class, throwable -> {
-                    Mc2Discord.LOGGER.error("Error while starting Discord bot: " + throwable.getCloseStatus().getReason().orElse("") + " (code " + throwable.getCloseStatus().getCode() + ")");
+                    Mc2Discord.LOGGER.error("Error while starting Discord bot: {} (CloseException, code {})", throwable.getCloseStatus().getReason().orElse(""), throwable.getCloseStatus().getCode());
                     this.errors.add("Error while starting Discord bot: " + throwable.getCloseStatus().getReason().orElse("") + " (code " + throwable.getCloseStatus().getCode() + ")");
                     if (throwable.getCloseStatus().getCode() == 4014) {
                         Mc2Discord.LOGGER.error("Make sure all required intents are enabled on Discord developer website (MESSAGE CONTENT & SERVER MEMBERS)");
@@ -60,7 +70,7 @@ public class Mc2Discord {
                     }
                 })
                 .doOnError(ClientException.class, throwable -> {
-                    Mc2Discord.LOGGER.error("Error while starting Discord bot: " + throwable.getStatus().reasonPhrase() + " (code " + throwable.getStatus().code() + ")");
+                    Mc2Discord.LOGGER.error("Error while starting Discord bot: {} (ClientException, code {})", throwable.getStatus().reasonPhrase(), throwable.getStatus().code());
                     this.errors.add("Error while starting Discord bot: " + throwable.getStatus().reasonPhrase() + " (code " + throwable.getStatus().code() + ")");
                 })
                 .subscribe(gatewayDiscordClient -> {
