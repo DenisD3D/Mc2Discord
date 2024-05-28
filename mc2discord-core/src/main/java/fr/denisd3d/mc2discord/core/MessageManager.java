@@ -133,7 +133,7 @@ public class MessageManager {
      * @return A Mono<Webhook> that completes when the webhook is found or created
      */
     public static Mono<Webhook> getMc2DiscordWebhook(Snowflake channel) {
-        Mono<TopLevelGuildMessageChannel> channelMono = Mc2Discord.INSTANCE.client.getChannelById(channel).ofType(TopLevelGuildMessageChannel.class);
+        Mono<TopLevelGuildMessageChannel> channelMono = Mc2Discord.INSTANCE.client.getChannelById(channel).ofType(TopLevelGuildMessageChannel.class).switchIfEmpty(Mono.fromRunnable(() -> Mc2Discord.LOGGER.error("Invalid channel type, channel {} must support webhooks (use another channel or another mode)", channel.asString())));
         return channelMono.flatMapMany(TopLevelGuildMessageChannel::getWebhooks)
                 .filter(webhook -> webhook.getName().isPresent() && webhook.getName().get().equals(Mc2Discord.INSTANCE.vars.mc2discord_webhook_name))
                 .switchIfEmpty(channelMono.flatMap(channel1 -> channel1.createWebhook(Mc2Discord.INSTANCE.vars.mc2discord_webhook_name)))
@@ -167,6 +167,7 @@ public class MessageManager {
         String finalMessage = message;
         return Mc2Discord.INSTANCE.client.getChannelById(channel)
                 .ofType(MessageChannel.class)
+                .switchIfEmpty(Mono.fromRunnable(() -> Mc2Discord.LOGGER.error("Invalid channel type, channel {} must support text messages", channel)))
                 .flatMapMany(messageChannel -> Flux.fromIterable(M2DUtils.breakStringInMessages(finalMessage, 2000, surroundWithCodeBlock))
                         .flatMap(s -> {
                             MessageCreateSpec.Builder builder = MessageCreateSpec.builder()
@@ -208,6 +209,7 @@ public class MessageManager {
     public static Mono<Void> createEmbedMessage(Snowflake channel, String message, Possible<String> username, Possible<String> avatarUrl, List<String> types, Collection<? extends EmbedCreateSpec> embeds, Collection<? extends MessageCreateFields.File> files) {
         return Mc2Discord.INSTANCE.client.getChannelById(channel)
                 .ofType(MessageChannel.class)
+                .switchIfEmpty(Mono.fromRunnable(() -> Mc2Discord.LOGGER.error("Invalid channel type, channel {} must support text messages", channel)))
                 .flatMapMany(messageChannel ->
                         Flux.fromIterable(M2DUtils.breakStringInMessages(message, 4096, false))
                                 .flatMap(s -> {
