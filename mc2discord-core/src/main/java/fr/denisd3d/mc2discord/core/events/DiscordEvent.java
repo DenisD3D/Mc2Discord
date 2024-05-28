@@ -32,8 +32,13 @@ public class DiscordEvent {
         if (event.getMessage().getWebhookId().isPresent()) { // Webhook messages
             if (!Mc2Discord.INSTANCE.config.misc.relay_bot_messages) return; // No bot messages
 
-            if (event.getMessage().getWebhook().blockOptional().flatMap(Webhook::getName).orElse("").equals(Mc2Discord.INSTANCE.vars.mc2discord_webhook_name))
-                return; // Self messages
+            if (Objects.equals(event.getMessage().getWebhook().map(Webhook::getName).onErrorResume(throwable -> Mono.just(Optional.of(Mc2Discord.INSTANCE.vars.mc2discord_webhook_name)))
+                    .map(name -> name.orElse(""))
+                    .block(), Mc2Discord.INSTANCE.vars.mc2discord_webhook_name))
+                return; // Self messages or slash commands
+
+            if (event.getMember().isEmpty())
+                return;
 
             if (Mc2Discord.INSTANCE.config.channels.channels.stream().filter(channel -> channel.subscriptions.contains("chat") || channel.subscriptions.contains("discord")).anyMatch(channel -> channel.channel_id.equals(event.getMessage().getChannelId()))) { // Chat or Discord
                 processMessage(event, event.getMember().get());
