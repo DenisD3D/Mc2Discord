@@ -35,7 +35,7 @@
 
     "config.channels.comment": " Channels configuration\n One [[Channels.Channel]] block should be created per Discord channel you want to setup",
     "config.channels.id.comment": " Id of the Discord channel to send messages in (see: https://github.com/DenisD3D/Mc2Discord/wiki/Discord-ids)",
-    "config.channels.subscriptions.comment": " List of messages types to send that will be sent in this channel. Available values: \"info\", \"chat\", \"command\", \"logs\"",
+    "config.channels.subscriptions.comment": " List of messages types to send that will be sent in this channel. Available values: \"info\", \"chat\", \"command\", \"logs\" (\"info\" is equivalent to adding \"server_start\", \"server_stop\", \"player_connect\", \"player_disconnect\", \"player_death\", \"player_advancement\")",
     "config.channels.mode.comment": " Messages format in this channel. Available values: WEBHOOK, PLAIN_TEXT, EMBED",
 
     "config.messages.comment": " Messages content configuration\n Variables (${xxx}) are replaced by corresponding values (see complete list of variables: https://github.com/DenisD3D/Mc2Discord/wiki/Variables)\n \"global\" variables may be used in any field",
