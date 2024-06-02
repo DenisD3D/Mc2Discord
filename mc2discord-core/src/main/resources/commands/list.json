@@ -1,0 +1,22 @@
+{
+  "name": "list",
+  "description": "Lists all logs and crash-reports on the server",
+  "options": [
+    {
+      "name": "filter",
+      "description": "Which type of files you want to list",
+      "type": 3,
+      "required": false,
+      "choices": [
+        {
+          "name": "logs",
+          "value": "logs"
+        },
+        {
+          "name": "crash-reports",
+          "value": "crash-reports"
+        }
+      ]
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.guild.MemberJoinEvent;
 import discord4j.core.event.domain.guild.MemberLeaveEvent;
+import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.gateway.intent.Intent;
@@ -13,6 +14,7 @@ import discord4j.gateway.intent.IntentSet;
 import discord4j.rest.http.client.ClientException;
 import discord4j.rest.request.RouteMatcher;
 import discord4j.rest.response.ResponseFunction;
+import fr.denisd3d.mc2discord.core.commands.SlashCommandListener;
 import fr.denisd3d.mc2discord.core.config.M2DConfig;
 import fr.denisd3d.mc2discord.core.events.DiscordEvent;
 import fr.denisd3d.mc2discord.core.events.LifecycleEvents;
@@ -44,6 +46,7 @@ public class Mc2Discord {
     public Mc2Discord(IMinecraft minecraft) {
         this.minecraft = minecraft;
         if (!loadConfig()) return;
+        loadCommands();
 
         if (!M2DUtils.isTokenValid(this.config.general.token)) {
             LOGGER.error("Invalid Discord bot token");
@@ -79,6 +82,7 @@ public class Mc2Discord {
                     this.client.on(MessageCreateEvent.class).subscribe(DiscordEvent::onMessageCreate);
                     this.client.on(MemberJoinEvent.class).subscribe(DiscordEvent::onMemberJoin);
                     this.client.on(MemberLeaveEvent.class).subscribe(DiscordEvent::onMemberLeave);
+                    this.client.on(ChatInputInteractionEvent.class, SlashCommandListener::handle).then(this.client.onDisconnect()).block();
                 });
     }
 
@@ -115,5 +119,14 @@ public class Mc2Discord {
         AccountManager.stop();
 
         return this.client != null ? this.client.logout() : Mono.empty();
+    }
+
+    private void loadCommands() {
+        List<String> commands = List.of("list.json", "display.json", "remove.json");
+        try {
+            new CommandRegistrar(client.getRestClient()).registerCommands(commands);
+        } catch (Exception e) {
+            LOGGER.error("Error trying to register global slash commands", e);
+        }
     }
 }
