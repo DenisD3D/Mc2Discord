@@ -84,3 +84,17 @@ jobs:
     with:
       version: ${{ inputs.version }}
     secrets: inherit
+    
+  publish-forge-1-21-x:
+    uses: ./.github/workflows/publish-forge-1.21.x.yml
+    needs: publish-fabric-1-20-x
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
+
+  publish-fabric-1-21-x:
+    uses: ./.github/workflows/publish-fabric-1.21.x.yml
+    needs: publish-forge-1-21-x
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
