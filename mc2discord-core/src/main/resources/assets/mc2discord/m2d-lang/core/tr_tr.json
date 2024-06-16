@@ -11,21 +11,21 @@
 
     "commands.restart.content": "Mc2Discord yeniden başlatıldı",
 
-    "commands.upload.success": "Your link : ",
-    "commands.upload.error": "Upload failed : %s",
+    "commands.upload.success": "Sizin linkiniz : ",
+    "commands.upload.error": "Yükleme başarısız : %s",
 
-    "commands.invite.error": "The discord token isn't valid",
+    "commands.invite.error": "Discord tokeni geçersiz.",
 
-    "commands.hidden.hidden": "%s is now hidden.",
-    "commands.hidden.visible": "%s is now visible.",
-    "commands.hidden.reload": "Reloaded hidden players list",
-    "commands.hidden.empty": "There are no hidden player",
-    "commands.hidden.list": "There are %d hidden players: %s",
+    "commands.hidden.hidden": "%s şimdi gizli.",
+    "commands.hidden.visible": "%s şimdi görünür.",
+    "commands.hidden.reload": "Gizli oyuncular listesi yeniden yüklendi",
+    "commands.hidden.empty": "Hiç gizli oyuncu yok",
+    "commands.hidden.list": "%d gizli oyuncu var: %s",
 
-    "commands.linked.linked": "%s is now linked.",
-    "commands.linked.unlinked": "%s is now unlinked.",
-    "commands.linked.reload": "Reloaded linked players list",
-    "commands.linked.empty": "There are no linked player",
+    "commands.linked.linked": "%s hesabını bağladı.",
+    "commands.linked.unlinked": "%s hesabını ayırdı.",
+    "commands.linked.reload": "Bağlı oyuncu listesi yeniden yüklendi",
+    "commands.linked.empty": "Hiç bağlı oyuncu yok.",
     "commands.linked.list": "There are %d linked players: %s",
 
     "config.lang.comment": " Set language for this configuration file. Delete the rest of the file to update. Thanks to the translators: %s\n Supported languages: %s",
