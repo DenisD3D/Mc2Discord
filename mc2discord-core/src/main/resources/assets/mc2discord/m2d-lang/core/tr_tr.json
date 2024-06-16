@@ -26,12 +26,12 @@
     "commands.linked.unlinked": "%s hesabını ayırdı.",
     "commands.linked.reload": "Bağlı oyuncu listesi yeniden yüklendi",
     "commands.linked.empty": "Hiç bağlı oyuncu yok.",
-    "commands.linked.list": "There are %d linked players: %s",
+    "commands.linked.list": "%d bağlı oyuncu var : %s",
 
-    "config.lang.comment": " Set language for this configuration file. Delete the rest of the file to update. Thanks to the translators: %s\n Supported languages: %s",
+    "config.lang.comment": "Bu konfigürasyon dosyasının dilini seçin. Güncellemek için dosyanın kalanını silin. Çevirmen(ler)e teşekkürler: %s\n Desteklenen diller: %s",
 
-    "config.general.comment": " Mc2Discord configuration file\n  - Curseforge (Download): https://www.curseforge.com/minecraft/mc-mods/mc2discord\n  - Modrinth (Download): https://modrinth.com/mod/mc2discord\n  - Discord (Support): https://discord.gg/rzzd76c\n  - Github (Source code): https://github.com/DenisD3D/Mc2Discord\n  - Wiki (Configuration guide): https://github.com/DenisD3D/Mc2Discord/wiki\n\n\n FOLLOW THE CONFIGURATION GUIDE IN THE WIKI: https://github.com/DenisD3D/Mc2Discord/wiki\n\n\n Support is available through the Discord server",
-    "config.general.token.comment": " Token for the Discord bot account, equivalent to a password obtainable through the Discord website (see: https://github.com/DenisD3D/Mc2Discord/wiki/Discord-token)",
+    "config.general.comment": " Mc2Discord konfigürasyon dosyası\n  - Curseforge (İndir): https://www.curseforge.com/minecraft/mc-mods/mc2discord\n  - Modrinth (İndir): https://modrinth.com/mod/mc2discord\n  - Discord (Destek): https://discord.gg/rzzd76c\n  - Github (Kaynak kodu): https://github.com/DenisD3D/Mc2Discord\n  - Wiki (Konfigürasyon rehberi): https://github.com/DenisD3D/Mc2Discord/wiki\n\n\n WİKİDEKİ KONFİGÜRASYON REHBERİNİ TAKİP EDİN https://github.com/DenisD3D/Mc2Discord/wiki\n\n\n Destek için Discord sunucusuna katıl",
+    "config.general.token.comment": " Discord bot hesabının tokeni, Discord web sitesinden elde edilebilir (bkz. : https://github.com/DenisD3D/Mc2Discord/wiki/Discord-token)",
 
     "config.channels.comment": " Channels configuration\n One [[Channels.Channel]] block should be created per Discord channel you want to setup",
     "config.channels.id.comment": " Id of the Discord channel to send messages in (see: https://github.com/DenisD3D/Mc2Discord/wiki/Discord-ids)",
