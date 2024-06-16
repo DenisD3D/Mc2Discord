@@ -1,0 +1,18 @@
+{
+  "config.messages.start.value": "Sunucu başladı",
+  "config.messages.stop.value": "Sunucu durduruldu",
+  "config.messages.join.value": "${player_display_name} oyuna katıldı",
+  "config.messages.leave.value": "${player_display_name} oyundan ayrıldı",
+  "config.messages.death.value": "${death_message}",
+  "config.messages.advancement.value": "${player_display_name} başarı elde etti ${advancement_title}. ${advancement_description}.",
+  "config.account.messages.link_get_code.value": "Hesabınızı bağlamak için, ${command} mesajını ${bot_name}#${bot_discriminator}'ya Discord'da özel mesaj olarak gönderin",
+  "config.account.messages.link_successful.value": "Hesabınız şimdi bağlı",
+  "config.account.messages.link_invalid_code.value": "Bu kod geçersiz",
+  "config.account.messages.link_error_already.value": "Hesabınız zaten bağlı",
+  "config.account.messages.unlink_successful.value": "Hesabınız şimdi bağlantısı kesildi",
+  "config.account.messages.unlink_error.value": "Hesabınızın bağlantısını kesemezsiniz",
+  "config.account.messages.missing_roles.value": "Hesabınızı bağlamak için gerekli rollere sahip değilsiniz",
+  "config.style.reply_format.value": "${member_nickname} yanıt olarak: ",
+  "config.style.presence.message.value": "${online_players} / ${max_players} oyuncu",
+  "config.misc.discord_text.value": "Davet bağlantısı tanımlanmamış"
+}
