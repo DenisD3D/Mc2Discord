@@ -1,0 +1,12 @@
+{
+  "name": "remove",
+  "description": "Removes old logs and crash-reports files",
+  "options": [
+    {
+      "name": "age",
+      "description": "Maximum number of days for a file to live",
+      "type": 4,
+      "required": false
+    }
+  ]
+}

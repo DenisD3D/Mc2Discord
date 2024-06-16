@@ -1,0 +1,12 @@
+{
+  "name": "display",
+  "description": "Displays the content of a log or crash-report file",
+  "options": [
+    {
+      "name": "name",
+      "description": "Which file you want to display",
+      "type": 3,
+      "required": true
+    }
+  ]
+}
