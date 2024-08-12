@@ -42,7 +42,7 @@
     "config.messages.start.comment": " Quando o servidor iniciar",
     "config.messages.start.value": "O servidor foi iniciado",
     "config.messages.stop.comment": " Quando o servidor parar",
-    "config.messages.stop.value": "O servidor foi parado",
+    "config.messages.stop.value": "O servidor foi desligado",
     "config.messages.join.comment": " Quando um jogador entra no servidor (variáveis \"player\" estão disponíveis)",
     "config.messages.join.value": "${player_display_name} entrou no jogo",
     "config.messages.leave.comment": " Quando um jogador sai do servidor (variáveis \"player\" estão disponíveis)",
