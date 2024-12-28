@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4.1.7
       - uses: Kir-Antipov/mc-publish@v3.3
         with:
           modrinth-id: Cfbcv7uF
