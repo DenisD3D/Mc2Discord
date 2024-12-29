@@ -78,6 +78,9 @@ tasks {
 
     jar {
         archiveClassifier.set("slim")
+        manifest.attributes(
+            "MixinConfigs" to "${sharedProperties["modId"]}.mixins.json"
+        )
     }
 
     shadowJar {

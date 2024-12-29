@@ -140,7 +140,7 @@ public class LifecycleEvents {
     }
 
     public static void mcOrDiscordReady() {
-        if (Mc2Discord.INSTANCE.client == null || !minecraftReady) return;
+        if (Mc2Discord.INSTANCE.client == null || !minecraftReady || Mc2Discord.INSTANCE.vars.isStarted) return;
         Mc2Discord.INSTANCE.vars.isStarted = true;
 
         MessageManager.init();
