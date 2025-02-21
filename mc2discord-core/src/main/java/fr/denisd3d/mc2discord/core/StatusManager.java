@@ -17,6 +17,7 @@ import java.util.concurrent.TimeoutException;
 
 public class StatusManager {
     private static Timer timer;
+    private static boolean isCancelled = false;
 
     public static void init() {
         timer = new Timer(true);
@@ -35,6 +36,7 @@ public class StatusManager {
     public static void stop() {
         if (timer != null)
             timer.cancel();
+        isCancelled = true;
     }
 
     static class ChannelUpdateTask extends TimerTask {
@@ -50,6 +52,10 @@ public class StatusManager {
             try {
                 if (M2DUtils.isNotConfigured()) // Check if mod is configured
                     return;
+
+                if (isCancelled) // If mod is stopped
+                    return;
+
                 String nameMessage = this.statusChannel.name_message.asString();
                 String topicMessage = this.statusChannel.topic_message.asString();
 
@@ -93,6 +99,9 @@ public class StatusManager {
         public void run() {
             try {
                 if (M2DUtils.isNotConfigured()) // Check if mod is configured
+                    return;
+
+                if (isCancelled) // If the mod is stopped
                     return;
 
                 ClientActivity clientActivity = switch (this.presence_type) {
