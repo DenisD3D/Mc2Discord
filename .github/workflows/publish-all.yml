@@ -57,23 +57,9 @@ jobs:
       version: ${{ inputs.version }}
     secrets: inherit
 
-  publish-forge-1-20-2:
-    uses: ./.github/workflows/publish-forge-1.20.2.yml
-    needs: publish-fabric-1-20-1
-    with:
-      version: ${{ inputs.version }}
-    secrets: inherit
-
-  publish-fabric-1-20-2:
-    uses: ./.github/workflows/publish-fabric-1.20.2.yml
-    needs: publish-forge-1-20-2
-    with:
-      version: ${{ inputs.version }}
-    secrets: inherit
-
   publish-forge-1-20-x:
     uses: ./.github/workflows/publish-forge-1.20.x.yml
-    needs: publish-fabric-1-20-2
+    needs: publish-fabric-1-20-1
     with:
       version: ${{ inputs.version }}
     secrets: inherit
