@@ -1,13 +1,13 @@
-name: 'Build all'
+name: "Build all"
 run-name: Build all-${{ inputs.version }}
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version'
+        description: "Version"
         required: true
-        default: '0.0.0-dev'
+        default: "0.0.0-dev"
   workflow_call:
     inputs:
       version:
@@ -34,13 +34,18 @@ jobs:
     uses: ./.github/workflows/build-1.20.2.yml
     with:
       version: ${{ inputs.version }}
-      
+
   build-1-20-x:
-   uses: ./.github/workflows/build-1.20.x.yml
-   with:
+    uses: ./.github/workflows/build-1.20.x.yml
+    with:
       version: ${{ inputs.version }}
 
   build-1-21-x:
-   uses: ./.github/workflows/build-1.21.x.yml
-   with:
+    uses: ./.github/workflows/build-1.21.x.yml
+    with:
+      version: ${{ inputs.version }}
+
+  build-1-21-5:
+    uses: ./.github/workflows/build-1.21.5.yml
+    with:
       version: ${{ inputs.version }}

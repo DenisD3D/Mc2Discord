@@ -1,3 +1,4 @@
-## 4.2.5 update
-+ 1.21.4 support
-+ pt_br lang
+## 4.2.6 update
++ 1.21.5 support
++ fix death message being always generic on fabric (thanks to CavanCheeta)
++ add missing `${attachements}` variable in `minecraft_chat_format`

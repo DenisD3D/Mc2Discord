@@ -1,13 +1,13 @@
-name: 'Publish all'
+name: "Publish all"
 run-name: Publish all-${{ inputs.version }}
 
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version'
+        description: "Version"
         required: true
-        default: '0.0.0-dev'
+        default: "0.0.0-dev"
 
 jobs:
   build-all:
@@ -70,7 +70,7 @@ jobs:
     with:
       version: ${{ inputs.version }}
     secrets: inherit
-    
+
   publish-forge-1-20-x:
     uses: ./.github/workflows/publish-forge-1.20.x.yml
     needs: publish-fabric-1-20-2
@@ -84,7 +84,7 @@ jobs:
     with:
       version: ${{ inputs.version }}
     secrets: inherit
-    
+
   publish-forge-1-21-x:
     uses: ./.github/workflows/publish-forge-1.21.x.yml
     needs: publish-fabric-1-20-x
@@ -95,6 +95,20 @@ jobs:
   publish-fabric-1-21-x:
     uses: ./.github/workflows/publish-fabric-1.21.x.yml
     needs: publish-forge-1-21-x
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
+
+  publish-forge-1-21-5:
+    uses: ./.github/workflows/publish-forge-1.21.5.yml
+    needs: publish-fabric-1-21-x
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
+
+  publish-fabric-1-21-5:
+    uses: ./.github/workflows/publish-fabric-1.21.5.yml
+    needs: publish-forge-1-21-5
     with:
       version: ${{ inputs.version }}
     secrets: inherit
