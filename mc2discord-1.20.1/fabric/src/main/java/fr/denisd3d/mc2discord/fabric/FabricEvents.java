@@ -49,7 +49,7 @@ public class FabricEvents {
     }
 
     public static void onPlayerDeathEvent(ServerPlayer serverPlayer, DamageSource damageSource) {
-        MinecraftEvents.onPlayerDeathEvent(new PlayerEntity(serverPlayer.getGameProfile().getName(), serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().getId()), new DeathEntity(damageSource.getMsgId(), serverPlayer.getCombatTracker().getDeathMessage().getString(), serverPlayer.getCombatTracker().getCombatDuration(), Optional.of(serverPlayer.getCombatTracker().mob).map(livingEntity -> livingEntity.getDisplayName().getString()).orElse(""), Optional.of(serverPlayer.getCombatTracker().mob).map(LivingEntity::getHealth).orElse(0.0f)));
+        MinecraftEvents.onPlayerDeathEvent(new PlayerEntity(serverPlayer.getGameProfile().getName(), serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().getId()), new DeathEntity(damageSource.getMsgId(), damageSource.getLocalizedDeathMessage(serverPlayer).getString(), serverPlayer.getCombatTracker().getCombatDuration(), Optional.of(serverPlayer.getCombatTracker().mob).map(livingEntity -> livingEntity.getDisplayName().getString()).orElse(""), Optional.of(serverPlayer.getCombatTracker().mob).map(LivingEntity::getHealth).orElse(0.0f)));
     }
 
     public static void onAdvancementEvent(ServerPlayer serverPlayer, Advancement advancement) {
