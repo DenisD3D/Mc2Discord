@@ -31,7 +31,7 @@ public class Style {
     @Path("minecraft_chat_format")
     @Comment("config.style.minecraft_chat_format.comment")
     @PreserveNotNull
-    public String minecraft_chat_format = "<Discord - ${member_display_name}> ${reply}${message}";
+    public String minecraft_chat_format = "<Discord - ${member_display_name}> ${reply}${message} ${attachements}";
 
     @Path("reply_format")
     @Comment("config.style.reply_format.comment")
