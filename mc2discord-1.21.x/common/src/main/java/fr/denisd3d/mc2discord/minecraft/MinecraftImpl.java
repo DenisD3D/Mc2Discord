@@ -18,6 +18,7 @@ import net.minecraft.network.chat.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.net.URI;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,7 +67,7 @@ public class MinecraftImpl implements IMinecraft {
                     }
                 }
             } else if (url != null) {
-                component.append(Component.literal(url).withStyle(baseStyle).withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url))));
+                component.append(Component.literal(url).withStyle(baseStyle).withStyle(style -> style.withClickEvent(new ClickEvent.OpenUrl(URI.create(url)))));
             }
         }
         component.append(Component.literal(content.substring(lastAppendPosition)).withStyle(baseStyle));
@@ -80,7 +81,7 @@ public class MinecraftImpl implements IMinecraft {
         MutableComponent attachementsComponent = Component.literal(" ");
         for (Map.Entry<String, String> entry : attachments.entrySet()) {
             attachementsComponent.append(Component.literal("[" + entry.getKey() + "]").withStyle(style -> style
-                    .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, entry.getValue()))
+                    .withClickEvent(new ClickEvent.OpenUrl(URI.create(entry.getValue())))
                     .withColor(ChatFormatting.BLUE)
                     .withUnderlined(true)));
         }
@@ -92,7 +93,7 @@ public class MinecraftImpl implements IMinecraft {
 
         MutableComponent component = convertToComponent(content, replacements);
         if (senderUsername != null) {
-            component.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "@" + senderUsername)).withInsertion("@" + senderUsername));
+            component.withStyle(style -> style.withClickEvent(new ClickEvent.SuggestCommand("@" + senderUsername)).withInsertion("@" + senderUsername));
         }
 
         Mc2DiscordMinecraft.server.getPlayerList().broadcastSystemMessage(component, false);

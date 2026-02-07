@@ -59,8 +59,8 @@ public class AccountCommands {
     public static Component getLinkTextComponent(String code) {
         Map<String, MutableComponent> replacements = new HashMap<>();
         replacements.put("command", Component.literal("!code " + code)
-                .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, "!code " + code))
-                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("chat.copy.click")))
+                .withStyle(style -> style.withClickEvent(new ClickEvent.CopyToClipboard("!code " + code))
+                        .withHoverEvent(new HoverEvent.ShowText(Component.translatable("chat.copy.click")))
                         .withColor(ChatFormatting.BLUE)
                         .withUnderlined(true)));
 

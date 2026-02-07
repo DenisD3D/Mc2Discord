@@ -38,7 +38,7 @@ public class TellrawCommandMixin {
         }
 
         ServerPlayer serverPlayer = commandContext.getSource().getPlayer();
-        String messageContent = ComponentUtils.updateForEntity(commandContext.getSource(), ComponentArgument.getComponent(commandContext, "message"), null, 0).getString();
+        String messageContent = ComponentUtils.updateForEntity(commandContext.getSource(), ComponentArgument.getResolvedComponent(commandContext, "message"), null, 0).getString();
         if (serverPlayer != null) {
             PlayerEntity player = new PlayerEntity(serverPlayer.getGameProfile().getName(), serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().getId());
             MessageManager.sendChatMessage(messageContent, Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_display_name, List.of(player)), Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_avatar_api, List.of(player))).subscribe();

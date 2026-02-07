@@ -26,6 +26,7 @@ import net.minecraft.server.players.PlayerList;
 import reactor.util.function.Tuple2;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 
@@ -46,11 +47,11 @@ public class M2DCommandImpl {
                     return 1;
                 })).then(Commands.literal("upload").executes(context -> {
                     String[] result = M2DCommands.upload();
-                    context.getSource().sendSuccess(() -> Component.literal(result[0]).append(Component.literal(result[1]).withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, result[1])).withColor(TextColor.fromLegacyFormat(ChatFormatting.BLUE)).withUnderlined(true))), false);
+                    context.getSource().sendSuccess(() -> Component.literal(result[0]).append(Component.literal(result[1]).withStyle(style -> style.withClickEvent(new ClickEvent.OpenUrl(URI.create(result[1]))).withColor(TextColor.fromLegacyFormat(ChatFormatting.BLUE)).withUnderlined(true))), false);
                     return 1;
                 })).then(Commands.literal("invite").executes(context -> {
                     String result = M2DCommands.getInviteLink();
-                    context.getSource().sendSuccess(() -> Component.literal(result).withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, result)).withColor(TextColor.fromLegacyFormat(ChatFormatting.BLUE)).withUnderlined(true)), false);
+                    context.getSource().sendSuccess(() -> Component.literal(result).withStyle(style -> style.withClickEvent(new ClickEvent.OpenUrl(URI.create(result))).withColor(TextColor.fromLegacyFormat(ChatFormatting.BLUE)).withUnderlined(true)), false);
                     return 1;
                 })).then(Commands.literal("hidden_players")
                         .then(Commands.literal("list").executes((context) -> {
@@ -152,7 +153,7 @@ public class M2DCommandImpl {
                         })))
                 .then(Commands.literal("tellraw").then(Commands.argument("type", StringArgumentType.word()).suggests((context, suggestionsBuilder) -> SharedSuggestionProvider.suggest(List.of("chat", "info", "custom"), suggestionsBuilder))
                         .then(Commands.argument("message", ComponentArgument.textComponent(buildContext)).executes((context) -> {
-                    MessageManager.sendMessage(List.of(StringArgumentType.getString(context, "type")), ComponentUtils.updateForEntity(context.getSource(), ComponentArgument.getComponent(context, "message"), null, 0).getString(), Possible.of(Mc2Discord.INSTANCE.vars.mc2discord_display_name), Possible.of(Mc2Discord.INSTANCE.vars.mc2discord_avatar)).subscribe();
+                    MessageManager.sendMessage(List.of(StringArgumentType.getString(context, "type")), ComponentUtils.updateForEntity(context.getSource(), ComponentArgument.getResolvedComponent(context, "message"), null, 0).getString(), Possible.of(Mc2Discord.INSTANCE.vars.mc2discord_display_name), Possible.of(Mc2Discord.INSTANCE.vars.mc2discord_avatar)).subscribe();
                     context.getSource().sendSuccess(() -> Component.literal("Message sent to Discord"), false);
                     return 1;
                 })))));

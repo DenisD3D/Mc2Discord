@@ -9,11 +9,13 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 
+import java.net.URI;
+
 public class DiscordCommandImpl {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("discord").executes(context -> {
             context.getSource().sendSuccess(() -> Component.literal(M2DCommands.getDiscordText())
-                    .withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, M2DCommands.getDiscordLink()))
+                    .withStyle(style -> style.withClickEvent(new ClickEvent.OpenUrl(URI.create(M2DCommands.getDiscordLink())))
                             .withColor(TextColor.fromLegacyFormat(ChatFormatting.BLUE))
                             .withUnderlined(true)), false);
             return 1;
