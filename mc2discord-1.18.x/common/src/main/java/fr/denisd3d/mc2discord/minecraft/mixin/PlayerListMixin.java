@@ -46,7 +46,7 @@ public class PlayerListMixin {
 
                     return (stackTrace[otherModMessage.class_index].getClassName() + "." + stackTrace[otherModMessage.class_index].getMethodName()).startsWith(otherModMessage.class_name);
                 })
-                .forEach(otherModMessage -> MessageManager.sendMessage(Collections.singletonList(otherModMessage.type), component.getString(), MessageManager.default_username, MessageManager.default_avatar).subscribe());
+                .forEach(otherModMessage -> MessageManager.sendMessage(Collections.singletonList(otherModMessage.type), component.getString().replaceAll("§.", ""), MessageManager.default_username, MessageManager.default_avatar).subscribe());
     }
 
     // Accounts
