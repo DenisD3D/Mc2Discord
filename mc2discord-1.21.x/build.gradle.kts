@@ -14,6 +14,9 @@ plugins {
 
     // Forge
     id("net.minecraftforge.gradle") version ("[7.0.2,8.0)") apply (false)
+
+    // NeoForge
+    id("net.neoforged.moddev") version ("2.0.140") apply (false)
 }
 
 val sharedProperties = readProperties(file("../shared.properties"))
@@ -50,7 +53,7 @@ subprojects {
     }
 
     tasks.processResources {
-        filesMatching(listOf("pack.mcmeta", "fabric.mod.json", "META-INF/mods.toml", "*.mixins.json")) {
+        filesMatching(listOf("pack.mcmeta", "fabric.mod.json", "META-INF/mods.toml", "*.mixins.json", "META-INF/neoforge.mods.toml")) {
             expand(
                 rootProject.properties +
                         sharedProperties.map { it.key.toString() to it.value }.toMap() +
