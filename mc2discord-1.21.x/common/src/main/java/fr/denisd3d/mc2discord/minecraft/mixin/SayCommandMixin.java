@@ -23,7 +23,7 @@ import java.util.List;
 public class SayCommandMixin {
 
     @SuppressWarnings({ "target", "Duplicates" })
-    @Inject(method = { "lambda$register$0" }, at = @At("HEAD"))
+    @Inject(method = { "lambda$register$0", "method_43657" }, at = @At("HEAD"))
     private static void execute(CommandContext<CommandSourceStack> c, PlayerChatMessage message,
             CallbackInfo cir) throws CommandSyntaxException {
         if (M2DUtils.isNotConfigured())

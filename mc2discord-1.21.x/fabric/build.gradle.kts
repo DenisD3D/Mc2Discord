@@ -1,5 +1,5 @@
 plugins {
-    id("fabric-loom")
+    id("net.fabricmc.fabric-loom-remap")
     id("com.gradleup.shadow")
 }
 
@@ -27,11 +27,6 @@ dependencies {
 
 loom {
     accessWidenerPath.set(project(":common").file("src/main/resources/${sharedProperties["modId"]}.accesswidener"))
-
-    @Suppress("UnstableApiUsage")
-    mixin {
-        defaultRefmapName.set("${sharedProperties["modId"]}.refmap.json")
-    }
 
     runs {
         register("FabricServer") {

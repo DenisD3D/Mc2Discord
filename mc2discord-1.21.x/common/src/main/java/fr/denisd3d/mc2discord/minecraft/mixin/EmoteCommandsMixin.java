@@ -22,7 +22,7 @@ import java.util.List;
 public class EmoteCommandsMixin {
 
     @SuppressWarnings({ "target", "Duplicates" })
-    @Inject(method = { "lambda$register$0" }, at = @At("HEAD"))
+    @Inject(method = { "lambda$register$0", "method_43645" }, at = @At("HEAD"))
     private static void execute(CommandContext<CommandSourceStack> c, PlayerChatMessage message, CallbackInfo ci) {
         if (M2DUtils.isNotConfigured())
             return;

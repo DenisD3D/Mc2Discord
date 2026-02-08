@@ -10,7 +10,7 @@ plugins {
     id("com.gradleup.shadow") version ("9.3.1") apply (false)
 
     // Fabric
-    id("fabric-loom") version ("1.15-SNAPSHOT") apply (false)
+    id("net.fabricmc.fabric-loom-remap") version ("1.15-SNAPSHOT") apply (false)
 
     // Forge
     id("net.minecraftforge.gradle") version ("[7.0.2,8.0)") apply (false)

@@ -24,7 +24,7 @@ import java.util.List;
 public class TellrawCommandMixin {
 
     @SuppressWarnings({"target", "Duplicates"})
-    @Inject(method = {"lambda$register$0"}, at = @At("HEAD"), cancellable = true)
+    @Inject(method = {"lambda$register$0", "method_13777"}, at = @At("HEAD"), cancellable = true)
     private static void execute(CommandContext<CommandSourceStack> commandContext, CallbackInfoReturnable<Integer> cir) throws CommandSyntaxException {
         if (M2DUtils.isNotConfigured()) return;
 
