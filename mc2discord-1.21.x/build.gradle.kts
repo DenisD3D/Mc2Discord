@@ -6,15 +6,14 @@ plugins {
     id("idea")
 
     // Common
-    id("org.spongepowered.gradle.vanilla") version ("0.2.1-SNAPSHOT") apply (false)
-    id("com.github.johnrengelman.shadow") version ("8.1.1") apply (false)
+    id("org.spongepowered.gradle.vanilla") version ("0.2.2-SNAPSHOT") apply (false)
+    id("com.gradleup.shadow") version ("9.3.1") apply (false)
 
     // Fabric
-    id("fabric-loom") version ("1.10-SNAPSHOT") apply (false)
+    id("fabric-loom") version ("1.15-SNAPSHOT") apply (false)
 
     // Forge
-    id("net.minecraftforge.gradle") version ("[6.0.24,6.2)") apply (false)
-    id("org.spongepowered.mixin") version ("0.7.+") apply (false)
+    id("net.minecraftforge.gradle") version ("[7.0.2,8.0)") apply (false)
 }
 
 val sharedProperties = readProperties(file("../shared.properties"))
@@ -36,16 +35,16 @@ subprojects {
     tasks.jar {
         manifest {
             attributes(
-                "Specification-Title" to sharedProperties["modName"],
-                "Specification-Vendor" to sharedProperties["modAuthors"],
+                "Specification-Title" to sharedProperties["modName"]!!,
+                "Specification-Vendor" to sharedProperties["modAuthors"]!!,
                 "Specification-Version" to modVersion,
-                "Implementation-Title" to sharedProperties["modName"],
-                "Implementation-Vendor" to sharedProperties["modAuthors"],
+                "Implementation-Title" to sharedProperties["modName"]!!,
+                "Implementation-Vendor" to sharedProperties["modAuthors"]!!,
                 "Implementation-Version" to modVersion,
                 "Implementation-Timestamp" to SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(Date()),
                 "Timestamp" to System.currentTimeMillis(),
                 "Built-On-Java" to "${System.getProperty("java.vm.version")} (${System.getProperty("java.vm.vendor")})",
-                "Build-On-Minecraft" to rootProject.extra["minecraftVersion"],
+                "Build-On-Minecraft" to rootProject.extra["minecraftVersion"]!!
             )
         }
     }

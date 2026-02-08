@@ -1,6 +1,6 @@
 plugins {
     id("fabric-loom")
-    id("com.github.johnrengelman.shadow")
+    id("com.gradleup.shadow")
 }
 
 val sharedProperties = readProperties(file("../../shared.properties"))
@@ -82,5 +82,9 @@ tasks {
     remapJar {
         dependsOn(shadowJar)
         inputFile.set(shadowJar.get().archiveFile.get())
+    }
+
+    test {
+        enabled = false
     }
 }

@@ -1,6 +1,5 @@
 package fr.denisd3d.mc2discord.minecraft.commands;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -22,6 +21,8 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.server.permissions.Permissions;
+import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
 import reactor.util.function.Tuple2;
 
@@ -37,7 +38,7 @@ public class M2DCommandImpl {
     private static final SimpleCommandExceptionType PLAYER_NOT_LINKED = new SimpleCommandExceptionType(Component.literal("Player isn't linked"));
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
-        dispatcher.register(Commands.literal("mc2discord").requires(commandSource -> commandSource.hasPermission(2))
+        dispatcher.register(Commands.literal("mc2discord").requires(commandSource -> commandSource.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
                 .then(Commands.literal("status").executes(context -> {
                     List<String> result = M2DCommands.getStatus();
                     result.forEach(s -> context.getSource().sendSuccess(() -> Component.literal(s), false));
@@ -63,10 +64,10 @@ public class M2DCommandImpl {
                                         .suggests((context, suggestionsBuilder) -> {
                                             PlayerList playerlist = context.getSource().getServer().getPlayerList();
                                             HiddenPlayerList hiddenPlayerList = Mc2Discord.INSTANCE.hiddenPlayerList;
-                                            return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream().filter((player) -> !hiddenPlayerList.contains(player.getUUID())).map((player) -> player.getGameProfile().getName()), suggestionsBuilder);
+                                            return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream().filter((player) -> !hiddenPlayerList.contains(player.getUUID())).map((player) -> player.getGameProfile().name()), suggestionsBuilder);
                                         }).executes((context) -> {
-                                            Collection<GameProfile> targets = GameProfileArgument.getGameProfiles(context, "targets");
-                                            List<String> result = M2DCommands.addHiddenPlayers(targets.stream().map(GameProfile::getId).toList());
+                                            Collection<NameAndId> targets = GameProfileArgument.getGameProfiles(context, "targets");
+                                            List<String> result = M2DCommands.addHiddenPlayers(targets.stream().map(NameAndId::id).toList());
 
                                             if (result.isEmpty())
                                                 throw PLAYER_ALREADY_HIDDEN.create();
@@ -79,10 +80,10 @@ public class M2DCommandImpl {
                                         .suggests((context, suggestionsBuilder) -> {
                                             PlayerList playerlist = context.getSource().getServer().getPlayerList();
                                             HiddenPlayerList hiddenPlayerList = Mc2Discord.INSTANCE.hiddenPlayerList;
-                                            return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream().filter((player) -> hiddenPlayerList.contains(player.getUUID())).map((player) -> player.getGameProfile().getName()), suggestionsBuilder);
+                                            return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream().filter((player) -> hiddenPlayerList.contains(player.getUUID())).map((player) -> player.getGameProfile().name()), suggestionsBuilder);
                                         }).executes((context) -> {
-                                            Collection<GameProfile> targets = GameProfileArgument.getGameProfiles(context, "targets");
-                                            List<String> result = M2DCommands.removeHiddenPlayers(targets.stream().map(GameProfile::getId).toList());
+                                            Collection<NameAndId> targets = GameProfileArgument.getGameProfiles(context, "targets");
+                                            List<String> result = M2DCommands.removeHiddenPlayers(targets.stream().map(NameAndId::id).toList());
 
                                             if (result.isEmpty())
                                                 throw PLAYER_NOT_HIDDEN.create();
@@ -110,15 +111,14 @@ public class M2DCommandImpl {
                                         .suggests((context, suggestionsBuilder) -> {
                                             PlayerList playerlist = context.getSource().getServer().getPlayerList();
                                             LinkedPlayerList linkedPlayerList = Mc2Discord.INSTANCE.linkedPlayerList;
-                                            return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream().filter((player) -> !linkedPlayerList.contains(player.getUUID())).map((player) -> player.getGameProfile().getName()), suggestionsBuilder);
+                                            return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream().filter((player) -> !linkedPlayerList.contains(player.getUUID())).map((player) -> player.getGameProfile().name()), suggestionsBuilder);
                                         }).then(Commands.argument("discord_id", LongArgumentType.longArg(0))
                                                 .executes((context) -> {
-                                                    Collection<GameProfile> targets = GameProfileArgument.getGameProfiles(context, "targets");
+                                                    Collection<NameAndId> targets = GameProfileArgument.getGameProfiles(context, "targets");
                                                     if (targets.size() > 1)
                                                         throw new RuntimeException("Only one player can be added at a time");
 
-                                                    String result = M2DCommands.addLinkedPlayers(targets.iterator().next().getId(), LongArgumentType.getLong(context, "discord_id"));
-
+                                                    String result = M2DCommands.addLinkedPlayers(targets.iterator().next().id(), LongArgumentType.getLong(context, "discord_id"));
                                                     if (result == null)
                                                         throw PLAYER_ALREADY_LINKED.create();
 
@@ -130,10 +130,10 @@ public class M2DCommandImpl {
                                         .suggests((context, suggestionsBuilder) -> {
                                             PlayerList playerlist = context.getSource().getServer().getPlayerList();
                                             LinkedPlayerList linkedPlayerList = Mc2Discord.INSTANCE.linkedPlayerList;
-                                            return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream().filter((player) -> linkedPlayerList.contains(player.getUUID())).map((player) -> player.getGameProfile().getName()), suggestionsBuilder);
+                                            return SharedSuggestionProvider.suggest(playerlist.getPlayers().stream().filter((player) -> linkedPlayerList.contains(player.getUUID())).map((player) -> player.getGameProfile().name()), suggestionsBuilder);
                                         }).executes((context) -> {
-                                            Collection<GameProfile> targets = GameProfileArgument.getGameProfiles(context, "targets");
-                                            List<String> result = M2DCommands.removeLinkedPlayers(targets.stream().map(GameProfile::getId).toList());
+                                            Collection<NameAndId> targets = GameProfileArgument.getGameProfiles(context, "targets");
+                                            List<String> result = M2DCommands.removeLinkedPlayers(targets.stream().map(NameAndId::id).toList());
 
                                             if (result.isEmpty())
                                                 throw PLAYER_NOT_LINKED.create();

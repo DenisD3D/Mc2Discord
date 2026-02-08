@@ -25,6 +25,7 @@ import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.server.permissions.PermissionSet;
 
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class Mc2DiscordMinecraft {
 
     public static void onServerStarted(MinecraftServer minecraftServer) {
         LifecycleEvents.minecraftReady = true;
-        commandSource = new CommandSourceStack(new DiscordCommandSource(), Vec3.ZERO, Vec2.ZERO, minecraftServer.overworld(), Integer.MAX_VALUE, "Discord", Component.literal("Discord"), minecraftServer, null);
+        commandSource = new CommandSourceStack(new DiscordCommandSource(), Vec3.ZERO, Vec2.ZERO, minecraftServer.overworld(), PermissionSet.ALL_PERMISSIONS, "Discord", Component.literal("Discord"), minecraftServer, null);
         LifecycleEvents.mcOrDiscordReady();
     }
 

@@ -17,6 +17,9 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.PermissionSet;
+import net.minecraft.server.permissions.Permission;
+import net.minecraft.server.permissions.PermissionLevel;
 
 import java.net.URI;
 import java.util.*;
@@ -99,6 +102,20 @@ public class MinecraftImpl implements IMinecraft {
         Mc2DiscordMinecraft.server.getPlayerList().broadcastSystemMessage(component, false);
     }
 
+    public static PermissionSet fromPermissionLevel(int levelId) {
+        if (levelId <= 0) {
+            return PermissionSet.NO_PERMISSIONS;
+        }
+        
+        PermissionLevel level = PermissionLevel.byId(levelId);
+        return permission -> {
+            if (permission instanceof Permission.HasCommandLevel hasCommandLevel) {
+                return level.isEqualOrHigherThan(hasCommandLevel.level());
+            }
+            return false;
+        };
+    }
+
     @Override
     public String executeHelpCommand(Integer permissionLevel, List<String> commands) {
         String prefix = Mc2Discord.INSTANCE.config.commands.prefix;
@@ -109,7 +126,7 @@ public class MinecraftImpl implements IMinecraft {
         response.append("Available commands:\n").append(prefix).append("help\n");
 
         if (permissionLevel >= 0) {
-            Map<CommandNode<CommandSourceStack>, String> map = commandDispatcher.getSmartUsage(commandDispatcher.getRoot(), Mc2DiscordMinecraft.commandSource.withPermission(permissionLevel));
+            Map<CommandNode<CommandSourceStack>, String> map = commandDispatcher.getSmartUsage(commandDispatcher.getRoot(), Mc2DiscordMinecraft.commandSource.withPermission(fromPermissionLevel(permissionLevel)));
 
             for (String string : map.values()) {
                 response.append(prefix).append(string).append("\n");
@@ -140,7 +157,7 @@ public class MinecraftImpl implements IMinecraft {
     public void executeCommand(String command, int permissionLevel, Snowflake channelId) {
         DiscordCommandSource.channelId = channelId;
         Mc2DiscordMinecraft.server.getCommands()
-                .performPrefixedCommand(Mc2DiscordMinecraft.commandSource.withPermission(permissionLevel), command);
+                .performPrefixedCommand(Mc2DiscordMinecraft.commandSource.withPermission(fromPermissionLevel(permissionLevel)), command);
     }
 
     @Override
@@ -174,7 +191,12 @@ public class MinecraftImpl implements IMinecraft {
 
     @Override
     public String getPlayerNameFromUUID(UUID uuid) {
-        return Optional.ofNullable(Mc2DiscordMinecraft.server.getProfileCache()).flatMap(gameProfileCache -> gameProfileCache.get(uuid)).map(GameProfile::getName).orElse(uuid.toString());
+        ServerPlayer player = Mc2DiscordMinecraft.server.getPlayerList().getPlayer(uuid);
+        if (player != null) {
+            return player.getName().getString();
+        } else {
+            return uuid.toString();
+        }
     }
 
     @Override

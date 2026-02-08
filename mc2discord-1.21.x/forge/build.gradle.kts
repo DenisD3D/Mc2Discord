@@ -1,7 +1,6 @@
 plugins {
     id("net.minecraftforge.gradle")
-    id("org.spongepowered.mixin")
-    id("com.github.johnrengelman.shadow")
+    id("com.gradleup.shadow")
 }
 
 val sharedProperties = readProperties(file("../../shared.properties"))
@@ -10,26 +9,38 @@ base {
     archivesName.set("${sharedProperties["modId"]}-forge-${rootProject.extra["minecraftDisplayVersion"]}")
 }
 
-mixin {
-    config("${sharedProperties["modId"]}.mixins.json")
-    config("${sharedProperties["modId"]}.forge.mixins.json")
-}
-
 repositories {
+    minecraft.mavenizer(this)
+    maven(fg.forgeMaven)
+    maven(fg.minecraftLibsMaven)
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Sponge"
+                url = uri("https://repo.spongepowered.org/repository/maven-public")
+            }
+        }
+        filter {
+            includeGroupAndSubgroups("org.spongepowered")
+        }
+    }
     maven("https://jitpack.io")
     mavenCentral()
+    mavenLocal()
 }
 
 val shadowMinecraftLibrary: Configuration by configurations.creating
 val shadowCompileOnly: Configuration by configurations.creating
-configurations.minecraftLibrary.get().extendsFrom(shadowMinecraftLibrary)
 configurations.compileOnly.get().extendsFrom(shadowCompileOnly)
+configurations.implementation.get().extendsFrom(shadowMinecraftLibrary)
+
 dependencies {
-    minecraft("net.minecraftforge:forge:${rootProject.extra["minecraftVersion"]}-${rootProject.extra["forgeVersion"]}")
+    implementation(minecraft.dependency("net.minecraftforge:forge:${rootProject.extra["minecraftVersion"]}-${rootProject.extra["forgeVersion"]}"))
     shadowCompileOnly(project(":common"))
     shadowMinecraftLibrary(project(":mc2discord-core"))
 
-    annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
+    annotationProcessor("net.minecraftforge:eventbus-validator:7.0-beta.10")
+
 
     implementation("net.sf.jopt-simple:jopt-simple:5.0.4") {
         version {
@@ -38,29 +49,23 @@ dependencies {
     }
 }
 
-// Fix for running Discord4J on Forge in dev. Exclude forge netty and use the one from Discord4J
-configurations.minecraft {
-    exclude(group = "io.netty")
-}
-
 minecraft {
     mappings("official", "${rootProject.extra["minecraftVersion"]}")
-    reobf = false
-    accessTransformer(file("src/main/resources/META-INF/accesstransformer.cfg"))
+    useDefaultAccessTransformer()
 
     runs {
-        create("server") {
-            taskName("Server")
-            workingDirectory(project.file("run"))
-            ideaModule("${rootProject.name}.${project.name}.main")
-            arg("nogui")
-            singleInstance(true)
-            mods {
-                create("${sharedProperties["modId"]}") {
-                    source(sourceSets.main.get())
-                    source(project(":common").sourceSets.main.get())
-                }
-            }
+        register("server") {
+            // taskName("Server")
+            // workingDirectory(project.file("run"))
+            // ideaModule("${rootProject.name}.${project.name}.main")
+            // arg("nogui")
+            // singleInstance(true)
+            // mods {
+            //     create("${sharedProperties["modId"]}") {
+            //         source(sourceSets.main.get())
+            //         source(project(":common").sourceSets.main.get())
+            //     }
+            // }
         }
     }
 }
@@ -78,6 +83,7 @@ tasks {
 
     jar {
         archiveClassifier.set("slim")
+        
         manifest.attributes(
             "MixinConfigs" to "${sharedProperties["modId"]}.mixins.json"
         )
@@ -114,5 +120,9 @@ tasks {
 
     assemble {
         dependsOn(shadowJar)
+    }
+
+    test {
+        enabled = false
     }
 }

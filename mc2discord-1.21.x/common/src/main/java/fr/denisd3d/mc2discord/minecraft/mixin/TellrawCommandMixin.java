@@ -24,7 +24,7 @@ import java.util.List;
 public class TellrawCommandMixin {
 
     @SuppressWarnings({"target", "Duplicates"})
-    @Inject(method = {"lambda$register$1", "method_13777"}, at = @At("HEAD"), cancellable = true)
+    @Inject(method = {"lambda$register$0"}, at = @At("HEAD"), cancellable = true)
     private static void execute(CommandContext<CommandSourceStack> commandContext, CallbackInfoReturnable<Integer> cir) throws CommandSyntaxException {
         if (M2DUtils.isNotConfigured()) return;
 
@@ -40,7 +40,7 @@ public class TellrawCommandMixin {
         ServerPlayer serverPlayer = commandContext.getSource().getPlayer();
         String messageContent = ComponentUtils.updateForEntity(commandContext.getSource(), ComponentArgument.getResolvedComponent(commandContext, "message"), null, 0).getString();
         if (serverPlayer != null) {
-            PlayerEntity player = new PlayerEntity(serverPlayer.getGameProfile().getName(), serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().getId());
+            PlayerEntity player = new PlayerEntity(serverPlayer.getGameProfile().name(), serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().id());
             MessageManager.sendChatMessage(messageContent, Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_display_name, List.of(player)), Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_avatar_api, List.of(player))).subscribe();
         } else {
             MessageManager.sendInfoMessage("relayed_command", messageContent).subscribe();
