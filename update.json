@@ -1,6 +1,19 @@
 {
   "homepage": "https://www.curseforge.com/minecraft/mc-mods/mc2discord",
   "promos": {
+    "1.21.11-latest": "4.2.7",
+    "1.21.11-recommended": "4.2.7",
+    "1.21.10-latest": "4.2.7",
+    "1.21.10-recommended": "4.2.7",
+    "1.21.9-latest": "4.2.7",
+    "1.21.9-recommended": "4.2.7",
+    "1.21.8-latest": "4.2.7",
+    "1.21.8-recommended": "4.2.7",
+    "1.21.7-latest": "4.2.7",
+    "1.21.7-recommended": "4.2.7",
+
+    "1.21.6-latest": "4.2.6",
+    "1.21.6-recommended": "4.2.6",
     "1.21.5-latest": "4.2.6",
     "1.21.5-recommended": "4.2.6",
     "1.21.4-latest": "4.2.6",
