@@ -1,0 +1,47 @@
+name: "Publish neoforge 1.21.x"
+run-name: Publish neoforge-1.21.x-${{ inputs.version }}
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+    secrets:
+      MODRINTH_TOKEN:
+        required: true
+      CURSEFORGE_TOKEN:
+        required: true
+      WEBHOOK_URL:
+        required: true
+
+jobs:
+  publish-neoforge-1-21-x:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+      - uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: Cfbcv7uF
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-id: 325235
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+          modrinth-unfeature-mode: intersection
+
+          files: mc2discord-neoforge-1.21.x-${{ inputs.version }}/mc2discord-neoforge-1.21.x-${{ inputs.version }}.jar
+          name: "[Neoforge 1.21.x] ${{ inputs.version }}"
+          changelog-file: CHANGELOG.md
+          loaders: |
+            neoforge
+          game-versions: |
+            1.21.7
+            1.21.8
+            1.21.9
+            1.21.10
+            1.21.11
+      - uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-url: ${{ secrets.WEBHOOK_URL }}
+          content: "New Mc2Discord version released: [Neoforge 1.21.x] ${{ inputs.version }}"

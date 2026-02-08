@@ -63,3 +63,10 @@ jobs:
     with:
       version: ${{ inputs.version }}
     secrets: inherit
+  
+  publish-neoforge-1-21-x:
+    uses: ./.github/workflows/publish-neoforge-1.21.x.yml
+    needs: publish-fabric-1-21-x
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
