@@ -71,7 +71,8 @@ tasks {
             "org.apache.commons.collections4",
             "org.immutables.encode",
             "org.json",
-            "com.electronwill.nightconfig"
+            "com.electronwill.nightconfig",
+            "com.google.gson"
         )
         relocations.forEach {
             relocate(it, "$relocateLocation.$it")
