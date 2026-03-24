@@ -16,7 +16,7 @@ on:
         required: true
 
 jobs:
-  publish-fabric-26.1:
+  publish-fabric-26-1:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

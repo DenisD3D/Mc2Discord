@@ -24,7 +24,7 @@ jobs:
 
   publish-fabric-26-1:
     uses: ./.github/workflows/publish-fabric-26.1.yml
-    needs: publish-forge-26-1
+    needs: build-26-1
     with:
       version: ${{ inputs.version }}
     secrets: inherit
