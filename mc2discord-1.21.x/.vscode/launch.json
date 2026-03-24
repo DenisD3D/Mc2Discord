@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "request": "launch",
+      "name": "neoforge - Server",
+      "presentation": {
+        "group": "Mod Development - neoforge",
+        "order": 0
+      },
+      "projectName": "neoforge",
+      "mainClass": "net.neoforged.devlaunch.Main",
+      "args": [
+        "@/home/denisd3d/Documents/Dev/mc2discord/mc2discord-1.21.x/neoforge/build/moddev/serverRunProgramArgs.txt"
+      ],
+      "vmArgs": [
+        "@/home/denisd3d/Documents/Dev/mc2discord/mc2discord-1.21.x/neoforge/build/moddev/serverRunVmArgs.txt",
+        "-Dfml.modFolders\u003dmc2discord%%/home/denisd3d/Documents/Dev/mc2discord/mc2discord-1.21.x/neoforge/bin/main"
+      ],
+      "cwd": "${workspaceFolder}/neoforge/run",
+      "env": {},
+      "console": "internalConsole",
+      "shortenCommandLine": "none"
+    }
+  ]
+}

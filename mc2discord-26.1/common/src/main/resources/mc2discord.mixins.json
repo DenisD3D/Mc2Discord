@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "fr.denisd3d.mc2discord.minecraft.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "EmoteCommandsMixin",
+    "PlayerListMixin",
+    "SayCommandMixin",
+    "TellrawCommandMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
