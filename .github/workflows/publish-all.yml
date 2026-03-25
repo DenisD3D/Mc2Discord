@@ -71,9 +71,16 @@ jobs:
       version: ${{ inputs.version }}
     secrets: inherit
 
+  publish-forge-26-1:
+    uses: ./.github/workflows/publish-forge-26.1.yml
+    needs: publish-neoforge-1-21-x
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
+
   publish-fabric-26-1:
     uses: ./.github/workflows/publish-fabric-26.1.yml
-    needs: publish-neoforge-1-21-x
+    needs: publish-forge-26-1
     with:
       version: ${{ inputs.version }}
     secrets: inherit

@@ -40,12 +40,12 @@ jobs:
         run: ./gradlew build
         env:
           INPUT_VERSION: ${{ inputs.version }}
-      # - uses: actions/upload-artifact@v4
-      #   with:
-      #     name: mc2discord-forge-26.1-${{ inputs.version }}
-      #     path: |
-      #       ${{ github.workspace }}/mc2discord-26.1/forge/build/libs/
-      #       !${{ github.workspace }}/mc2discord-26.1/forge/build/libs/*-slim.jar
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mc2discord-forge-26.1-${{ inputs.version }}
+          path: |
+            ${{ github.workspace }}/mc2discord-26.1/forge/build/libs/
+            !${{ github.workspace }}/mc2discord-26.1/forge/build/libs/*-slim.jar
       - uses: actions/upload-artifact@v4
         with:
           name: mc2discord-fabric-26.1-${{ inputs.version }}

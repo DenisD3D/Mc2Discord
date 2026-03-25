@@ -50,7 +50,7 @@ dependencies {
 }
 
 minecraft {
-    // mappings("official", "${rootProject.extra["minecraftVersion"]}")
+    mappings("official", "${rootProject.extra["minecraftVersion"]}")
     useDefaultAccessTransformer()
 
     runs {
