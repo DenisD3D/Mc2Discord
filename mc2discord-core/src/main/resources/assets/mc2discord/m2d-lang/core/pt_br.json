@@ -28,7 +28,7 @@
     "config.messages.leave.value": "${player_display_name} saiu do jogo",
     "config.messages.death.value": "${death_message}",
     "config.messages.advancement.value": "${player_display_name} fez o avanço ${advancement_title}. ${advancement_description}.",
-    "config.account.discord_pseudo_format.value": "${member_name} (IG: ${player_name})",
+    "config.account.discord_pseudo_format.value": "${member_global_name} (IG: ${player_name})",
     "config.account.messages.link_get_code.value": "Para vincular sua conta, envie ${command} para ${bot_name}#${bot_discriminator} em uma mensagem privada no Discord",
     "config.account.messages.link_successful.value": "Você vinculou sua conta com sucesso",
     "config.account.messages.link_invalid_code.value": "Este código é inválido",

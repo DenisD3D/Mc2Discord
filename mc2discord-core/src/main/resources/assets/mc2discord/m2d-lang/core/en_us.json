@@ -74,7 +74,7 @@
     "config.account.guild_id.comment": " Id of the guild (Discord server)",
     "config.account.rename_discord_member.comment": " If true, Discord members will be renamed to discord_pseudo_format",
     "config.account.discord_pseudo_format.comment": " Format to rename Discord members in (\"player\", \"member\" and \"global\" variables are available)",
-    "config.account.discord_pseudo_format.value": "${member_name} (IG: ${player_name})",
+    "config.account.discord_pseudo_format.value": "${member_global_name} (IG: ${player_name})",
     "config.account.force_link.comment": " If true, players will be asked to link their account before joining the server (whitelist)",
     "config.account.messages.comment": " Content of messages related to account linking\n \"global\" variables may be used in any field",
     "config.account.messages.link_get_code.comment": " When a player receive a link code (\"${command}\" and minecraft formatting variables are available)",

@@ -20,6 +20,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.permissions.PermissionSet;
 import net.minecraft.server.permissions.Permission;
 import net.minecraft.server.permissions.PermissionLevel;
+import net.minecraft.server.players.NameAndId;
 
 import java.net.URI;
 import java.util.*;
@@ -191,12 +192,7 @@ public class MinecraftImpl implements IMinecraft {
 
     @Override
     public String getPlayerNameFromUUID(UUID uuid) {
-        ServerPlayer player = Mc2DiscordMinecraft.server.getPlayerList().getPlayer(uuid);
-        if (player != null) {
-            return player.getName().getString();
-        } else {
-            return uuid.toString();
-        }
+        return Mc2DiscordMinecraft.server.services().nameToIdCache().get(uuid).map(NameAndId::name).orElse(uuid.toString());
     }
 
     @Override
