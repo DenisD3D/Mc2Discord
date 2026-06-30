@@ -1,0 +1,37 @@
+name: "Publish 26.2"
+run-name: Publish 26.2-${{ inputs.version }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version"
+        required: true
+        default: "0.0.0-dev"
+
+jobs:
+  build-26-2:
+    uses: ./.github/workflows/build-26.2.yml
+    with:
+      version: ${{ inputs.version }}
+
+  publish-forge-26-2:
+    uses: ./.github/workflows/publish-forge-26.2.yml
+    needs: build-26-2
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
+
+  publish-fabric-26-2:
+    uses: ./.github/workflows/publish-fabric-26.2.yml
+    needs: publish-forge-26-2
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
+  
+  publish-neoforge-26-2:
+    uses: ./.github/workflows/publish-neoforge-26.2.yml
+    needs: publish-fabric-26-2
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit

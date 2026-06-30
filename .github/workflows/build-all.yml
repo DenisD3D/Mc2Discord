@@ -40,7 +40,7 @@ jobs:
     with:
       version: ${{ inputs.version }}
 
-  build-26-1:
-    uses: ./.github/workflows/build-26.1.yml
+  build-26-2:
+    uses: ./.github/workflows/build-26.2.yml
     with:
       version: ${{ inputs.version }}

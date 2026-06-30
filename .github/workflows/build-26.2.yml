@@ -1,5 +1,5 @@
-name: 'Build 26.1'
-run-name: Build 26.1-${{ inputs.version }}
+name: 'Build 26.2'
+run-name: Build 26.2-${{ inputs.version }}
 
 on:
   workflow_dispatch:
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: mc2discord-26.1
+        working-directory: mc2discord-26.2
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 25
@@ -33,7 +33,7 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-26.1-${{ runner.os }}-${{ hashFiles('**/gradle.properties', '**/build.gradle.kts', '**/settings.gradle', '**/gradle-wrapper.jar') }}
+          key: gradle-26.2-${{ runner.os }}-${{ hashFiles('**/gradle.properties', '**/build.gradle.kts', '**/settings.gradle', '**/gradle-wrapper.jar') }}
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
@@ -42,19 +42,19 @@ jobs:
           INPUT_VERSION: ${{ inputs.version }}
       - uses: actions/upload-artifact@v4
         with:
-          name: mc2discord-forge-26.1-${{ inputs.version }}
+          name: mc2discord-forge-26.2-${{ inputs.version }}
           path: |
-            ${{ github.workspace }}/mc2discord-26.1/forge/build/libs/
-            !${{ github.workspace }}/mc2discord-26.1/forge/build/libs/*-slim.jar
+            ${{ github.workspace }}/mc2discord-26.2/forge/build/libs/
+            !${{ github.workspace }}/mc2discord-26.2/forge/build/libs/*-slim.jar
       - uses: actions/upload-artifact@v4
         with:
-          name: mc2discord-fabric-26.1-${{ inputs.version }}
+          name: mc2discord-fabric-26.2-${{ inputs.version }}
           path: |
-            ${{ github.workspace }}/mc2discord-26.1/fabric/build/libs/
-            !${{ github.workspace }}/mc2discord-26.1/fabric/build/libs/*-all.jar
+            ${{ github.workspace }}/mc2discord-26.2/fabric/build/libs/
+            !${{ github.workspace }}/mc2discord-26.2/fabric/build/libs/*-all.jar
       - uses: actions/upload-artifact@v4
         with:
-          name: mc2discord-neoforge-26.1-${{ inputs.version }}
+          name: mc2discord-neoforge-26.2-${{ inputs.version }}
           path: |
-            ${{ github.workspace }}/mc2discord-26.1/neoforge/build/libs/
-            !${{ github.workspace }}/mc2discord-26.1/neoforge/build/libs/*-all.jar
+            ${{ github.workspace }}/mc2discord-26.2/neoforge/build/libs/
+            !${{ github.workspace }}/mc2discord-26.2/neoforge/build/libs/*-all.jar
