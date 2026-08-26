@@ -1,6 +1,7 @@
 package fr.denisd3d.mc2discord.core;
 
 import com.electronwill.nightconfig.core.io.ParsingException;
+import discord4j.common.ReactorResources;
 import discord4j.common.close.CloseException;
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
@@ -8,11 +9,13 @@ import discord4j.core.event.domain.guild.MemberJoinEvent;
 import discord4j.core.event.domain.guild.MemberLeaveEvent;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.gateway.GatewayReactorResources;
 import discord4j.gateway.intent.Intent;
 import discord4j.gateway.intent.IntentSet;
 import discord4j.rest.http.client.ClientException;
 import discord4j.rest.request.RouteMatcher;
 import discord4j.rest.response.ResponseFunction;
+import reactor.netty.resources.ConnectionProvider;
 import fr.denisd3d.mc2discord.core.config.M2DConfig;
 import fr.denisd3d.mc2discord.core.events.DiscordEvent;
 import fr.denisd3d.mc2discord.core.events.LifecycleEvents;
@@ -52,6 +55,10 @@ public class Mc2Discord {
         }
 
         DiscordClient.builder(this.config.general.token)
+                .setReactorResources(ReactorResources.builder()
+                        .httpClient(ReactorResources.newHttpClient(ConnectionProvider.create("mc2discord"))
+                                .proxyWithSystemProperties())
+                        .build())
                 .onClientResponse(
                         ResponseFunction.retryWhen(
                                 RouteMatcher.any(),
@@ -60,6 +67,10 @@ public class Mc2Discord {
                 .build()
                 .gateway()
                 .setEnabledIntents(IntentSet.all().andNot(IntentSet.of(Intent.GUILD_PRESENCES)))
+                .setGatewayReactorResources(reactorResources -> GatewayReactorResources.builder(reactorResources)
+                        .httpClient(ReactorResources.newHttpClient(ConnectionProvider.create("d4j-gateway", 1))
+                                .proxyWithSystemProperties())
+                        .build())
                 .login()
                 .doOnError(CloseException.class, throwable -> {
                     Mc2Discord.LOGGER.error("Error while starting Discord bot: {} (CloseException, code {})", throwable.getCloseStatus().getReason().orElse(""), throwable.getCloseStatus().getCode());
