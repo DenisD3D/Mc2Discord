@@ -1,0 +1,37 @@
+name: "Publish 1.21.1"
+run-name: Publish 1.21.1-${{ inputs.version }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version"
+        required: true
+        default: "0.0.0-dev"
+
+jobs:
+  build-1-21-1:
+    uses: ./.github/workflows/build-1.21.1.yml
+    with:
+      version: ${{ inputs.version }}
+
+  publish-forge-1-21-1:
+    uses: ./.github/workflows/publish-forge-1.21.1.yml
+    needs: build-1-21-1
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
+
+  publish-fabric-1-21-1:
+    uses: ./.github/workflows/publish-fabric-1.21.1.yml
+    needs: publish-forge-1-21-1
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
+
+  publish-neoforge-1-21-1:
+    uses: ./.github/workflows/publish-neoforge-1.21.1.yml
+    needs: publish-fabric-1-21-1
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit

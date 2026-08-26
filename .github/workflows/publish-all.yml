@@ -50,9 +50,30 @@ jobs:
       version: ${{ inputs.version }}
     secrets: inherit
 
+  publish-forge-1-21-1:
+    uses: ./.github/workflows/publish-forge-1.21.1.yml
+    needs: publish-fabric-1-20-x
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
+
+  publish-fabric-1-21-1:
+    uses: ./.github/workflows/publish-fabric-1.21.1.yml
+    needs: publish-forge-1-21-1
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
+
+  publish-neoforge-1-21-1:
+    uses: ./.github/workflows/publish-neoforge-1.21.1.yml
+    needs: publish-fabric-1-21-1
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
+
   publish-forge-1-21-x:
     uses: ./.github/workflows/publish-forge-1.21.x.yml
-    needs: publish-fabric-1-20-x
+    needs: publish-neoforge-1-21-1
     with:
       version: ${{ inputs.version }}
     secrets: inherit

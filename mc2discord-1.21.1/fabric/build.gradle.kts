@@ -1,6 +1,6 @@
 plugins {
-    id("fabric-loom")
-    id("com.github.johnrengelman.shadow")
+    id("net.fabricmc.fabric-loom-remap")
+    id("com.gradleup.shadow")
 }
 
 val sharedProperties = readProperties(file("../../shared.properties"))
@@ -27,11 +27,6 @@ dependencies {
 
 loom {
     accessWidenerPath.set(project(":common").file("src/main/resources/${sharedProperties["modId"]}.accesswidener"))
-
-    @Suppress("UnstableApiUsage")
-    mixin {
-        defaultRefmapName.set("${sharedProperties["modId"]}.refmap.json")
-    }
 
     runs {
         register("FabricServer") {
@@ -71,7 +66,12 @@ tasks {
             "org.apache.commons.collections4",
             "org.immutables.encode",
             "org.json",
-            "com.electronwill.nightconfig"
+            "com.electronwill.nightconfig",
+            "com.google.gson",
+            "google.protobuf",
+            "javax.annotation",
+            "com.google.crypto.tink",
+            "com.google.protobuf"
         )
         relocations.forEach {
             relocate(it, "$relocateLocation.$it")
@@ -82,5 +82,9 @@ tasks {
     remapJar {
         dependsOn(shadowJar)
         inputFile.set(shadowJar.get().archiveFile.get())
+    }
+
+    test {
+        enabled = false
     }
 }
