@@ -1,5 +1,6 @@
 package fr.denisd3d.mc2discord.minecraft.mixin;
 
+import com.mojang.authlib.GameProfile;
 import fr.denisd3d.mc2discord.core.AccountManager;
 import fr.denisd3d.mc2discord.core.M2DUtils;
 import fr.denisd3d.mc2discord.core.Mc2Discord;
@@ -8,7 +9,6 @@ import fr.denisd3d.mc2discord.minecraft.commands.AccountCommands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
-import net.minecraft.server.players.NameAndId;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -58,8 +58,8 @@ public class PlayerListMixin {
     }
 
     // Accounts
-    @Inject(method = "canPlayerLogin(Ljava/net/SocketAddress;Lnet/minecraft/server/players/NameAndId;)Lnet/minecraft/network/chat/Component;", at = @At(value = "HEAD"), cancellable = true)
-    public void canPlayerLogin(SocketAddress socketAddress, NameAndId nameAndId,
+    @Inject(method = "canPlayerLogin(Ljava/net/SocketAddress;Lcom/mojang/authlib/GameProfile;)Lnet/minecraft/network/chat/Component;", at = @At(value = "HEAD"), cancellable = true)
+    public void canPlayerLogin(SocketAddress socketAddress, GameProfile gameProfile,
             CallbackInfoReturnable<Component> cir) {
         if (M2DUtils.isNotConfigured())
             return;
@@ -67,7 +67,7 @@ public class PlayerListMixin {
             return;
 
         if (Mc2Discord.INSTANCE.config.account.force_link) {
-            String result = AccountManager.checkLinkedOrGenerateCode(nameAndId.id());
+            String result = AccountManager.checkLinkedOrGenerateCode(gameProfile.getId());
             if (result != null) {
                 cir.setReturnValue(AccountCommands.getLinkTextComponent(result));
             }

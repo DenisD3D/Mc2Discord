@@ -19,32 +19,32 @@ public class NeoForgeEvents {
         @SubscribeEvent(priority = EventPriority.LOWEST)
         public static void onServerChat(ServerChatEvent event) {
                 MinecraftEvents.onMinecraftChatMessageEvent(event.getMessage().getString(),
-                                new PlayerEntity(event.getPlayer().getGameProfile().name(), event.getPlayer()
+                                new PlayerEntity(event.getPlayer().getGameProfile().getName(), event.getPlayer()
                                                 .getDisplayName()
-                                                .getString(), event.getPlayer().getGameProfile().id()));
+                                                .getString(), event.getPlayer().getGameProfile().getId()));
         }
 
         @SubscribeEvent
         public static void onPlayerConnectEvent(PlayerEvent.PlayerLoggedInEvent event) {
-                MinecraftEvents.onPlayerConnectEvent(new PlayerEntity(event.getEntity().getGameProfile().name(),
+                MinecraftEvents.onPlayerConnectEvent(new PlayerEntity(event.getEntity().getGameProfile().getName(),
                                 event.getEntity().getDisplayName().getString(),
-                                event.getEntity().getGameProfile().id()));
+                                event.getEntity().getGameProfile().getId()));
         }
 
         @SubscribeEvent
         public static void onPlayerDisconnectEvent(PlayerEvent.PlayerLoggedOutEvent event) {
-                MinecraftEvents.onPlayerDisconnectEvent(new PlayerEntity(event.getEntity().getGameProfile().name(),
+                MinecraftEvents.onPlayerDisconnectEvent(new PlayerEntity(event.getEntity().getGameProfile().getName(),
                                 event.getEntity().getDisplayName().getString(),
-                                event.getEntity().getGameProfile().id()));
+                                event.getEntity().getGameProfile().getId()));
         }
 
         @SubscribeEvent(priority = EventPriority.LOWEST)
         public static void onPlayerDeathEvent(LivingDeathEvent event) {
                 if (event.getEntity() instanceof net.minecraft.world.entity.player.Player player) {
                         MinecraftEvents.onPlayerDeathEvent(
-                                        new PlayerEntity(player.getGameProfile().name(),
+                                        new PlayerEntity(player.getGameProfile().getName(),
                                                         player.getDisplayName().getString(),
-                                                        player.getGameProfile().id()),
+                                                        player.getGameProfile().getId()),
                                         new DeathEntity(event.getSource()
                                                         .getMsgId(),
                                                         player.getCombatTracker().getDeathMessage().getString(),
@@ -63,9 +63,9 @@ public class NeoForgeEvents {
                 if (event.getAdvancement().value().display().isPresent()
                                 && event.getAdvancement().value().display().get().shouldAnnounceChat()) {
                         MinecraftEvents.onAdvancementEvent(
-                                        new PlayerEntity(event.getEntity().getGameProfile().name(),
+                                        new PlayerEntity(event.getEntity().getGameProfile().getName(),
                                                         event.getEntity().getDisplayName().getString(),
-                                                        event.getEntity().getGameProfile().id()),
+                                                        event.getEntity().getGameProfile().getId()),
                                         new AdvancementEntity(event.getAdvancement().id().toString(),
                                                         event.getAdvancement().value().name().map(Component::getString)
                                                                         .orElse(""),

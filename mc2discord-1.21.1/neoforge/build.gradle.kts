@@ -46,6 +46,14 @@ repositories {
     mavenCentral()
 }
 
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "io.netty") {
+            useVersion("4.1.122.Final")
+        }
+    }
+}
+
 val shade by configurations.creating
 configurations.implementation.get().extendsFrom(shade)
 dependencies {

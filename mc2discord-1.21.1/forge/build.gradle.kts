@@ -39,8 +39,6 @@ dependencies {
     shadowCompileOnly(project(":common"))
     shadowMinecraftLibrary(project(":mc2discord-core"))
 
-    annotationProcessor("net.minecraftforge:eventbus-validator:7.0-beta.10")
-
 
     implementation("net.sf.jopt-simple:jopt-simple:5.0.4") {
         version {

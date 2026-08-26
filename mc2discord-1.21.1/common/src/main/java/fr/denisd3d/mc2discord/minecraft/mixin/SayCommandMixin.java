@@ -23,7 +23,7 @@ import java.util.List;
 public class SayCommandMixin {
 
     @SuppressWarnings({ "target", "Duplicates" })
-    @Inject(method = { "lambda$register$0", "method_43657" }, at = @At("HEAD"))
+    @Inject(method = { "lambda$register$1", "method_43657" }, at = @At("HEAD"))
     private static void execute(CommandContext<CommandSourceStack> c, PlayerChatMessage message,
             CallbackInfo cir) throws CommandSyntaxException {
         if (M2DUtils.isNotConfigured())
@@ -39,8 +39,8 @@ public class SayCommandMixin {
         String messageContent = ChatType.bind(ChatType.SAY_COMMAND, source).decorate(message.decoratedContent())
                 .getString();
         if (serverPlayer != null) {
-            PlayerEntity player = new PlayerEntity(serverPlayer.getGameProfile().name(),
-                    serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().id());
+            PlayerEntity player = new PlayerEntity(serverPlayer.getGameProfile().getName(),
+                    serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().getId());
             MessageManager
                     .sendChatMessage(messageContent,
                             Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_display_name, List.of(player)),

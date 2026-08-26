@@ -37,8 +37,8 @@ public class EmoteCommandsMixin {
         String messageContent = ChatType.bind(ChatType.EMOTE_COMMAND, source).decorate(message.decoratedContent())
                 .getString();
         if (serverPlayer != null) {
-            PlayerEntity player = new PlayerEntity(serverPlayer.getGameProfile().name(),
-                    serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().id());
+            PlayerEntity player = new PlayerEntity(serverPlayer.getGameProfile().getName(),
+                    serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().getId());
             MessageManager
                     .sendChatMessage(messageContent,
                             Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_display_name, List.of(player)),

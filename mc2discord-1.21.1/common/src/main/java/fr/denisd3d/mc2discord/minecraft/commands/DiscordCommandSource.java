@@ -19,8 +19,9 @@ public class DiscordCommandSource implements CommandSource {
     public void sendSystemMessage(Component component) {
         answer += component.getString() + ((component.getStyle().getClickEvent() != null && component.getStyle()
                 .getClickEvent()
-                .action() == ClickEvent.Action.OPEN_URL) ? " <" + ((ClickEvent.OpenUrl)component.getStyle()
-                .getClickEvent()).uri() + ">" : "") + "\n";
+                .getAction() == ClickEvent.Action.OPEN_URL) ? " <" + component.getStyle()
+                .getClickEvent()
+                .getValue() + ">" : "") + "\n";
         scheduleMessage();
     }
 
