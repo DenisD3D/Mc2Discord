@@ -1,0 +1,30 @@
+license = "Apache 2.0"
+issueTrackerURL = "${modIssueTrackerUrl}"
+
+[[mods]]
+modId = "${modId}"
+version = "${modVersion}"
+displayName = "${modName}"
+updateJSONURL = "${modUpdateJsonUrl}"
+displayURL = "${modDisplayUrl}"
+#logoFile = ""
+#credits = ""
+authors = "${modAuthors}"
+description = '''${modDescription}'''
+
+[[mixins]]
+config="${modId}.mixins.json"
+
+[[dependencies.${ modId }]]
+modId = "neoforge"
+type = "required"
+versionRange = "${neoforgeVersionRange}"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.${ modId }]]
+modId = "minecraft"
+type="required"
+versionRange = "${neoforgeMinecraftVersionRange}"
+ordering = "NONE"
+side = "BOTH"
