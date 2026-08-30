@@ -21,5 +21,5 @@ repositories {
 
 dependencies {
     compileOnly(group = "org.spongepowered", name = "mixin", version = "0.8.5")
-    implementation(project(":mc2discord-core"))
+    api(project(":mc2discord-core"))
 }
