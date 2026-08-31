@@ -1,39 +1,12 @@
 plugins {
-    id("java-library")
-    id("net.neoforged.moddev")
+    id("net.fabricmc.fabric-loom-remap")
     id("com.gradleup.shadow")
 }
 
 val sharedProperties = readProperties(file("../../shared.properties"))
 
 base {
-    archivesName.set("${sharedProperties["modId"]}-neoforge-${rootProject.extra["minecraftDisplayVersion"]}")
-}
-
-val shade by configurations.creating
-configurations.implementation.get().extendsFrom(shade)
-
-neoForge {
-    version = rootProject.extra["neoforgeVersion"] as String
-
-    runs {
-
-        register("server") {
-            server()
-            programArgument("--nogui")
-        }
-
-        all {
-            systemProperty("forge.logging.markers", "REGISTRIES")
-            logLevel = org.slf4j.event.Level.INFO
-        }
-    }
-
-    mods {
-        create("${sharedProperties["modId"]}", Action {
-            sourceSet(sourceSets.main.get())
-        })
-    }
+    archivesName.set("${sharedProperties["modId"]}-fabric-${rootProject.extra["minecraftDisplayVersion"]}")
 }
 
 repositories {
@@ -41,17 +14,27 @@ repositories {
     mavenCentral()
 }
 
-configurations.all {
-    resolutionStrategy.eachDependency {
-        if (requested.group == "io.netty") {
-            useVersion("4.1.122.Final")
-        }
-    }
+configurations.implementation.get().extendsFrom(configurations.shadow.get())
+dependencies {
+    minecraft("com.mojang:minecraft:${rootProject.extra["minecraftVersion"]}")
+    mappings(loom.officialMojangMappings())
+    modImplementation("net.fabricmc:fabric-loader:${rootProject.extra["fabricLoaderVersion"]}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.extra["fabricVersion"]}")
+
+    shadow(project(":common"))
+    shadow(project(":mc2discord-core"))
 }
 
-dependencies {
-    compileOnly(project(":common"))
-    shade(project(":mc2discord-core"))
+loom {
+    accessWidenerPath.set(project(":common").file("src/main/resources/${sharedProperties["modId"]}.accesswidener"))
+
+    runs {
+        register("FabricServer") {
+            server()
+            ideConfigGenerated(true)
+            name("Fabric Server")
+        }
+    }
 }
 
 tasks {
@@ -63,13 +46,8 @@ tasks {
         from(project(":common").sourceSets.main.get().resources)
     }
 
-    jar {
-        archiveClassifier.set("slim")   
-    }
-
     shadowJar {
-        archiveClassifier.set("")
-        configurations = listOf(shade)
+        configurations = listOf(project.configurations.shadow.get())
         val relocateLocation = "${sharedProperties["modGroup"]}.shadow"
         val relocations = listOf(
             "io.netty",
@@ -101,22 +79,12 @@ tasks {
         exclude("META-INF/services/**") // Fix compatibility with geckolib
     }
 
-    // Disable test tasks since we have no tests
+    remapJar {
+        dependsOn(shadowJar)
+        inputFile.set(shadowJar.get().archiveFile.get())
+    }
+
     test {
         enabled = false
-    }
-    named<JavaCompile>("compileTestJava") {
-        enabled = false
-    }
-
-    build {
-        dependsOn(shadowJar)
-    }
-
-    register<Copy>("buildAndCollect") {
-        group = "build"
-        from(jar.map { it.archiveFile })
-        into(rootProject.layout.buildDirectory.file("libs/${project.version}"))
-        dependsOn("build")
     }
 }

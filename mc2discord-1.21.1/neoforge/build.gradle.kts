@@ -21,6 +21,7 @@ neoForge {
         register("server") {
             server()
             programArgument("--nogui")
+            additionalRuntimeClasspathConfiguration.extendsFrom(shade)
         }
 
         all {
@@ -64,7 +65,7 @@ tasks {
     }
 
     jar {
-        archiveClassifier.set("slim")   
+        archiveClassifier.set("slim")
     }
 
     shadowJar {

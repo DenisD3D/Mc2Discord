@@ -10,22 +10,18 @@ base {
     archivesName.set("${sharedProperties["modId"]}-neoforge-${rootProject.extra["minecraftDisplayVersion"]}")
 }
 
+val shade by configurations.creating
+configurations.implementation.get().extendsFrom(shade)
+
 neoForge {
     version = rootProject.extra["neoforgeVersion"] as String
-
-    // parchment {
-    //     mappingsVersion = project.parchment_mappings_version
-    //     minecraftVersion = project.parchment_minecraft_version
-    // }
-
-    // This line is optional. Access Transformers are automatically detected
-    // accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
 
         register("server") {
             server()
             programArgument("--nogui")
+            additionalRuntimeClasspathConfiguration.extendsFrom(shade)
         }
 
         all {
@@ -46,8 +42,14 @@ repositories {
     mavenCentral()
 }
 
-val shade by configurations.creating
-configurations.implementation.get().extendsFrom(shade)
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "io.netty") {
+            useVersion("4.1.122.Final")
+        }
+    }
+}
+
 dependencies {
     compileOnly(project(":common"))
     shade(project(":mc2discord-core"))
