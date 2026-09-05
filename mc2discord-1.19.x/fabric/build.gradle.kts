@@ -72,7 +72,11 @@ tasks {
             "org.immutables.encode",
             "org.json",
             "com.electronwill.nightconfig",
-            "com.google.gson"
+            "com.google.gson",
+            "javax.annotation",
+            "google.protobuf",
+            "com.google.crypto.tink",
+            "com.google.protobuf"
         )
         relocations.forEach {
             relocate(it, "$relocateLocation.$it")
