@@ -42,7 +42,7 @@ jobs:
             26.1.2
             26.2
           environment: server
-      - uses: tsickert/discord-webhook@v7
+      - uses: tsickert/discord-webhook@v7.0.0
         with:
           webhook-url: ${{ secrets.WEBHOOK_URL }}
           content: "New Mc2Discord version released: [Fabric 26.2] ${{ inputs.version }}"

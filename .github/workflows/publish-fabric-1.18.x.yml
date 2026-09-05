@@ -41,7 +41,7 @@ jobs:
             1.18.1
             1.18.2
           environment: server
-      - uses: tsickert/discord-webhook@v7
+      - uses: tsickert/discord-webhook@v7.0.0
         with:
           webhook-url: ${{ secrets.WEBHOOK_URL }}
           content: 'New Mc2Discord version released: [Fabric 1.18.x] ${{ inputs.version }}'
