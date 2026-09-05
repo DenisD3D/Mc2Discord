@@ -19,9 +19,9 @@ jobs:
   publish-forge-1-21-1:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-      - uses: Kir-Antipov/mc-publish@v3.3
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+      - uses: Kir-Antipov/mc-publish@v3.3.1
         with:
           modrinth-id: Cfbcv7uF
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
@@ -38,7 +38,8 @@ jobs:
           game-versions: |
             1.21
             1.21.1
-      - uses: tsickert/discord-webhook@v5.3.0
+          environment: server
+      - uses: tsickert/discord-webhook@v7
         with:
           webhook-url: ${{ secrets.WEBHOOK_URL }}
           content: "New Mc2Discord version released: [Forge 1.21.1] ${{ inputs.version }}"
