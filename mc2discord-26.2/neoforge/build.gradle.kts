@@ -44,7 +44,7 @@ repositories {
 configurations.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "io.netty") {
-            useVersion("4.1.122.Final")
+            useVersion("4.2.15.Final")
         }
     }
 }

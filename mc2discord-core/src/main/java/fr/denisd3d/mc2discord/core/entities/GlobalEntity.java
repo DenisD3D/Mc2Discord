@@ -16,8 +16,10 @@ public class GlobalEntity extends Entity {
     public final String mcVersion;
     public final String serverHostname;
     public final String serverPort;
+    public final double tps;
+    public final double mspt;
 
-    public GlobalEntity(int onlinePlayers, int maxPlayers, int uniquePlayers, String motd, String mcVersion, String serverHostname, String serverPort) {
+    public GlobalEntity(int onlinePlayers, int maxPlayers, int uniquePlayers, String motd, String mcVersion, String serverHostname, String serverPort, double tps, double mspt) {
         this.onlinePlayers = onlinePlayers;
         this.maxPlayers = maxPlayers;
         this.uniquePlayers = uniquePlayers;
@@ -25,6 +27,8 @@ public class GlobalEntity extends Entity {
         this.mcVersion = mcVersion;
         this.serverHostname = serverHostname;
         this.serverPort = serverPort;
+        this.tps = tps;
+        this.mspt = mspt;
     }
 
     @Override
@@ -36,6 +40,11 @@ public class GlobalEntity extends Entity {
         replacements.put("mc_version", this.mcVersion);
         replacements.put("server_hostname", this.serverHostname);
         replacements.put("server_port", this.serverPort);
+        replacements.put("mod_loader", Mc2Discord.INSTANCE.vars.modLoader);
+        replacements.put("mod_loader_version", Mc2Discord.INSTANCE.vars.modLoaderVersion);
+        replacements.put("mod_count", String.valueOf(Mc2Discord.INSTANCE.vars.modCount));
+        replacements.put("tps", String.format(java.util.Locale.ROOT, "%.3f", this.tps));
+        replacements.put("mspt", String.format(java.util.Locale.ROOT, "%.3f", this.mspt));
         replacements.put("now", String.valueOf(System.currentTimeMillis()));
         replacements.put("uptime", String.valueOf(System.currentTimeMillis() - Vars.startTime));
         replacements.put("bot_name", Mc2Discord.INSTANCE.vars.bot_name);

@@ -161,13 +161,17 @@ public class MinecraftImpl implements IMinecraft {
         }
 
         MinecraftServer server = Mc2DiscordMinecraft.server;
+        double mspt = server.getAverageTickTime();
+        double tps = 1000.0 / Math.max(mspt, 50.0);
         return new GlobalEntity(onlinePlayerCount,
                 server.getMaxPlayers(),
                 Optional.ofNullable(server.playerDataStorage.playerDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".dat"))).map(files -> files.length).orElse(0),
                 server.getMotd(),
                 server.getServerVersion(),
                 server.getLocalIp(),
-                String.valueOf(server.getPort()));
+                String.valueOf(server.getPort()),
+                tps,
+                mspt);
     }
 
     @Override

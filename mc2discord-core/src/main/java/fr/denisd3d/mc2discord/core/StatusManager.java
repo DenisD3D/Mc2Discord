@@ -20,6 +20,7 @@ public class StatusManager {
     private static boolean isCancelled = false;
 
     public static void init() {
+        isCancelled = false;
         timer = new Timer(true);
 
         if (!Mc2Discord.INSTANCE.config.style.presence.message.getValues().get(0).isEmpty() && Mc2Discord.INSTANCE.config.style.presence.update != 0) {

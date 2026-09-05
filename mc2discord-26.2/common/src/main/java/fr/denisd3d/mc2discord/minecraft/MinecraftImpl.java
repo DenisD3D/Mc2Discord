@@ -1,5 +1,6 @@
 package fr.denisd3d.mc2discord.minecraft;
 
+import com.google.common.math.Stats;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.CommandNode;
@@ -21,6 +22,7 @@ import net.minecraft.server.permissions.PermissionSet;
 import net.minecraft.server.permissions.Permission;
 import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.server.players.NameAndId;
+import net.minecraft.util.TimeUtil;
 
 import java.net.URI;
 import java.util.*;
@@ -181,13 +183,17 @@ public class MinecraftImpl implements IMinecraft {
         }
 
         MinecraftServer server = Mc2DiscordMinecraft.server;
+        double mspt = Stats.meanOf(server.getTickTimesNanos()) / TimeUtil.NANOSECONDS_PER_MILLISECOND;
+        double tps = TimeUtil.MILLISECONDS_PER_SECOND / Math.max(mspt, server.tickRateManager().millisecondsPerTick());
         return new GlobalEntity(onlinePlayerCount,
                 server.getMaxPlayers(),
                 Optional.ofNullable(server.playerDataStorage.playerDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".dat"))).map(files -> files.length).orElse(0),
                 server.getMotd(),
                 server.getServerVersion(),
                 server.getLocalIp(),
-                String.valueOf(server.getPort()));
+                String.valueOf(server.getPort()),
+                tps,
+                mspt);
     }
 
     @Override

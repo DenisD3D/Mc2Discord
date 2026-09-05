@@ -1,7 +1,9 @@
 package fr.denisd3d.mc2discord.neoforge;
 
+import fr.denisd3d.mc2discord.core.Mc2Discord;
 import fr.denisd3d.mc2discord.minecraft.Mc2DiscordMinecraft;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
@@ -26,6 +28,10 @@ public class Mc2DiscordNeoForge {
     @SubscribeEvent
     public void onServerAboutToStart(ServerAboutToStartEvent event) {
         Mc2DiscordMinecraft.onServerStarting(event.getServer());
+
+        Mc2Discord.INSTANCE.vars.modLoader = "NeoForge";
+        Mc2Discord.INSTANCE.vars.modLoaderVersion = ModList.get().getModContainerById("neoforge").orElseThrow().getModInfo().getVersion().toString();
+        Mc2Discord.INSTANCE.vars.modCount = ModList.get().size();
     }
 
     @SubscribeEvent

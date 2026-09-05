@@ -118,6 +118,9 @@ public class Mc2Discord {
     public void restart() {
         shutdown().block();
         INSTANCE = new Mc2Discord(this.minecraft);
+        INSTANCE.vars.modLoader = this.vars.modLoader;
+        INSTANCE.vars.modLoaderVersion = this.vars.modLoaderVersion;
+        INSTANCE.vars.modCount = this.vars.modCount;
     }
 
     public Mono<Void> shutdown() {

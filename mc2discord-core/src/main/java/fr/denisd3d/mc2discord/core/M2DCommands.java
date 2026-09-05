@@ -54,7 +54,12 @@ public class M2DCommands {
         try {
             Mc2Discord.INSTANCE.restart();
         } catch (Exception ignored) {
-            Mc2Discord.INSTANCE = new Mc2Discord(Mc2Discord.INSTANCE.minecraft);
+            Mc2Discord previousInstance = Mc2Discord.INSTANCE;
+            Mc2Discord newInstance = new Mc2Discord(previousInstance.minecraft);
+            newInstance.vars.modLoader = previousInstance.vars.modLoader;
+            newInstance.vars.modLoaderVersion = previousInstance.vars.modLoaderVersion;
+            newInstance.vars.modCount = previousInstance.vars.modCount;
+            Mc2Discord.INSTANCE = newInstance;
         }
         return Mc2Discord.INSTANCE.langManager.translate("commands.restart.content");
     }

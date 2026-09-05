@@ -13,7 +13,7 @@ plugins {
     id("fabric-loom") version ("1.10-SNAPSHOT") apply (false)
 
     // Forge
-    id("net.minecraftforge.gradle") version ("[6.0.24,6.2)") apply (false)
+    id("net.minecraftforge.gradle") version ("6.0.24") apply (false)
     id("org.spongepowered.mixin") version ("0.7.+") apply (false)
 }
 

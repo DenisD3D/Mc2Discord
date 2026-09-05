@@ -18,6 +18,11 @@ public class Vars {
     public String mc2discord_avatar = "";
     public String mc2discord_webhook_name = "";
 
+    // MC info
+    public String modLoader = "Unknown";
+    public String modLoaderVersion = "Unknown";
+    public int modCount = 0;
+
     public Table<Snowflake, String, Snowflake> emojiCache = HashBasedTable.create(); // Store emojis to replace in messages :emoji: to <:name:id> for each guild (<GuildId, EmojiName, EmojiId>)
     public Table<Snowflake, String, Snowflake> channelCache = HashBasedTable.create(); // Store channels to replace in messages to #name for each guild (<GuildId, ChannelName, ChannelId>)
     public Table<Snowflake, String, Snowflake> memberCache = HashBasedTable.create(); // Store channels to replace in messages to #name for each guild (<GuildId, MemberUsername, MemberId>)
