@@ -10,7 +10,9 @@ repositories {
 
 dependencies {
     // Discord4J
-    api(group = "com.discord4j", name = "discord4j-core", version = "3.3.0")
+    api(group = "com.discord4j", name = "discord4j-core", version = "3.3.3") {
+        exclude(group = "org.slf4j", module = "slf4j-api")
+    }
 
     // Config
     implementation(group = "com.github.denisd3d", name = "config4j", version = "1.1.6")

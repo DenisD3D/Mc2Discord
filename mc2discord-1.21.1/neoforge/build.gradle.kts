@@ -94,12 +94,18 @@ tasks {
             "google.protobuf",
             "javax.annotation",
             "com.google.crypto.tink",
-            "com.google.protobuf"
+            "com.google.protobuf",
+            "org.apache.commons.io",
+            "org.jspecify.annotations",
+            "moe.kyokobot.libdave",
+            "com.sedmelluq.lava"
         )
         relocations.forEach {
             relocate(it, "$relocateLocation.$it")
         }
         exclude("META-INF/services/**") // Fix compatibility with geckolib
+        exclude("natives/**")
+        exclude("META-INF/native/**")
     }
 
     // Disable test tasks since we have no tests
