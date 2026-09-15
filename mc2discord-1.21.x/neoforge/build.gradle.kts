@@ -50,6 +50,10 @@ configurations.all {
     }
 }
 
+configurations.named(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME) {
+    resolutionStrategy.force("org.jspecify:jspecify:1.0.0")
+}
+
 dependencies {
     compileOnly(project(":common"))
     shade(project(":mc2discord-core"))
