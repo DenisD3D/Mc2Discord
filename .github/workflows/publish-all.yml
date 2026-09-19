@@ -133,3 +133,24 @@ jobs:
     with:
       version: ${{ inputs.version }}
     secrets: inherit
+
+  publish-forge-26-3:
+    uses: ./.github/workflows/publish-forge-26.3.yml
+    needs: publish-neoforge-26-2
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
+
+  publish-fabric-26-3:
+    uses: ./.github/workflows/publish-fabric-26.3.yml
+    needs: publish-forge-26-3
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
+  
+  publish-neoforge-26-3:
+    uses: ./.github/workflows/publish-neoforge-26.3.yml
+    needs: publish-fabric-26-3
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit

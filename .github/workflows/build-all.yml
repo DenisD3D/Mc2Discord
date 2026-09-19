@@ -49,3 +49,8 @@ jobs:
     uses: ./.github/workflows/build-26.2.yml
     with:
       version: ${{ inputs.version }}
+
+  build-26-3:
+    uses: ./.github/workflows/build-26.3.yml
+    with:
+      version: ${{ inputs.version }}
