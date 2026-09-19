@@ -54,15 +54,15 @@ public class ForgeEvents {
     @SubscribeEvent
     public static void onAdvancementEvent(AdvancementEvent.AdvancementEarnEvent event) {
         if (event.getAdvancement().value().display().isPresent()
-                && event.getAdvancement().value().display().get().shouldAnnounceChat()) {
+                && event.getAdvancement().value().display().get().announceToChat()) {
             MinecraftEvents.onAdvancementEvent(
                     new PlayerEntity(event.getEntity().getGameProfile().name(),
                             event.getEntity().getDisplayName().getString(),
                             event.getEntity().getGameProfile().id()),
                     new AdvancementEntity(event.getAdvancement().id().toString(),
                             event.getAdvancement().value().name().map(Component::getString).orElse(""),
-                            event.getAdvancement().value().display().get().getTitle().getString(),
-                            event.getAdvancement().value().display().get().getDescription().getString()));
+                            event.getAdvancement().value().display().get().title().getString(),
+                            event.getAdvancement().value().display().get().description().getString()));
         }
     }
 }

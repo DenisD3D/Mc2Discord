@@ -53,14 +53,14 @@ public class FabricEvents {
     }
 
     public static void onAdvancementEvent(ServerPlayer serverPlayer, AdvancementHolder advancement) {
-        if (advancement.value().display().isPresent() && advancement.value().display().get().shouldAnnounceChat()) {
+        if (advancement.value().display().isPresent() && advancement.value().display().get().announceToChat()) {
             MinecraftEvents.onAdvancementEvent(new PlayerEntity(serverPlayer.getGameProfile().name(),
                             serverPlayer.getDisplayName().getString(),
                             serverPlayer.getGameProfile().id()),
                     new AdvancementEntity(advancement.id().toString(),
                             advancement.value().name().map(Component::getString).orElse(""),
-                            advancement.value().display().get().getTitle().getString(),
-                            advancement.value().display().get().getDescription().getString()));
+                            advancement.value().display().get().title().getString(),
+                            advancement.value().display().get().description().getString()));
         }
     }
 }

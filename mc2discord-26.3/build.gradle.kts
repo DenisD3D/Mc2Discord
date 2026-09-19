@@ -10,13 +10,13 @@ plugins {
     id("com.gradleup.shadow") version ("9.3.1") apply (false)
 
     // Fabric
-    id("net.fabricmc.fabric-loom-remap") version ("1.15-SNAPSHOT") apply (false)
+    id("net.fabricmc.fabric-loom") version("1.15-SNAPSHOT") apply (false)
 
     // Forge
     id("net.minecraftforge.gradle") version ("[7.0.2,8.0)") apply (false)
 
     // NeoForge
-    id("net.neoforged.moddev") version ("2.0.141") apply (false)
+    id("net.neoforged.moddev") version ("2.0.147") apply (false)
 }
 
 val sharedProperties = readProperties(file("../shared.properties"))

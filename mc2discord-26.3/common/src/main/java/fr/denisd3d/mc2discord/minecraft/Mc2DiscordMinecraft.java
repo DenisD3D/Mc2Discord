@@ -47,7 +47,7 @@ public class Mc2DiscordMinecraft {
 
     public static void onServerStarted(MinecraftServer minecraftServer) {
         LifecycleEvents.minecraftReady = true;
-        commandSource = new CommandSourceStack(new DiscordCommandSource(), Vec3.ZERO, Vec2.ZERO, minecraftServer.overworld(), PermissionSet.ALL_PERMISSIONS, "Discord", Component.literal("Discord"), minecraftServer, null);
+        commandSource = new CommandSourceStack(new DiscordCommandSource(), Vec3.ZERO, Vec2.ZERO, minecraftServer.overworld(), PermissionSet.ALL_PERMISSIONS, Component.literal("Discord"), minecraftServer);
         LifecycleEvents.mcOrDiscordReady();
     }
 
