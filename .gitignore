@@ -1,3 +1,22 @@
-.vscode/
+# gradle
+.gradle/
+build/
+
+# ide
 .idea/
+.vscode/
 .kotlin/
+.settings/
+.classpath
+.project
+*.iml
+*.ipr
+*.iws
+*.launch
+bin/
+out/
+
+# minecraft
+run/
+runs/
+.eclipse/

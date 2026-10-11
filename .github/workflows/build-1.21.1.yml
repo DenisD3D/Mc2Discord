@@ -17,44 +17,48 @@ on:
 jobs:
   build-1-21-1:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: mc2discord-1.21.1
     steps:
       - uses: actions/checkout@v7
-      - name: Set up JDK 21
+      - name: Set up JDK
         uses: actions/setup-java@v6
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: |
+            21
       - name: Cache Gradle
         uses: actions/cache@v6
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-1.21.1-${{ runner.os }}-${{ hashFiles('**/gradle.properties', '**/build.gradle.kts', '**/settings.gradle', '**/gradle-wrapper.jar') }}
+          key: gradle-1.21.1-${{ runner.os }}-${{ hashFiles('gradle.properties', 'stonecutter.properties.toml', '*.gradle.kts', 'buildSrc/**', 'mc2discord-core/build.gradle.kts', 'gradle/wrapper/gradle-wrapper.jar') }}
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew :1.21.1-forge:build :1.21.1-fabric:build :1.21.1-neoforge:build
         env:
           INPUT_VERSION: ${{ inputs.version }}
       - uses: actions/upload-artifact@v7
         with:
           name: mc2discord-forge-1.21.1-${{ inputs.version }}
           path: |
-            ${{ github.workspace }}/mc2discord-1.21.1/forge/build/libs/
-            !${{ github.workspace }}/mc2discord-1.21.1/forge/build/libs/*-slim.jar
+            versions/1.21.1-forge/build/libs/
+            !versions/1.21.1-forge/build/libs/*-slim.jar
+            !versions/1.21.1-forge/build/libs/*-all.jar
+            !versions/1.21.1-forge/build/libs/*-dev.jar
       - uses: actions/upload-artifact@v7
         with:
           name: mc2discord-fabric-1.21.1-${{ inputs.version }}
           path: |
-            ${{ github.workspace }}/mc2discord-1.21.1/fabric/build/libs/
-            !${{ github.workspace }}/mc2discord-1.21.1/fabric/build/libs/*-all.jar
+            versions/1.21.1-fabric/build/libs/
+            !versions/1.21.1-fabric/build/libs/*-slim.jar
+            !versions/1.21.1-fabric/build/libs/*-all.jar
+            !versions/1.21.1-fabric/build/libs/*-dev.jar
       - uses: actions/upload-artifact@v7
         with:
           name: mc2discord-neoforge-1.21.1-${{ inputs.version }}
           path: |
-            ${{ github.workspace }}/mc2discord-1.21.1/neoforge/build/libs/
-            !${{ github.workspace }}/mc2discord-1.21.1/neoforge/build/libs/*-all.jar
+            versions/1.21.1-neoforge/build/libs/
+            !versions/1.21.1-neoforge/build/libs/*-slim.jar
+            !versions/1.21.1-neoforge/build/libs/*-all.jar
+            !versions/1.21.1-neoforge/build/libs/*-dev.jar

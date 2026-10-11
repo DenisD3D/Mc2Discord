@@ -15,65 +15,9 @@ jobs:
     with:
       version: ${{ inputs.version }}
 
-  publish-forge-1-18-x:
-    uses: ./.github/workflows/publish-forge-1.18.x.yml
-    needs: build-all
-    with:
-      version: ${{ inputs.version }}
-    secrets: inherit
-
-  publish-fabric-1-18-x:
-    uses: ./.github/workflows/publish-fabric-1.18.x.yml
-    needs: publish-forge-1-18-x
-    with:
-      version: ${{ inputs.version }}
-    secrets: inherit
-
-  publish-forge-1-19-x:
-    uses: ./.github/workflows/publish-forge-1.19.x.yml
-    needs: publish-fabric-1-18-x
-    with:
-      version: ${{ inputs.version }}
-    secrets: inherit
-
-  publish-fabric-1-19-x:
-    uses: ./.github/workflows/publish-fabric-1.19.x.yml
-    needs: publish-forge-1-19-x
-    with:
-      version: ${{ inputs.version }}
-    secrets: inherit
-
-  publish-forge-1-20-1:
-    uses: ./.github/workflows/publish-forge-1.20.1.yml
-    needs: publish-fabric-1-19-x
-    with:
-      version: ${{ inputs.version }}
-    secrets: inherit
-
-  publish-fabric-1-20-1:
-    uses: ./.github/workflows/publish-fabric-1.20.1.yml
-    needs: publish-forge-1-20-1
-    with:
-      version: ${{ inputs.version }}
-    secrets: inherit
-
-  publish-forge-1-20-x:
-    uses: ./.github/workflows/publish-forge-1.20.x.yml
-    needs: publish-fabric-1-20-1
-    with:
-      version: ${{ inputs.version }}
-    secrets: inherit
-
-  publish-fabric-1-20-x:
-    uses: ./.github/workflows/publish-fabric-1.20.x.yml
-    needs: publish-forge-1-20-x
-    with:
-      version: ${{ inputs.version }}
-    secrets: inherit
-
   publish-forge-1-21-1:
     uses: ./.github/workflows/publish-forge-1.21.1.yml
-    needs: publish-fabric-1-20-x
+    needs: build-all
     with:
       version: ${{ inputs.version }}
     secrets: inherit

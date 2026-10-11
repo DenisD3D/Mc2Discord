@@ -3,6 +3,11 @@ plugins {
     id("idea")
 }
 
+// The core is shared by every Minecraft version: build it for the oldest Java version in use
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+}
+
 repositories {
     maven("https://jitpack.io")
     mavenCentral()

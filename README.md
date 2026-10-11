@@ -45,6 +45,39 @@ You can also watch the video tutorial:
 <img src="https://user-images.githubusercontent.com/35769613/177222845-63e42dd7-1486-4463-9861-f8c53fa8bb84.png" width="50%">
 </a>
 
+## Development
+Minecraft 1.21.1, 1.21.11, 26.2 and 26.3 are built from a single codebase for Fabric, Forge and NeoForge with [Stonecutter](https://stonecutter.kikugie.dev/).
+
+| Path | Content |
+|---|---|
+| `mc2discord-core/` | Discord side of the mod, independent of Minecraft |
+| `src/` | Minecraft side of the mod, for every version and loader |
+| `build.<loader>.gradle.kts` | Build script of each loader |
+| `buildSrc/` | Build logic shared by the loaders |
+| `stonecutter.properties.toml` | Dependencies versions of each Minecraft version and loader |
+| `settings.gradle.kts` | List of the Minecraft versions and loaders |
+
+Each version and loader is a Gradle project named `<minecraft>-<loader>`:
+```sh
+./gradlew build                 # Build everything
+./gradlew :26.3-neoforge:build  # Build one target, the jar is in versions/26.3-neoforge/build/libs
+./gradlew :26.3-fabric:runServer
+```
+
+The code in `src/` differs between targets with Stonecutter comments:
+```java
+//? if >=1.21.5 {
+return new ClickEvent.OpenUrl(URI.create(url));
+//?} else {
+/*return new ClickEvent(ClickEvent.Action.OPEN_URL, url);
+*///?}
+```
+The conditions can be a Minecraft version (`>=1.21.5`) or a loader (`fabric`, `forge`, `neoforge`). Most of the differences are grouped in `VersionCompat.java`. Simple renames are declared in `stonecutter.gradle.kts`: the code always uses the newest name, which is replaced by the old one when building an older version.
+
+Only one target is active (not commented) in `src/` at a time, `26.3-fabric` by default. To work on another one, run the `Set active project to <minecraft>-<loader>` Gradle task (or use the Stonecutter IntelliJ plugin), and run `Reset active project` before committing.
+
+To support a new Minecraft version, add it in `settings.gradle.kts` and `stonecutter.properties.toml`, then fix the compilation errors with new conditions.
+
 ## Misc
 ### Links
  * Discord (Support): https://discord.gg/rzzd76c

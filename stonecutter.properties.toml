@@ -1,0 +1,98 @@
+# Properties of the Stonecutter build, available as `property("...")` in the build scripts.
+# Tables are applied on top of the global values when they match the Minecraft version and/or the loader.
+
+mod.id = "mc2discord"
+mod.name = "Mc2Discord"
+mod.authors = "DenisD3D"
+mod.description = "Link your Minecraft chat with your Discord server"
+mod.issue_tracker_url = "https://github.com/DenisD3D/Mc2Discord/issues"
+mod.update_json_url = "https://raw.githubusercontent.com/DenisD3D/Mc2Discord/main/update.json"
+mod.display_url = "https://www.curseforge.com/minecraft/mc-mods/mc2discord"
+
+loomx.loom_version = "1.15-SNAPSHOT"
+
+
+# ------------------------------ 1.21.1 ------------------------------
+["1.21.1"]
+mod.java = "21"
+# Used in the name of the jars
+mod.mc_display = "1.21.1"
+
+[fabric."1.21.1"]
+deps.fabric_loader = "0.16.9"
+deps.fabric_api = "0.102.0+1.21.1"
+# ~1.x.1 <-> 1.x.1, 1.x.2, ...
+mod.mc_range = "~1.21"
+
+[forge."1.21.1"]
+deps.forge = "52.0.33"
+mod.loader_range = "[51,)"
+mod.mc_range = "[1.21,1.22)"
+
+[neoforge."1.21.1"]
+deps.neoforge = "21.1.65"
+mod.loader_range = "[21,)"
+mod.mc_range = "[1.21,1.22)"
+
+
+# ------------------------------ 1.21.11 -----------------------------
+["1.21.11"]
+mod.java = "21"
+mod.mc_display = "1.21.x"
+
+[fabric."1.21.11"]
+deps.fabric_loader = "0.18.4"
+deps.fabric_api = "0.141.3+1.21.11"
+mod.mc_range = "~1.21"
+
+[forge."1.21.11"]
+deps.forge = "61.0.8"
+mod.loader_range = "[53,)"
+mod.mc_range = "[1.21.7,1.22)"
+
+[neoforge."1.21.11"]
+deps.neoforge = "21.11.38-beta"
+mod.loader_range = "[21,)"
+mod.mc_range = "[1.21,1.22)"
+
+
+# ------------------------------- 26.2 -------------------------------
+["26.2"]
+mod.java = "25"
+mod.mc_display = "26.2"
+
+[fabric."26.2"]
+deps.fabric_loader = "0.19.3"
+deps.fabric_api = "0.153.0+26.2"
+mod.mc_range = "^26.1"
+
+[forge."26.2"]
+deps.forge = "65.0.2"
+mod.loader_range = "[65,)"
+mod.mc_range = "[26,27)"
+
+[neoforge."26.2"]
+deps.neoforge = "26.2.0.7-beta"
+mod.loader_range = "[26,27)"
+mod.mc_range = "[26,27)"
+
+
+# ------------------------------- 26.3 -------------------------------
+["26.3"]
+mod.java = "25"
+mod.mc_display = "26.3"
+
+[fabric."26.3"]
+deps.fabric_loader = "0.19.3"
+deps.fabric_api = "0.161.0+26.3"
+mod.mc_range = "^26.3"
+
+[forge."26.3"]
+deps.forge = "66.0.0"
+mod.loader_range = "[62,)"
+mod.mc_range = "[26,27)"
+
+[neoforge."26.3"]
+deps.neoforge = "26.3.0.6-beta"
+mod.loader_range = "[26,27)"
+mod.mc_range = "[26,27)"
