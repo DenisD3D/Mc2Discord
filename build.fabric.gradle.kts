@@ -25,16 +25,14 @@ loom {
     )
 
     runs {
-        register("FabricServer") {
-            server()
+        named("server") {
             ideConfigGenerated(true)
-            name("Fabric Server")
-            runDir("run")
         }
     }
 }
 
 tasks {
+
     if (obfuscated) {
         // jar (-dev) -> shadowJar (-all) -> remapJar (final jar)
         named<net.fabricmc.loom.task.RemapJarTask>("remapJar") {

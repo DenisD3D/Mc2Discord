@@ -40,8 +40,62 @@ val shade: Configuration by configurations.creating {
 }
 configurations.implementation.get().extendsFrom(shade)
 
+val nettyVersion = "4.2.15.Final"
+
+// Discord4J needs a newer Netty than the one of the older Minecraft versions: use a single version of every module
+// in the dev runs instead of a mix of both, which can't be loaded
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "io.netty") {
+            useVersion(nettyVersion)
+        }
+    }
+    // Pulled by the upgraded netty-codec of Minecraft, they require optional libraries that are not there
+    exclude(group = "io.netty", module = "netty-codec-marshalling")
+    exclude(group = "io.netty", module = "netty-codec-protobuf")
+}
+
+// Transitive dependencies of the core that are never loaded at runtime.
+// They are left out of the mod jar and of the dev runs, where they conflict with the libraries of Minecraft
+// or can't be loaded as modules by the mod loaders.
+val unused = listOf(
+    // Voice is not used: its encryption and DAVE stack is only reachable from 4 classes of discord4j-voice
+    // (discord4j-voice itself is kept, discord4j-core references it)
+    "com.google.crypto.tink:tink",
+    "com.google.protobuf:protobuf-java",
+    "moe.kyokobot.libdave",
+    "dev.arbjerg:lava-common",
+    "com.discord4j:simple-fsm",
+    // Only needed by the above and shipped with Minecraft: the core uses the Minecraft ones
+    "com.google.code.gson:gson",
+    "commons-io:commons-io",
+    // Compile time only: annotations and annotation processors
+    "com.google.code.findbugs:jsr305",
+    "com.google.errorprone:error_prone_annotations",
+    "org.checkerframework:checker-qual",
+    "org.jspecify:jspecify",
+    "org.immutables:encode",
+    "com.austinv11.servicer:Servicer",
+    // Legacy store, only found through META-INF/services which is excluded
+    "com.discord4j:stores-jdk",
+    // Native transports and HTTP/3 (QUIC): the natives can't be loaded once relocated,
+    // reactor-netty detects their absence and uses NIO and HTTP/1.1
+    "io.netty:netty-transport-native-epoll",
+    "io.netty:netty-transport-classes-epoll",
+    "io.netty:netty-resolver-dns-native-macos",
+    "io.netty:netty-resolver-dns-classes-macos",
+    "io.netty:netty-codec-native-quic",
+    "io.netty:netty-codec-http3"
+)
+
 dependencies {
-    shade(project(":mc2discord-core"))
+    shade(project(":mc2discord-core")) {
+        unused.forEach {
+            exclude(group = it.substringBefore(':'), module = it.substringAfter(':', "").ifEmpty { null })
+        }
+    }
+    // Only brought by the HTTP/3 modules excluded above, but reactor-netty calls it to check if HTTP/3 is available
+    shade("io.netty:netty-codec-classes-quic:$nettyVersion")
 }
 
 tasks {
@@ -92,44 +146,6 @@ tasks {
 
     shadowJar {
         configurations = listOf(shade)
-
-        // Transitive dependencies that are never loaded at runtime.
-        // Every package left in the jar must be in the relocations below, and the other way around.
-        dependencies {
-            val unused = listOf(
-                // Voice is not used: its encryption and DAVE stack is only reachable from 4 classes of discord4j-voice
-                // (discord4j-voice itself is kept, discord4j-core references it)
-                "com.google.crypto.tink:tink",
-                "com.google.protobuf:protobuf-java",
-                "moe.kyokobot.libdave:.*",
-                "dev.arbjerg:lava-common",
-                "com.discord4j:simple-fsm",
-                // Only needed by the above and shipped with Minecraft: the core uses the Minecraft ones
-                "com.google.code.gson:gson",
-                "commons-io:commons-io",
-                // Compile time only: annotations and annotation processors
-                "com.google.code.findbugs:jsr305",
-                "com.google.errorprone:error_prone_annotations",
-                "org.checkerframework:checker-qual",
-                "org.jspecify:jspecify",
-                "org.immutables:encode",
-                "com.austinv11.servicer:Servicer",
-                // Legacy store, only found through META-INF/services which is excluded
-                "com.discord4j:stores-jdk",
-                // Native transports and HTTP/3 (QUIC): the natives can't be loaded once relocated,
-                // reactor-netty detects their absence and uses NIO and HTTP/1.1.
-                // netty-codec-classes-quic must stay, reactor-netty calls it to check if HTTP/3 is available
-                "io.netty:netty-transport-native-epoll",
-                "io.netty:netty-transport-classes-epoll",
-                "io.netty:netty-resolver-dns-native-macos",
-                "io.netty:netty-resolver-dns-classes-macos",
-                "io.netty:netty-codec-native-quic",
-                "io.netty:netty-codec-http3"
-            )
-            unused.forEach {
-                exclude(dependency("$it:.*"))
-            }
-        }
 
         // Drop the classes that are not reachable from the mod, like the server side of reactor-netty.
         // Jackson and Caffeine load classes by name and must be kept whole.
