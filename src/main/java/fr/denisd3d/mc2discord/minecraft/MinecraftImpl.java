@@ -83,14 +83,14 @@ public class MinecraftImpl implements IMinecraft {
     public void sendMessage(String content, HashMap<String, String> attachments, String referencedContent, String senderUsername) {
         HashMap<String, MutableComponent> replacements = new HashMap<>();
 
-        MutableComponent attachementsComponent = Component.literal(" ");
+        MutableComponent attachmentsComponent = Component.literal(" ");
         for (Map.Entry<String, String> entry : attachments.entrySet()) {
-            attachementsComponent.append(Component.literal("[" + entry.getKey() + "]").withStyle(style -> style
+            attachmentsComponent.append(Component.literal("[" + entry.getKey() + "]").withStyle(style -> style
                     .withClickEvent(VersionCompat.openUrl(entry.getValue()))
                     .withColor(ChatFormatting.BLUE)
                     .withUnderlined(true)));
         }
-        replacements.put("attachments", attachementsComponent);
+        replacements.put("attachments", attachmentsComponent);
 
         if (referencedContent != null) {
             replacements.put("reply", Component.literal(referencedContent));
