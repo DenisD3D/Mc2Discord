@@ -7,7 +7,7 @@ import discord4j.common.util.Snowflake;
 import fr.denisd3d.mc2discord.core.IMinecraft;
 import fr.denisd3d.mc2discord.core.Mc2Discord;
 import fr.denisd3d.mc2discord.core.entities.Entity;
-import fr.denisd3d.mc2discord.core.entities.GlobalEntity;
+import fr.denisd3d.mc2discord.core.entities.Template;
 import fr.denisd3d.mc2discord.minecraft.commands.AccountCommands;
 import fr.denisd3d.mc2discord.minecraft.commands.DiscordCommandSource;
 import net.minecraft.ChatFormatting;
@@ -15,7 +15,6 @@ import net.minecraft.CrashReport;
 import net.minecraft.ReportType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.*;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 //? if >=1.21.9 {
 import net.minecraft.server.players.NameAndId;
@@ -24,83 +23,90 @@ import net.minecraft.server.players.NameAndId;
 *///?}
 import net.minecraft.util.TimeUtil;
 
+import java.io.File;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MinecraftImpl implements IMinecraft {
     private static final Pattern URL_PATTERN = Pattern.compile("(\\b(?:https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])");
-    private static final Pattern COMBINED_PATTERN = Pattern.compile("\\$\\$|" + Entity.VARIABLE_PATTERN.pattern() + "|" + URL_PATTERN.pattern()); // Escaped "$$", or capturing group 1: variable name, capturing group 2: variable format, capturing group 3: url
 
-    public static MutableComponent convertToComponent(String content) {
-        return convertToComponent(content, Collections.emptyMap());
+    public static MutableComponent toComponent(Template template) {
+        return toComponent(template, Map.of(), List.of());
     }
 
-    public static MutableComponent convertToComponent(String content, Map<String, MutableComponent> replacements) {
-        Matcher matcher = COMBINED_PATTERN.matcher(content);
+    /**
+     * Render a template as a Minecraft component: applies the Minecraft formatting variables and makes urls clickable
+     * @param components Values of the variables rendered as components, e.g. ${attachments}
+     */
+    public static MutableComponent toComponent(Template template, Map<String, Component> components, List<Entity> entities) {
         MutableComponent component = Component.empty();
-        Style baseStyle = Style.EMPTY;
+        Style style = Style.EMPTY;
 
-        int lastAppendPosition = 0;
-
-        while (matcher.find()) {
-            String variable_name = matcher.group(1);
-            String url = matcher.group(3);
-
-            component.append(Component.literal(content.substring(lastAppendPosition, matcher.start())).withStyle(baseStyle));
-            lastAppendPosition = matcher.end();
-
-            if (variable_name != null) {
-                switch (variable_name) {
-                    case "color_start" -> {
-                        if (matcher.group(2) != null) {
-                            baseStyle = TextColor.parseColor(matcher.group(2)).result().map(baseStyle::withColor).orElse(baseStyle);
-                        }
-                    }
-                    case "color_end" -> baseStyle = baseStyle.withColor(ChatFormatting.WHITE);
-                    case "bold_start" -> baseStyle = baseStyle.withBold(true);
-                    case "bold_end" -> baseStyle = baseStyle.withBold(false);
-                    case "italic_start" -> baseStyle = baseStyle.withItalic(true);
-                    case "italic_end" -> baseStyle = baseStyle.withItalic(false);
-                    case "underlined_start" -> baseStyle = baseStyle.withUnderlined(true);
-                    case "underlined_end" -> baseStyle = baseStyle.withUnderlined(false);
-                    case "strikethrough_start" -> baseStyle = baseStyle.withStrikethrough(true);
-                    case "strikethrough_end" -> baseStyle = baseStyle.withStrikethrough(false);
-                    case "obfuscated_start" -> baseStyle = baseStyle.withObfuscated(true);
-                    case "obfuscated_end" -> baseStyle = baseStyle.withObfuscated(false);
-                    default -> {
-                        MutableComponent replacement = replacements.get(variable_name);
-                        if (replacement != null) {
-                            component.append(replacement.withStyle(baseStyle));
+        for (Template.Part part : template.parts()) {
+            switch (part) {
+                case Template.Text text -> appendWithLinks(component, text.text(), style);
+                case Template.Placeholder placeholder -> {
+                    switch (placeholder.name()) {
+                        case "color_start" -> style = parseColor(placeholder.format(), entities).map(style::withColor).orElse(style);
+                        case "color_end" -> style = style.withColor(ChatFormatting.WHITE);
+                        case "bold_start" -> style = style.withBold(true);
+                        case "bold_end" -> style = style.withBold(false);
+                        case "italic_start" -> style = style.withItalic(true);
+                        case "italic_end" -> style = style.withItalic(false);
+                        case "underlined_start" -> style = style.withUnderlined(true);
+                        case "underlined_end" -> style = style.withUnderlined(false);
+                        case "strikethrough_start" -> style = style.withStrikethrough(true);
+                        case "strikethrough_end" -> style = style.withStrikethrough(false);
+                        case "obfuscated_start" -> style = style.withObfuscated(true);
+                        case "obfuscated_end" -> style = style.withObfuscated(false);
+                        default -> {
+                            Component replacement = components.get(placeholder.name());
+                            if (replacement != null) {
+                                component.append(replacement.copy().withStyle(style));
+                            } else {
+                                appendWithLinks(component, Template.resolve(placeholder, entities), style);
+                            }
                         }
                     }
                 }
-            } else if (url != null) {
-                component.append(Component.literal(url).withStyle(baseStyle).withStyle(style -> style.withClickEvent(VersionCompat.openUrl(url))));
-            } else { // "$$", see Entity#replaceForMinecraft
-                component.append(Component.literal("$").withStyle(baseStyle));
             }
         }
-        component.append(Component.literal(content.substring(lastAppendPosition)).withStyle(baseStyle));
         return component;
     }
 
-    @Override
-    public void sendMessage(String content, HashMap<String, String> attachments, String referencedContent, String senderUsername) {
-        HashMap<String, MutableComponent> replacements = new HashMap<>();
+    /**
+     * @param color A color name, a hex color or "top_role" for the color of the member
+     */
+    private static Optional<TextColor> parseColor(String color, List<Entity> entities) {
+        if ("top_role".equals(color)) {
+            color = Template.value("member_top_role_color", null, entities);
+        }
+        return color == null ? Optional.empty() : TextColor.parseColor(color).result();
+    }
 
+    private static void appendWithLinks(MutableComponent component, String text, Style style) {
+        Matcher matcher = URL_PATTERN.matcher(text);
+        int lastAppendPosition = 0;
+        while (matcher.find()) {
+            String url = matcher.group();
+            component.append(Component.literal(text.substring(lastAppendPosition, matcher.start())).withStyle(style));
+            component.append(Component.literal(url).withStyle(style).withStyle(urlStyle -> urlStyle.withClickEvent(VersionCompat.openUrl(url))));
+            lastAppendPosition = matcher.end();
+        }
+        component.append(Component.literal(text.substring(lastAppendPosition)).withStyle(style));
+    }
+
+    @Override
+    public void sendMessage(Template format, List<Entity> entities, Map<String, String> attachments, String reply, String senderUsername) {
         MutableComponent attachmentsComponent = Component.literal(" ");
         for (Map.Entry<String, String> entry : attachments.entrySet()) {
             attachmentsComponent.append(Component.literal("[" + entry.getKey() + "]")
                     .withStyle(style -> style.withClickEvent(VersionCompat.openUrl(entry.getValue())).withColor(ChatFormatting.BLUE).withUnderlined(true)));
         }
-        replacements.put("attachments", attachmentsComponent);
 
-        if (referencedContent != null) {
-            replacements.put("reply", Component.literal(referencedContent));
-        }
-
-        MutableComponent component = convertToComponent(content, replacements);
+        Map<String, Component> components = Map.of("attachments", attachmentsComponent, "reply", Component.literal(reply != null ? reply : ""));
+        MutableComponent component = toComponent(format, components, entities);
         if (senderUsername != null) {
             component.withStyle(style -> style.withClickEvent(VersionCompat.suggestCommand("@" + senderUsername)).withInsertion("@" + senderUsername));
         }
@@ -164,22 +170,55 @@ public class MinecraftImpl implements IMinecraft {
     }
 
     @Override
-    public GlobalEntity getServerData() {
+    public int getOnlinePlayerCount() {
         int onlinePlayerCount = 0;
         for (ServerPlayer player : Mc2DiscordMinecraft.server.getPlayerList().getPlayers()) {
             if (!Mc2Discord.INSTANCE.hiddenPlayerList.contains(player.getUUID())) {
                 onlinePlayerCount++;
             }
         }
+        return onlinePlayerCount;
+    }
 
-        MinecraftServer server = Mc2DiscordMinecraft.server;
-        double mspt = Stats.meanOf(server.getTickTimesNanos()) / TimeUtil.NANOSECONDS_PER_MILLISECOND;
-        double tps = TimeUtil.MILLISECONDS_PER_SECOND / Math.max(mspt, server.tickRateManager().millisecondsPerTick());
-        return new GlobalEntity(onlinePlayerCount, server.getMaxPlayers(),
-                Optional.ofNullable(server.playerDataStorage.playerDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".dat")))
-                        .map(files -> files.length)
-                        .orElse(0),
-                server.getMotd(), server.getServerVersion(), server.getLocalIp(), String.valueOf(server.getPort()), tps, mspt);
+    @Override
+    public int getMaxPlayers() {
+        return Mc2DiscordMinecraft.server.getMaxPlayers();
+    }
+
+    @Override
+    public int getUniquePlayerCount() {
+        File[] playerFiles = Mc2DiscordMinecraft.server.playerDataStorage.playerDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".dat"));
+        return playerFiles != null ? playerFiles.length : 0;
+    }
+
+    @Override
+    public String getMotd() {
+        return Mc2DiscordMinecraft.server.getMotd();
+    }
+
+    @Override
+    public String getMinecraftVersion() {
+        return Mc2DiscordMinecraft.server.getServerVersion();
+    }
+
+    @Override
+    public String getServerHostname() {
+        return Mc2DiscordMinecraft.server.getLocalIp();
+    }
+
+    @Override
+    public int getServerPort() {
+        return Mc2DiscordMinecraft.server.getPort();
+    }
+
+    @Override
+    public double getTps() {
+        return TimeUtil.MILLISECONDS_PER_SECOND / Math.max(getMspt(), Mc2DiscordMinecraft.server.tickRateManager().millisecondsPerTick());
+    }
+
+    @Override
+    public double getMspt() {
+        return Stats.meanOf(Mc2DiscordMinecraft.server.getTickTimesNanos()) / TimeUtil.NANOSECONDS_PER_MILLISECOND;
     }
 
     @Override

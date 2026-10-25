@@ -9,6 +9,8 @@ import fr.denisd3d.config4j.DefaultValue;
 import fr.denisd3d.mc2discord.core.M2DUtils;
 import fr.denisd3d.mc2discord.core.config.converters.SnowflakeArrayConverter;
 import fr.denisd3d.mc2discord.core.config.converters.SnowflakeConverter;
+import fr.denisd3d.mc2discord.core.config.converters.TemplateConverter;
+import fr.denisd3d.mc2discord.core.entities.Template;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +30,9 @@ public class Account {
     @Path("discord_pseudo_format")
     @Comment("config.account.discord_pseudo_format.comment")
     @DefaultValue("config.account.discord_pseudo_format.value")
+    @Conversion(TemplateConverter.class)
     @PreserveNotNull
-    public String discord_pseudo_format;
+    public Template discord_pseudo_format;
 
     @Path("Messages")
     @Comment("config.account.messages.comment")

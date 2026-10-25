@@ -1,35 +1,21 @@
 package fr.denisd3d.mc2discord.core.entities;
 
-import org.apache.commons.lang3.time.DurationFormatUtils;
+import java.time.Duration;
 
-import java.util.Map;
-import java.util.function.BiFunction;
-
-public class DeathEntity extends Entity {
-    private static final String prefix = "death_";
-    public final String damageType;
-    public final String message;
-    public final long combatDuration; // In milliseconds
-    public final String attackerName;
-    public final float attackerHealth;
-
-    public DeathEntity(String damageType, String message, int combatDurationTicks, String attackerName, float attackerHealth) {
-        this.damageType = damageType;
-        this.message = message;
-        this.combatDuration = combatDurationTicks * 50L; // 20 ticks per second
-        this.attackerName = attackerName;
-        this.attackerHealth = attackerHealth;
-    }
-
+/**
+ * @param attackerName   Empty if the death wasn't caused by an entity
+ * @param attackerHealth 0 if the death wasn't caused by a living entity
+ */
+public record DeathEntity(String damageType, String message, Duration combatDuration, String attackerName, float attackerHealth) implements Entity {
     @Override
-    public void getReplacements(Map<String, String> replacements, Map<String, BiFunction<String, String, String>> formatters) {
-        replacements.put(prefix + "damage_type", this.damageType);
-        replacements.put(prefix + "message", this.message);
-        replacements.put(prefix + "combat_duration", Long.toString(this.combatDuration));
-        replacements.put(prefix + "attacker_name", this.attackerName);
-        replacements.put(prefix + "attacker_health", Float.toString(this.attackerHealth));
-
-        formatters.put(prefix + "combat_duration", (format, value) -> DurationFormatUtils.formatDuration(Long.parseLong(value), format));
-
+    public Object get(String variable) {
+        return switch (variable) {
+            case "death_damage_type" -> damageType;
+            case "death_message" -> message;
+            case "death_combat_duration" -> combatDuration;
+            case "death_attacker_name" -> attackerName;
+            case "death_attacker_health" -> attackerHealth;
+            default -> null;
+        };
     }
 }

@@ -1,37 +1,26 @@
 package fr.denisd3d.mc2discord.core.entities;
 
-import java.util.Map;
-import java.util.function.BiFunction;
+import discord4j.core.object.entity.Member;
 
-public class MemberEntity extends Entity {
-    private static final String prefix = "member_";
-    public final String global_name;
-    public final String username;
-    public final String nickname;
-    public final String avatarUrl;
-    public final String top_role_color;
-
-    public MemberEntity(String global_name, String username, String nickname, String avatarUrl, int top_role_color) {
-        this.global_name = global_name;
-        this.username = username;
-        this.nickname = nickname;
-        this.avatarUrl = avatarUrl;
-        StringBuilder hex = new StringBuilder(Integer.toHexString(top_role_color & 0xffffff));
-        while (hex.length() < 6) {
-            hex.insert(0, "0");
-        }
-        this.top_role_color = "#" + hex;
+public record MemberEntity(String globalName, String username, String nickname, String avatarUrl, int topRoleColor) implements Entity {
+    /**
+     * @param topRoleColor See {@link fr.denisd3d.mc2discord.core.M2DUtils#getMemberColor(Member)}
+     */
+    public static MemberEntity of(Member member, int topRoleColor) {
+        return new MemberEntity(member.getGlobalName().orElse(member.getUsername()), member.getUsername(), member.getNickname().orElse(""),
+                member.getAvatarUrl(), topRoleColor);
     }
 
     @Override
-    public void getReplacements(Map<String, String> replacements, Map<String, BiFunction<String, String, String>> formatters) {
-        replacements.put(prefix + "display_name", !this.nickname.isEmpty() ? this.nickname : this.global_name);
-        replacements.put(prefix + "global_name", this.global_name);
-        replacements.put(prefix + "username", this.username);
-        replacements.put(prefix + "nickname", this.nickname);
-        replacements.put(prefix + "avatar_url", this.avatarUrl);
-        replacements.put(prefix + "top_role_color", this.top_role_color);
-
-        formatters.put("color_start", (format, value) -> "${color_start|" + (format.equals("top_role") ? this.top_role_color : format) + "}");
+    public Object get(String variable) {
+        return switch (variable) {
+            case "member_display_name" -> nickname.isEmpty() ? globalName : nickname;
+            case "member_global_name" -> globalName;
+            case "member_username" -> username;
+            case "member_nickname" -> nickname;
+            case "member_avatar_url" -> avatarUrl;
+            case "member_top_role_color" -> String.format("#%06x", topRoleColor & 0xffffff);
+            default -> null;
+        };
     }
 }

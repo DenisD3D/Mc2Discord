@@ -2,13 +2,11 @@ package fr.denisd3d.mc2discord.fabric;
 
 //? if fabric {
 import com.mojang.brigadier.ParseResults;
-import fr.denisd3d.mc2discord.core.entities.AdvancementEntity;
-import fr.denisd3d.mc2discord.core.entities.DeathEntity;
-import fr.denisd3d.mc2discord.core.entities.PlayerEntity;
 import fr.denisd3d.mc2discord.core.events.MinecraftEvents;
 import fr.denisd3d.mc2discord.fabric.events.CommandExecuteCallback;
 import fr.denisd3d.mc2discord.fabric.events.PlayerCompletedAdvancementCallback;
 import fr.denisd3d.mc2discord.fabric.events.PlayerDeathCallback;
+import fr.denisd3d.mc2discord.minecraft.Entities;
 import fr.denisd3d.mc2discord.minecraft.Mc2DiscordMinecraft;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -16,16 +14,12 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.ChatType;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.LivingEntity;
-
-import java.util.Optional;
 
 public class FabricEvents {
 
@@ -38,38 +32,25 @@ public class FabricEvents {
     }
 
     public static void onChatMessageEvent(PlayerChatMessage playerChatMessage, ServerPlayer serverPlayer, ChatType.Bound bound) {
-        MinecraftEvents.onMinecraftChatMessageEvent(playerChatMessage.signedContent(),
-                new PlayerEntity(serverPlayer.getGameProfile().name(), serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().id()));
+        MinecraftEvents.onMinecraftChatMessageEvent(playerChatMessage.signedContent(), Entities.player(serverPlayer));
     }
 
     public static void onPlayerConnectEvent(ServerGamePacketListenerImpl serverGamePacketListener, PacketSender packetSender, MinecraftServer minecraftServer) {
-        MinecraftEvents.onPlayerConnectEvent(new PlayerEntity(serverGamePacketListener.getPlayer().getGameProfile().name(),
-                serverGamePacketListener.getPlayer().getDisplayName().getString(), serverGamePacketListener.getPlayer().getGameProfile().id()));
+        MinecraftEvents.onPlayerConnectEvent(Entities.player(serverGamePacketListener.getPlayer()));
     }
 
     public static void onPlayerDisconnectEvent(ServerGamePacketListenerImpl serverGamePacketListener, MinecraftServer minecraftServer) {
-        MinecraftEvents.onPlayerDisconnectEvent(new PlayerEntity(serverGamePacketListener.getPlayer().getGameProfile().name(),
-                serverGamePacketListener.getPlayer().getDisplayName().getString(), serverGamePacketListener.getPlayer().getGameProfile().id()));
+        MinecraftEvents.onPlayerDisconnectEvent(Entities.player(serverGamePacketListener.getPlayer()));
     }
 
     public static void onPlayerDeathEvent(ServerPlayer serverPlayer, DamageSource damageSource) {
-        MinecraftEvents.onPlayerDeathEvent(
-                new PlayerEntity(serverPlayer.getGameProfile().name(), serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().id()),
-                new DeathEntity(damageSource.getMsgId(), damageSource.getLocalizedDeathMessage(serverPlayer).getString(),
-                        serverPlayer.getCombatTracker().getCombatDuration(),
-                        Optional.ofNullable(damageSource.getEntity()).map(attacker -> attacker.getDisplayName().getString()).orElse(""),
-                        Optional.ofNullable(damageSource.getEntity())
-                                .filter(LivingEntity.class::isInstance)
-                                .map(attacker -> ((LivingEntity) attacker).getHealth())
-                                .orElse(0.0f)));
+        MinecraftEvents.onPlayerDeathEvent(Entities.player(serverPlayer),
+                Entities.death(serverPlayer, damageSource, damageSource.getLocalizedDeathMessage(serverPlayer)));
     }
 
     public static void onAdvancementEvent(ServerPlayer serverPlayer, AdvancementHolder advancement) {
         if (advancement.value().display().isPresent() && advancement.value().display().get().announceToChat()) {
-            MinecraftEvents.onAdvancementEvent(
-                    new PlayerEntity(serverPlayer.getGameProfile().name(), serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().id()),
-                    new AdvancementEntity(advancement.id().toString(), advancement.value().name().map(Component::getString).orElse(""),
-                            advancement.value().display().get().title().getString(), advancement.value().display().get().description().getString()));
+            MinecraftEvents.onAdvancementEvent(Entities.player(serverPlayer), Entities.advancement(advancement));
         }
     }
 }

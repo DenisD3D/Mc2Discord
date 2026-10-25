@@ -12,7 +12,6 @@ import fr.denisd3d.mc2discord.core.AccountManager;
 import fr.denisd3d.mc2discord.core.M2DUtils;
 import fr.denisd3d.mc2discord.core.Mc2Discord;
 import fr.denisd3d.mc2discord.core.MessageManager;
-import fr.denisd3d.mc2discord.core.entities.Entity;
 import fr.denisd3d.mc2discord.core.entities.MemberEntity;
 import fr.denisd3d.mc2discord.core.entities.MessageEntity;
 import reactor.core.publisher.Mono;
@@ -115,9 +114,7 @@ public class DiscordEvent {
         // Content
         MessageEntity messageEntity = new MessageEntity(M2DUtils.replaceAllMentions(event.getMessage().getContent(), event.getMessage().getUserMentions(),
                 event.getMessage().getRoleMentions().collectList().block(), event.getGuildId().orElse(null)));
-        MemberEntity memberEntity = new MemberEntity(member.getGlobalName().orElse(member.getUsername()), member.getUsername(), member.getNickname().orElse(""),
-                member.getAvatarUrl(), M2DUtils.getMemberColor(member).blockOptional().orElseThrow());
-        String content = Entity.replaceForMinecraft(Mc2Discord.INSTANCE.config.style.minecraft_chat_format, Arrays.asList(messageEntity, memberEntity));
+        MemberEntity memberEntity = MemberEntity.of(member, M2DUtils.getMemberColor(member).blockOptional().orElseThrow());
 
         // Attachements
         HashMap<String, String> attachments = event.getMessage()
@@ -127,20 +124,17 @@ public class DiscordEvent {
                 .collect(HashMap::new, (m, v) -> m.put(v.getKey(), v.getValue()), HashMap::putAll);
 
         // Referenced content
-        Optional<MemberEntity> referencedMemberEntity = event.getMessage()
+        Optional<String> reply = event.getMessage()
                 .getMessageReference()
                 .flatMap(MessageReference::getMessageId)
                 .flatMap(snowflake -> Optional.of(Mono.defer(() -> event.getMessage().getChannel().flatMap(channel -> channel.getMessageById(snowflake)))))
                 .flatMap(message -> Optional.ofNullable(message.block()))
                 .flatMap(message -> Optional.ofNullable(message.getAuthorAsMember().block()))
-                .flatMap(referenced_member -> Optional.of(new MemberEntity(referenced_member.getGlobalName().orElse(referenced_member.getUsername()),
-                        referenced_member.getUsername(), referenced_member.getNickname().orElse(""), referenced_member.getAvatarUrl(),
-                        M2DUtils.getMemberColor(referenced_member).blockOptional().orElseThrow())));
-        Optional<String> referencedContent = referencedMemberEntity
-                .flatMap(entity -> Optional.of(Entity.replace(Mc2Discord.INSTANCE.config.style.reply_format, Collections.singletonList(entity))));
+                .map(referencedMember -> MemberEntity.of(referencedMember, M2DUtils.getMemberColor(referencedMember).blockOptional().orElseThrow()))
+                .map(referencedMemberEntity -> Mc2Discord.INSTANCE.config.style.reply_format.render(referencedMemberEntity));
 
-        Mc2Discord.INSTANCE.minecraft.sendMessage(content, attachments, referencedContent.orElse(null),
-                "0".equals(member.getDiscriminator()) ? member.getUsername() : null);
+        Mc2Discord.INSTANCE.minecraft.sendMessage(Mc2Discord.INSTANCE.config.style.minecraft_chat_format, List.of(messageEntity, memberEntity), attachments,
+                reply.orElse(null), "0".equals(member.getDiscriminator()) ? member.getUsername() : null);
     }
 
     public static void onMemberJoin(MemberJoinEvent memberJoinEvent) {

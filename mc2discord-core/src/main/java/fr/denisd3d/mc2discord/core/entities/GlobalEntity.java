@@ -2,59 +2,42 @@ package fr.denisd3d.mc2discord.core.entities;
 
 import fr.denisd3d.mc2discord.core.Mc2Discord;
 import fr.denisd3d.mc2discord.core.Vars;
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DurationFormatUtils;
 
-import java.util.Map;
-import java.util.function.BiFunction;
+import java.time.Duration;
+import java.time.Instant;
 
-public class GlobalEntity extends Entity {
-    public final int onlinePlayers;
-    public final int maxPlayers;
-    public final int uniquePlayers;
-    public final String motd;
-    public final String mcVersion;
-    public final String serverHostname;
-    public final String serverPort;
-    public final double tps;
-    public final double mspt;
+/**
+ * Variables available in every template, read only when a template uses them
+ */
+public final class GlobalEntity implements Entity {
+    public static final GlobalEntity INSTANCE = new GlobalEntity();
 
-    public GlobalEntity(int onlinePlayers, int maxPlayers, int uniquePlayers, String motd, String mcVersion, String serverHostname, String serverPort,
-            double tps, double mspt) {
-        this.onlinePlayers = onlinePlayers;
-        this.maxPlayers = maxPlayers;
-        this.uniquePlayers = uniquePlayers;
-        this.motd = motd;
-        this.mcVersion = mcVersion;
-        this.serverHostname = serverHostname;
-        this.serverPort = serverPort;
-        this.tps = tps;
-        this.mspt = mspt;
+    private GlobalEntity() {
     }
 
     @Override
-    public void getReplacements(Map<String, String> replacements, Map<String, BiFunction<String, String, String>> formatters) {
-        replacements.put("online_players", String.valueOf(this.onlinePlayers));
-        replacements.put("max_players", String.valueOf(this.maxPlayers));
-        replacements.put("unique_players", String.valueOf(this.uniquePlayers));
-        replacements.put("motd", this.motd);
-        replacements.put("mc_version", this.mcVersion);
-        replacements.put("server_hostname", this.serverHostname);
-        replacements.put("server_port", this.serverPort);
-        replacements.put("mod_loader", Mc2Discord.INSTANCE.vars.modLoader);
-        replacements.put("mod_loader_version", Mc2Discord.INSTANCE.vars.modLoaderVersion);
-        replacements.put("mod_count", String.valueOf(Mc2Discord.INSTANCE.vars.modCount));
-        replacements.put("tps", String.format(java.util.Locale.ROOT, "%.3f", this.tps));
-        replacements.put("mspt", String.format(java.util.Locale.ROOT, "%.3f", this.mspt));
-        replacements.put("now", String.valueOf(System.currentTimeMillis()));
-        replacements.put("uptime", String.valueOf(System.currentTimeMillis() - Vars.startTime));
-        replacements.put("bot_name", Mc2Discord.INSTANCE.vars.bot_name);
-        replacements.put("bot_discriminator", Mc2Discord.INSTANCE.vars.bot_discriminator);
-        replacements.put("bot_id", Mc2Discord.INSTANCE.vars.bot_id.asString());
-        replacements.put("bot_display_name", Mc2Discord.INSTANCE.vars.mc2discord_display_name);
-        replacements.put("bot_avatar_url", Mc2Discord.INSTANCE.vars.mc2discord_avatar);
-
-        formatters.put("now", (format, value) -> DateFormatUtils.format(Long.parseLong(value), format));
-        formatters.put("uptime", (format, value) -> DurationFormatUtils.formatDuration(Long.parseLong(value), format));
+    public Object get(String variable) {
+        return switch (variable) {
+            case "online_players" -> Mc2Discord.INSTANCE.minecraft.getOnlinePlayerCount();
+            case "max_players" -> Mc2Discord.INSTANCE.minecraft.getMaxPlayers();
+            case "unique_players" -> Mc2Discord.INSTANCE.minecraft.getUniquePlayerCount();
+            case "motd" -> Mc2Discord.INSTANCE.minecraft.getMotd();
+            case "mc_version" -> Mc2Discord.INSTANCE.minecraft.getMinecraftVersion();
+            case "server_hostname" -> Mc2Discord.INSTANCE.minecraft.getServerHostname();
+            case "server_port" -> Mc2Discord.INSTANCE.minecraft.getServerPort();
+            case "mod_loader" -> Mc2Discord.INSTANCE.vars.modLoader;
+            case "mod_loader_version" -> Mc2Discord.INSTANCE.vars.modLoaderVersion;
+            case "mod_count" -> Mc2Discord.INSTANCE.vars.modCount;
+            case "tps" -> Mc2Discord.INSTANCE.minecraft.getTps();
+            case "mspt" -> Mc2Discord.INSTANCE.minecraft.getMspt();
+            case "now" -> Instant.now();
+            case "uptime" -> Vars.startTime == null ? Duration.ZERO : Duration.ofMillis(System.currentTimeMillis() - Vars.startTime);
+            case "bot_name" -> Mc2Discord.INSTANCE.vars.bot_name;
+            case "bot_discriminator" -> Mc2Discord.INSTANCE.vars.bot_discriminator;
+            case "bot_id" -> Mc2Discord.INSTANCE.vars.bot_id.asString();
+            case "bot_display_name" -> Mc2Discord.INSTANCE.vars.mc2discord_display_name;
+            case "bot_avatar_url" -> Mc2Discord.INSTANCE.vars.mc2discord_avatar;
+            default -> null;
+        };
     }
 }

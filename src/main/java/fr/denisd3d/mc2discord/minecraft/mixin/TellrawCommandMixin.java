@@ -5,8 +5,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.denisd3d.mc2discord.core.M2DUtils;
 import fr.denisd3d.mc2discord.core.Mc2Discord;
 import fr.denisd3d.mc2discord.core.MessageManager;
-import fr.denisd3d.mc2discord.core.entities.Entity;
-import fr.denisd3d.mc2discord.core.entities.PlayerEntity;
+import fr.denisd3d.mc2discord.minecraft.Entities;
 import fr.denisd3d.mc2discord.minecraft.Mc2DiscordMinecraft;
 import fr.denisd3d.mc2discord.minecraft.VersionCompat;
 import net.minecraft.commands.CommandSourceStack;
@@ -16,8 +15,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.List;
 
 @Mixin(TellRawCommand.class)
 public class TellrawCommandMixin {
@@ -46,12 +43,7 @@ public class TellrawCommandMixin {
         ServerPlayer serverPlayer = commandContext.getSource().getPlayer();
         String messageContent = VersionCompat.resolveComponentArgument(commandContext, "message").getString();
         if (serverPlayer != null) {
-            PlayerEntity player = new PlayerEntity(serverPlayer.getGameProfile().name(), serverPlayer.getDisplayName().getString(),
-                    serverPlayer.getGameProfile().id());
-            MessageManager
-                    .sendChatMessage(messageContent, Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_display_name, List.of(player)),
-                            Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_avatar_api, List.of(player)))
-                    .subscribe();
+            MessageManager.sendChatMessage(messageContent, Entities.player(serverPlayer)).subscribe();
         } else {
             MessageManager.sendInfoMessage("relayed_command", messageContent).subscribe();
         }

@@ -5,51 +5,51 @@ import com.electronwill.nightconfig.core.conversion.Path;
 import com.electronwill.nightconfig.core.conversion.PreserveNotNull;
 import fr.denisd3d.config4j.Comment;
 import fr.denisd3d.config4j.DefaultValue;
-import fr.denisd3d.mc2discord.core.config.converters.RandomString;
-import fr.denisd3d.mc2discord.core.config.converters.RandomStringConverter;
+import fr.denisd3d.mc2discord.core.config.converters.RandomTemplate;
+import fr.denisd3d.mc2discord.core.config.converters.RandomTemplateConverter;
 
 public class Messages {
     @Path("start")
     @Comment("config.messages.start.comment")
     @DefaultValue("config.messages.start.value")
-    @Conversion(RandomStringConverter.class)
+    @Conversion(RandomTemplateConverter.class)
     @PreserveNotNull
-    public RandomString start;
+    public RandomTemplate start;
 
     @Path("stop")
     @Comment("config.messages.stop.comment")
     @DefaultValue("config.messages.stop.value")
-    @Conversion(RandomStringConverter.class)
+    @Conversion(RandomTemplateConverter.class)
     @PreserveNotNull
-    public RandomString stop;
+    public RandomTemplate stop;
 
     @Path("join")
     @Comment("config.messages.join.comment")
     @DefaultValue("config.messages.join.value")
-    @Conversion(RandomStringConverter.class)
+    @Conversion(RandomTemplateConverter.class)
     @PreserveNotNull
-    public RandomString join;
+    public RandomTemplate join;
 
     @Path("leave")
     @Comment("config.messages.leave.comment")
     @DefaultValue("config.messages.leave.value")
-    @Conversion(RandomStringConverter.class)
+    @Conversion(RandomTemplateConverter.class)
     @PreserveNotNull
-    public RandomString leave;
+    public RandomTemplate leave;
 
     @Path("death")
     @Comment("config.messages.death.comment")
     @DefaultValue("config.messages.death.value")
-    @Conversion(RandomStringConverter.class)
+    @Conversion(RandomTemplateConverter.class)
     @PreserveNotNull
-    public RandomString death;
+    public RandomTemplate death;
 
     @Path("advancement")
     @Comment("config.messages.advancement.comment")
     @DefaultValue("config.messages.advancement.value")
-    @Conversion(RandomStringConverter.class)
+    @Conversion(RandomTemplateConverter.class)
     @PreserveNotNull
-    public RandomString advancement;
+    public RandomTemplate advancement;
 
     @Path("comment")
     public String comment;

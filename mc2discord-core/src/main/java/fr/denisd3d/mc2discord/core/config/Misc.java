@@ -1,9 +1,12 @@
 package fr.denisd3d.mc2discord.core.config;
 
+import com.electronwill.nightconfig.core.conversion.Conversion;
 import com.electronwill.nightconfig.core.conversion.Path;
 import com.electronwill.nightconfig.core.conversion.PreserveNotNull;
 import fr.denisd3d.config4j.Comment;
 import fr.denisd3d.config4j.DefaultValue;
+import fr.denisd3d.mc2discord.core.config.converters.TemplateConverter;
+import fr.denisd3d.mc2discord.core.entities.Template;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +35,9 @@ public class Misc {
 
     @Path("logs_format")
     @Comment("config.misc.logs_format.comment")
+    @Conversion(TemplateConverter.class)
     @PreserveNotNull
-    public String logs_format = "[${log_time|HH:mm:ss}] [${log_thread_name}/${log_level}] [${log_logger_name}]: ${log_message}";
+    public Template logs_format = Template.parse("[${log_time|HH:mm:ss}] [${log_thread_name}/${log_level}] [${log_logger_name}]: ${log_message}");
 
     @Path("logs_level")
     @Comment("config.misc.logs_level.comment")

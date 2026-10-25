@@ -1,6 +1,5 @@
 package fr.denisd3d.mc2discord.core;
 
-import fr.denisd3d.mc2discord.core.entities.Entity;
 import fr.denisd3d.mc2discord.core.entities.LogEntity;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +11,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 
+import java.time.Instant;
 import java.util.Collections;
 
 public class LoggingManager {
@@ -47,8 +47,9 @@ public class LoggingManager {
                 return;
 
             if (event.getLevel().intLevel() <= Level.getLevel(Mc2Discord.INSTANCE.config.misc.logs_level).intLevel()) {
-                logs += Entity.replace(Mc2Discord.INSTANCE.config.misc.logs_format, Collections.singletonList(new LogEntity(event.getLoggerName(),
-                        event.getThreadName(), event.getInstant().getEpochMillisecond(), event.getLevel(), event.getMessage()))) + "\n";
+                String loggerName = event.getLoggerName().substring(event.getLoggerName().lastIndexOf(".") + 1);
+                logs += Mc2Discord.INSTANCE.config.misc.logs_format.render(new LogEntity(loggerName, event.getThreadName(),
+                        Instant.ofEpochMilli(event.getInstant().getEpochMillisecond()), event.getLevel().name(), event.getMessage().getFormattedMessage())) + "\n";
                 scheduleMessage();
             }
         }

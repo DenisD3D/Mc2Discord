@@ -1,11 +1,12 @@
 package fr.denisd3d.mc2discord.core;
 
 import discord4j.common.util.Snowflake;
-import fr.denisd3d.mc2discord.core.entities.GlobalEntity;
+import fr.denisd3d.mc2discord.core.entities.Entity;
+import fr.denisd3d.mc2discord.core.entities.Template;
 import reactor.util.annotation.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface IMinecraft {
@@ -20,13 +21,14 @@ public interface IMinecraft {
     }
 
     /**
-     * Send a message to the minecraft server chat
-     * @param content The message content
-     * @param attachments Files that may be attached to the message, as an array of name and urls
-     * @param referencedContent The message being replied to
-     * @param senderId The Discord user id of the sender for quick @
+     * Send a Discord message to the minecraft server chat
+     * @param format The chat format, it may also contain the Minecraft formatting variables and ${reply} / ${attachments}
+     * @param entities The entities of the message (message, member)
+     * @param attachments Files that may be attached to the message, as a map of name and urls
+     * @param reply The rendered reply format if the message is replying to another one
+     * @param senderUsername The Discord username of the sender for quick @
      */
-    void sendMessage(String content, HashMap<String, String> attachments, @Nullable String referencedContent, @Nullable String senderId);
+    void sendMessage(Template format, List<Entity> entities, Map<String, String> attachments, @Nullable String reply, @Nullable String senderUsername);
 
     /**
      * Create help command text with all commands available for the permission level and the listed commands
@@ -57,10 +59,34 @@ public interface IMinecraft {
     String getEnvInfo();
 
     /**
-     * Get the minecraft server data (version, players, ...)
-     * @return The minecraft server data
+     * @return The number of online players, hidden players excluded
      */
-    GlobalEntity getServerData();
+    int getOnlinePlayerCount();
+
+    int getMaxPlayers();
+
+    /**
+     * @return The number of players that joined the server at least once
+     */
+    int getUniquePlayerCount();
+
+    String getMotd();
+
+    String getMinecraftVersion();
+
+    String getServerHostname();
+
+    int getServerPort();
+
+    /**
+     * @return The number of ticks per second, capped to the server tick rate
+     */
+    double getTps();
+
+    /**
+     * @return The mean time in milliseconds to process a tick
+     */
+    double getMspt();
 
     /**
      * Get name of a player from his UUID, even if he is offline

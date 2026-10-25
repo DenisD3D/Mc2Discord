@@ -6,7 +6,6 @@ import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.User;
 import discord4j.core.spec.GuildMemberEditSpec;
 import discord4j.rest.http.client.ClientException;
-import fr.denisd3d.mc2discord.core.entities.Entity;
 import fr.denisd3d.mc2discord.core.entities.MemberEntity;
 import fr.denisd3d.mc2discord.core.entities.PlayerEntity;
 import fr.denisd3d.mc2discord.core.storage.LinkedPlayerEntry;
@@ -14,7 +13,6 @@ import org.apache.commons.collections4.map.PassiveExpiringMap;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -62,12 +60,10 @@ public class AccountManager {
                     Integer color = memberIntegerTuple2.getT2();
 
                     return member.edit(GuildMemberEditSpec.builder()
-                            .nicknameOrNull(Entity.replace(Mc2Discord.INSTANCE.config.account.discord_pseudo_format,
-                                    Arrays.asList(
-                                            new PlayerEntity(Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid),
-                                                    Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid), uuid),
-                                            new MemberEntity(member.getGlobalName().orElse(member.getUsername()), member.getUsername(),
-                                                    member.getNickname().orElse(""), member.getAvatarUrl(), color))))
+                            .nicknameOrNull(Mc2Discord.INSTANCE.config.account.discord_pseudo_format.render(
+                                    new PlayerEntity(Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid),
+                                            Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid), uuid),
+                                    MemberEntity.of(member, color)))
                             .build());
                 })
                 .subscribe();
@@ -130,7 +126,7 @@ public class AccountManager {
                 .orElse(null);
 
         if (player_uuid == null) {
-            event.getMessage().getRestChannel().createMessage(Mc2Discord.INSTANCE.config.account.messages.link_invalid_code.asString()).subscribe();
+            event.getMessage().getRestChannel().createMessage(Mc2Discord.INSTANCE.config.account.messages.link_invalid_code.render()).subscribe();
         } else {
             codes.remove(player_uuid);
 
@@ -145,7 +141,7 @@ public class AccountManager {
                                         || (member.getRoleIds().size() != 0 && member.getRoleIds().containsAll(policy.required_roles_id)))
                                 .switchIfEmpty(event.getMessage()
                                         .getRestChannel()
-                                        .createMessage(Mc2Discord.INSTANCE.config.account.messages.missing_roles.asString())
+                                        .createMessage(Mc2Discord.INSTANCE.config.account.messages.missing_roles.render())
                                         .then(Mono.empty()))
                                 .doOnNext(accountPolicy -> validate_link(player_uuid, event))
                                 .map(policy -> policy.roles_id_to_give)
@@ -166,7 +162,7 @@ public class AccountManager {
 
         Mc2Discord.INSTANCE.linkedPlayerList.add(new LinkedPlayerEntry(uuid, event.getMessage().getAuthor().get().getId()));
 
-        event.getMessage().getRestChannel().createMessage(Mc2Discord.INSTANCE.config.account.messages.link_successful.asString()).subscribe();
+        event.getMessage().getRestChannel().createMessage(Mc2Discord.INSTANCE.config.account.messages.link_successful.render()).subscribe();
         codes.remove(uuid);
 
         if (!Mc2Discord.INSTANCE.config.account.guild_id.equals(M2DUtils.NIL_SNOWFLAKE)) {

@@ -10,7 +10,6 @@ import discord4j.core.spec.MessageCreateSpec;
 import discord4j.core.spec.WebhookExecuteSpec;
 import discord4j.discordjson.possible.Possible;
 import fr.denisd3d.mc2discord.core.config.Channels;
-import fr.denisd3d.mc2discord.core.entities.Entity;
 import fr.denisd3d.mc2discord.core.entities.MessageEntity;
 import fr.denisd3d.mc2discord.core.entities.PlayerEntity;
 import reactor.core.publisher.Flux;
@@ -25,14 +24,19 @@ public class MessageManager {
     public static void init() {
         default_username = Mc2Discord.INSTANCE.config.style.bot_name.isEmpty()
                 ? Possible.absent()
-                : Possible.of(Entity.replace(Mc2Discord.INSTANCE.config.style.bot_name));
+                : Possible.of(Mc2Discord.INSTANCE.config.style.bot_name.render());
         default_avatar = Mc2Discord.INSTANCE.config.style.bot_avatar.isEmpty()
                 ? Possible.absent()
-                : Possible.of(Entity.replace(Mc2Discord.INSTANCE.config.style.bot_avatar));
+                : Possible.of(Mc2Discord.INSTANCE.config.style.bot_avatar.render());
     }
 
     public static Mono<Void> sendInfoMessage(String type, String message) {
         return sendMessage(Arrays.asList(type, "info"), message, default_username, default_avatar);
+    }
+
+    public static Mono<Void> sendChatMessage(String message, PlayerEntity player) {
+        return sendChatMessage(message, Mc2Discord.INSTANCE.config.style.webhook_display_name.render(player),
+                Mc2Discord.INSTANCE.config.style.webhook_avatar_api.render(player));
     }
 
     public static Mono<Void> sendChatMessage(String message, String username, String avatarUrl) {
@@ -164,9 +168,8 @@ public class MessageManager {
     public static Mono<Void> createPlainTextMessage(Snowflake channel, String message, Possible<String> username, boolean surroundWithCodeBlock,
             Collection<? extends EmbedCreateSpec> embeds, Collection<? extends MessageCreateFields.File> files) {
         if (!username.isAbsent()) {
-            message = Entity.replace(Mc2Discord.INSTANCE.config.style.discord_chat_format,
-                    List.of(new MessageEntity(message), new PlayerEntity(username.toOptional().orElse(Mc2Discord.INSTANCE.vars.mc2discord_display_name),
-                            username.toOptional().orElse(Mc2Discord.INSTANCE.vars.mc2discord_display_name), new UUID(0L, 0L))));
+            String name = username.toOptional().orElse(Mc2Discord.INSTANCE.vars.mc2discord_display_name);
+            message = Mc2Discord.INSTANCE.config.style.discord_chat_format.render(new MessageEntity(message), new PlayerEntity(name, name, new UUID(0L, 0L)));
         }
 
         String finalMessage = message;

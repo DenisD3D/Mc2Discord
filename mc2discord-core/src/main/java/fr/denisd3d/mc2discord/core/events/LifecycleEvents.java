@@ -15,7 +15,6 @@ import discord4j.rest.util.PermissionSet;
 import fr.denisd3d.mc2discord.core.*;
 import fr.denisd3d.mc2discord.core.config.Channels;
 import fr.denisd3d.mc2discord.core.config.StatusChannels;
-import fr.denisd3d.mc2discord.core.entities.Entity;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuples;
@@ -34,10 +33,10 @@ public class LifecycleEvents {
 
         Mc2Discord.INSTANCE.vars.mc2discord_display_name = Mc2Discord.INSTANCE.config.style.bot_name.isEmpty()
                 ? readyEvent.getSelf().getUsername()
-                : Entity.replace(Mc2Discord.INSTANCE.config.style.bot_name);
+                : Mc2Discord.INSTANCE.config.style.bot_name.render();
         Mc2Discord.INSTANCE.vars.mc2discord_avatar = Mc2Discord.INSTANCE.config.style.bot_avatar.isEmpty()
                 ? readyEvent.getSelf().getAvatarUrl()
-                : Entity.replace(Mc2Discord.INSTANCE.config.style.bot_avatar);
+                : Mc2Discord.INSTANCE.config.style.bot_avatar.render();
         Mc2Discord.INSTANCE.vars.mc2discord_webhook_name = "Mc2Dis Webhook - " + Mc2Discord.INSTANCE.vars.bot_name + "#"
                 + Mc2Discord.INSTANCE.vars.bot_discriminator;
 
@@ -163,15 +162,14 @@ public class LifecycleEvents {
             Mc2Discord.LOGGER.warn(error);
         }
 
-        MessageManager.sendInfoMessage("server_start", Entity.replace(Mc2Discord.INSTANCE.config.messages.start.asString(), Collections.emptyList()))
-                .subscribe();
+        MessageManager.sendInfoMessage("server_start", Mc2Discord.INSTANCE.config.messages.start.render()).subscribe();
     }
 
     public static void onShutdown() {
         if (M2DUtils.isNotConfigured())
             return;
 
-        MessageManager.sendInfoMessage("server_stop", Entity.replace(Mc2Discord.INSTANCE.config.messages.stop.asString(), Collections.emptyList()))
+        MessageManager.sendInfoMessage("server_stop", Mc2Discord.INSTANCE.config.messages.stop.render())
                 .then(Mc2Discord.INSTANCE.shutdown())
                 .block();
     }
