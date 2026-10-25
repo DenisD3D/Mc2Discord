@@ -21,7 +21,7 @@ dependencies {
 loom {
     accessWidenerPath = sc.process(
         rootProject.file("src/main/resources/$modId.accesswidener"),
-        "build/processed.accesswidener"
+        "build/processed.accesswidener",
     )
 
     runs {

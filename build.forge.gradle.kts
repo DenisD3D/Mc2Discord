@@ -52,7 +52,7 @@ tasks {
         archiveClassifier.set("slim")
 
         manifest.attributes(
-            "MixinConfigs" to "$modId.mixins.json"
+            "MixinConfigs" to "$modId.mixins.json",
         )
     }
 

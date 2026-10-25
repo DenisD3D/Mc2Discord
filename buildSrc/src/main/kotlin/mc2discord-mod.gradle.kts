@@ -85,7 +85,7 @@ val unused = listOf(
     "io.netty:netty-resolver-dns-native-macos",
     "io.netty:netty-resolver-dns-classes-macos",
     "io.netty:netty-codec-native-quic",
-    "io.netty:netty-codec-http3"
+    "io.netty:netty-codec-http3",
 )
 
 dependencies {
@@ -111,7 +111,7 @@ tasks {
                 "Implementation-Timestamp" to SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(Date()),
                 "Timestamp" to System.currentTimeMillis(),
                 "Built-On-Java" to "${System.getProperty("java.vm.version")} (${System.getProperty("java.vm.vendor")})",
-                "Build-On-Minecraft" to minecraftVersion
+                "Build-On-Minecraft" to minecraftVersion,
             )
         }
     }
@@ -129,7 +129,7 @@ tasks {
             "javaVersion" to prop("mod.java"),
             "minecraftVersionRange" to prop("mod.mc_range"),
             "loaderVersionRange" to optionalProp("mod.loader_range"),
-            "fabricLoaderVersion" to optionalProp("deps.fabric_loader")
+            "fabricLoaderVersion" to optionalProp("deps.fabric_loader"),
         )
         inputs.properties(properties)
 
@@ -170,7 +170,7 @@ tasks {
             "com.vdurmont.emoji",
             "org.json",
             // Account
-            "org.apache.commons.collections4"
+            "org.apache.commons.collections4",
         )
         relocations.forEach {
             relocate(it, "$relocateLocation.$it")

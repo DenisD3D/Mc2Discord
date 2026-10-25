@@ -14,6 +14,12 @@ spotless {
         target("src/*/java/**/*.java", "mc2discord-core/src/*/java/**/*.java")
         eclipse().configFile("eclipse-formatter.xml")
     }
+
+    // Gradle scripts, rules in .editorconfig
+    kotlinGradle {
+        target("*.gradle.kts", "mc2discord-core/*.gradle.kts", "buildSrc/*.gradle.kts", "buildSrc/src/main/kotlin/*.gradle.kts")
+        ktlint()
+    }
 }
 
 stonecutter active "26.3-fabric"
