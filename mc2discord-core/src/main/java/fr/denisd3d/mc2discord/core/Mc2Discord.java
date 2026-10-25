@@ -46,7 +46,8 @@ public class Mc2Discord {
 
     public Mc2Discord(IMinecraft minecraft) {
         this.minecraft = minecraft;
-        if (!loadConfig()) return;
+        if (!loadConfig())
+            return;
 
         if (!M2DUtils.isTokenValid(this.config.general.token)) {
             LOGGER.error("Invalid Discord bot token");
@@ -56,33 +57,31 @@ public class Mc2Discord {
 
         DiscordClient.builder(this.config.general.token)
                 .setReactorResources(ReactorResources.builder()
-                        .httpClient(ReactorResources.newHttpClient(ConnectionProvider.create("mc2discord"))
-                                .proxyWithSystemProperties())
+                        .httpClient(ReactorResources.newHttpClient(ConnectionProvider.create("mc2discord")).proxyWithSystemProperties())
                         .build())
-                .onClientResponse(
-                        ResponseFunction.retryWhen(
-                                RouteMatcher.any(),
-                                RetrySpec.withThrowable(Retry.anyOf(IOException.class)))
-                )
+                .onClientResponse(ResponseFunction.retryWhen(RouteMatcher.any(), RetrySpec.withThrowable(Retry.anyOf(IOException.class))))
                 .build()
                 .gateway()
                 .setEnabledIntents(IntentSet.all().andNot(IntentSet.of(Intent.GUILD_PRESENCES)))
                 .setGatewayReactorResources(reactorResources -> GatewayReactorResources.builder(reactorResources)
-                        .httpClient(ReactorResources.newHttpClient(ConnectionProvider.create("d4j-gateway", 1))
-                                .proxyWithSystemProperties())
+                        .httpClient(ReactorResources.newHttpClient(ConnectionProvider.create("d4j-gateway", 1)).proxyWithSystemProperties())
                         .build())
                 .login()
                 .doOnError(CloseException.class, throwable -> {
-                    Mc2Discord.LOGGER.error("Error while starting Discord bot: {} (CloseException, code {})", throwable.getCloseStatus().getReason().orElse(""), throwable.getCloseStatus().getCode());
-                    this.errors.add("Error while starting Discord bot: " + throwable.getCloseStatus().getReason().orElse("") + " (code " + throwable.getCloseStatus().getCode() + ")");
+                    Mc2Discord.LOGGER.error("Error while starting Discord bot: {} (CloseException, code {})", throwable.getCloseStatus().getReason().orElse(""),
+                            throwable.getCloseStatus().getCode());
+                    this.errors.add("Error while starting Discord bot: " + throwable.getCloseStatus().getReason().orElse("") + " (code "
+                            + throwable.getCloseStatus().getCode() + ")");
                     if (throwable.getCloseStatus().getCode() == 4014) {
                         Mc2Discord.LOGGER.error("Make sure all required intents are enabled on Discord developer website (MESSAGE CONTENT & SERVER MEMBERS)");
                         this.errors.add("Make sure all required intents are enabled on Discord developer website (MESSAGE CONTENT & SERVER MEMBERS)");
                     }
                 })
                 .doOnError(ClientException.class, throwable -> {
-                    Mc2Discord.LOGGER.error("Error while starting Discord bot: {} (ClientException, code {})", throwable.getStatus().reasonPhrase(), throwable.getStatus().code());
-                    this.errors.add("Error while starting Discord bot: " + throwable.getStatus().reasonPhrase() + " (code " + throwable.getStatus().code() + ")");
+                    Mc2Discord.LOGGER.error("Error while starting Discord bot: {} (ClientException, code {})", throwable.getStatus().reasonPhrase(),
+                            throwable.getStatus().code());
+                    this.errors
+                            .add("Error while starting Discord bot: " + throwable.getStatus().reasonPhrase() + " (code " + throwable.getStatus().code() + ")");
                 })
                 .subscribe(gatewayDiscordClient -> {
                     this.client = gatewayDiscordClient;
@@ -100,7 +99,8 @@ public class Mc2Discord {
             }
             this.config = new M2DConfig(M2DUtils.CONFIG_FILE, translationKey -> {
                 if ("config.lang.comment".equals(translationKey)) {
-                    return langManager.formatMessage(translationKey, String.join(", ", LangManager.LANG_CONTRIBUTORS), String.join(", ", LangManager.AVAILABLE_LANG));
+                    return langManager.formatMessage(translationKey, String.join(", ", LangManager.LANG_CONTRIBUTORS),
+                            String.join(", ", LangManager.AVAILABLE_LANG));
                 }
                 return minecraft.translateKey(langManager, translationKey);
             });

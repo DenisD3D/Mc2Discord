@@ -1,6 +1,5 @@
 package fr.denisd3d.mc2discord.core.entities;
 
-
 import fr.denisd3d.mc2discord.core.Mc2Discord;
 
 import java.util.Collections;
@@ -17,7 +16,6 @@ import java.util.regex.Pattern;
 public abstract class Entity {
     public static final Pattern VARIABLE_PATTERN = Pattern.compile("\\$\\{(.*?)(?:\\|(.*?))?}");
     private static final Set<String> invalidFormatsWarned = ConcurrentHashMap.newKeySet(); // Warn only once per invalid format, as logs are also formatted
-
 
     public static String replace(String content) {
         return replace(content, Collections.emptyList());
@@ -51,7 +49,8 @@ public abstract class Entity {
 
     abstract void getReplacements(Map<String, String> replacements, Map<String, BiFunction<String, String, String>> formatters);
 
-    private static String replace(String content, Map<String, String> replacements, Map<String, BiFunction<String, String, String>> formatters, UnaryOperator<String> escaper) {
+    private static String replace(String content, Map<String, String> replacements, Map<String, BiFunction<String, String, String>> formatters,
+            UnaryOperator<String> escaper) {
         Matcher matcher = VARIABLE_PATTERN.matcher(content);
         StringBuilder builder = new StringBuilder();
 

@@ -38,30 +38,38 @@ public class FabricEvents {
     }
 
     public static void onChatMessageEvent(PlayerChatMessage playerChatMessage, ServerPlayer serverPlayer, ChatType.Bound bound) {
-        MinecraftEvents.onMinecraftChatMessageEvent(playerChatMessage.signedContent(), new PlayerEntity(serverPlayer.getGameProfile().name(), serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().id()));
+        MinecraftEvents.onMinecraftChatMessageEvent(playerChatMessage.signedContent(),
+                new PlayerEntity(serverPlayer.getGameProfile().name(), serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().id()));
     }
 
     public static void onPlayerConnectEvent(ServerGamePacketListenerImpl serverGamePacketListener, PacketSender packetSender, MinecraftServer minecraftServer) {
-        MinecraftEvents.onPlayerConnectEvent(new PlayerEntity(serverGamePacketListener.getPlayer().getGameProfile().name(), serverGamePacketListener.getPlayer().getDisplayName().getString(), serverGamePacketListener.getPlayer().getGameProfile().id()));
+        MinecraftEvents.onPlayerConnectEvent(new PlayerEntity(serverGamePacketListener.getPlayer().getGameProfile().name(),
+                serverGamePacketListener.getPlayer().getDisplayName().getString(), serverGamePacketListener.getPlayer().getGameProfile().id()));
     }
 
     public static void onPlayerDisconnectEvent(ServerGamePacketListenerImpl serverGamePacketListener, MinecraftServer minecraftServer) {
-        MinecraftEvents.onPlayerDisconnectEvent(new PlayerEntity(serverGamePacketListener.getPlayer().getGameProfile().name(), serverGamePacketListener.getPlayer().getDisplayName().getString(), serverGamePacketListener.getPlayer().getGameProfile().id()));
+        MinecraftEvents.onPlayerDisconnectEvent(new PlayerEntity(serverGamePacketListener.getPlayer().getGameProfile().name(),
+                serverGamePacketListener.getPlayer().getDisplayName().getString(), serverGamePacketListener.getPlayer().getGameProfile().id()));
     }
 
     public static void onPlayerDeathEvent(ServerPlayer serverPlayer, DamageSource damageSource) {
-        MinecraftEvents.onPlayerDeathEvent(new PlayerEntity(serverPlayer.getGameProfile().name(), serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().id()), new DeathEntity(damageSource.getMsgId(), damageSource.getLocalizedDeathMessage(serverPlayer).getString(), serverPlayer.getCombatTracker().getCombatDuration(), Optional.ofNullable(damageSource.getEntity()).map(attacker -> attacker.getDisplayName().getString()).orElse(""), Optional.ofNullable(damageSource.getEntity()).filter(LivingEntity.class::isInstance).map(attacker -> ((LivingEntity) attacker).getHealth()).orElse(0.0f)));
+        MinecraftEvents.onPlayerDeathEvent(
+                new PlayerEntity(serverPlayer.getGameProfile().name(), serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().id()),
+                new DeathEntity(damageSource.getMsgId(), damageSource.getLocalizedDeathMessage(serverPlayer).getString(),
+                        serverPlayer.getCombatTracker().getCombatDuration(),
+                        Optional.ofNullable(damageSource.getEntity()).map(attacker -> attacker.getDisplayName().getString()).orElse(""),
+                        Optional.ofNullable(damageSource.getEntity())
+                                .filter(LivingEntity.class::isInstance)
+                                .map(attacker -> ((LivingEntity) attacker).getHealth())
+                                .orElse(0.0f)));
     }
 
     public static void onAdvancementEvent(ServerPlayer serverPlayer, AdvancementHolder advancement) {
         if (advancement.value().display().isPresent() && advancement.value().display().get().announceToChat()) {
-            MinecraftEvents.onAdvancementEvent(new PlayerEntity(serverPlayer.getGameProfile().name(),
-                            serverPlayer.getDisplayName().getString(),
-                            serverPlayer.getGameProfile().id()),
-                    new AdvancementEntity(advancement.id().toString(),
-                            advancement.value().name().map(Component::getString).orElse(""),
-                            advancement.value().display().get().title().getString(),
-                            advancement.value().display().get().description().getString()));
+            MinecraftEvents.onAdvancementEvent(
+                    new PlayerEntity(serverPlayer.getGameProfile().name(), serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().id()),
+                    new AdvancementEntity(advancement.id().toString(), advancement.value().name().map(Component::getString).orElse(""),
+                            advancement.value().display().get().title().getString(), advancement.value().display().get().description().getString()));
         }
     }
 }

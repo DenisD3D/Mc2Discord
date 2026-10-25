@@ -25,7 +25,9 @@ public class Mc2DiscordForge {
 
     public Mc2DiscordForge() {
         //? if <1.21.6 {
-        /^ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class, () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (a, b) -> true));
+        /^ModLoadingContext.get()
+                .registerExtensionPoint(IExtensionPoint.DisplayTest.class,
+                        () -> new IExtensionPoint.DisplayTest(() -> IExtensionPoint.DisplayTest.IGNORESERVERONLY, (a, b) -> true));
         ^///?}
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(ForgeEvents.class);

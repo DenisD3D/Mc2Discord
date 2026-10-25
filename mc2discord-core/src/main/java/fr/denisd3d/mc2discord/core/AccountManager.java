@@ -20,10 +20,10 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class AccountManager {
-    public static final PassiveExpiringMap.ConstantTimeToLiveExpirationPolicy<UUID, String> expirationPolicy = new PassiveExpiringMap.ConstantTimeToLiveExpirationPolicy<>(10, TimeUnit.MINUTES);
+    public static final PassiveExpiringMap.ConstantTimeToLiveExpirationPolicy<UUID, String> expirationPolicy = new PassiveExpiringMap.ConstantTimeToLiveExpirationPolicy<>(
+            10, TimeUnit.MINUTES);
     public static final PassiveExpiringMap<UUID, String> codes = new PassiveExpiringMap<>(expirationPolicy);
     public static final Random random = new Random();
-
 
     public static void init() {
         if (!Mc2Discord.INSTANCE.config.features.account_linking)
@@ -61,10 +61,16 @@ public class AccountManager {
                     Member member = memberIntegerTuple2.getT1();
                     Integer color = memberIntegerTuple2.getT2();
 
-                    return member.edit(GuildMemberEditSpec.builder().nicknameOrNull(Entity.replace(Mc2Discord.INSTANCE.config.account.discord_pseudo_format, Arrays.asList(
-                            new PlayerEntity(Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid), Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid), uuid),
-                            new MemberEntity(member.getGlobalName().orElse(member.getUsername()), member.getUsername(), member.getNickname().orElse(""), member.getAvatarUrl(), color)))).build());
-                }).subscribe();
+                    return member.edit(GuildMemberEditSpec.builder()
+                            .nicknameOrNull(Entity.replace(Mc2Discord.INSTANCE.config.account.discord_pseudo_format,
+                                    Arrays.asList(
+                                            new PlayerEntity(Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid),
+                                                    Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid), uuid),
+                                            new MemberEntity(member.getGlobalName().orElse(member.getUsername()), member.getUsername(),
+                                                    member.getNickname().orElse(""), member.getAvatarUrl(), color))))
+                            .build());
+                })
+                .subscribe();
 
     }
 
@@ -116,7 +122,12 @@ public class AccountManager {
 
         String code = message.substring(5).trim();
 
-        UUID player_uuid = codes.entrySet().stream().filter(entry -> entry.getValue().equals(code)).map(PassiveExpiringMap.Entry::getKey).findFirst().orElse(null);
+        UUID player_uuid = codes.entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().equals(code))
+                .map(PassiveExpiringMap.Entry::getKey)
+                .findFirst()
+                .orElse(null);
 
         if (player_uuid == null) {
             event.getMessage().getRestChannel().createMessage(Mc2Discord.INSTANCE.config.account.messages.link_invalid_code.asString()).subscribe();
@@ -124,12 +135,14 @@ public class AccountManager {
             codes.remove(player_uuid);
 
             if (!Mc2Discord.INSTANCE.config.account.guild_id.equals(M2DUtils.NIL_SNOWFLAKE)) {
-                event.getMessage().getAuthor().orElseThrow(() -> new RuntimeException("Message author is null"))
+                event.getMessage()
+                        .getAuthor()
+                        .orElseThrow(() -> new RuntimeException("Message author is null"))
                         .asMember(Mc2Discord.INSTANCE.config.account.guild_id)
                         .flatMapMany(member -> Mono.fromSupplier(() -> Mc2Discord.INSTANCE.config.account.policies)
                                 .flatMapMany(Flux::fromIterable)
-                                .filter(policy -> policy.required_roles_id.size() == 0 || (member.getRoleIds()
-                                        .size() != 0 && member.getRoleIds().containsAll(policy.required_roles_id)))
+                                .filter(policy -> policy.required_roles_id.size() == 0
+                                        || (member.getRoleIds().size() != 0 && member.getRoleIds().containsAll(policy.required_roles_id)))
                                 .switchIfEmpty(event.getMessage()
                                         .getRestChannel()
                                         .createMessage(Mc2Discord.INSTANCE.config.account.messages.missing_roles.asString())
@@ -148,12 +161,8 @@ public class AccountManager {
     }
 
     private static void validate_link(UUID uuid, MessageCreateEvent event) {
-        Mc2Discord.LOGGER.info("New account linked (Discord: " + event.getMessage()
-                .getAuthor()
-                .map(User::getId)
-                .map(Snowflake::asLong)
-                .orElse(0L) + ", MC: " + uuid + ")");
-
+        Mc2Discord.LOGGER.info(
+                "New account linked (Discord: " + event.getMessage().getAuthor().map(User::getId).map(Snowflake::asLong).orElse(0L) + ", MC: " + uuid + ")");
 
         Mc2Discord.INSTANCE.linkedPlayerList.add(new LinkedPlayerEntry(uuid, event.getMessage().getAuthor().get().getId()));
 

@@ -26,7 +26,6 @@ import net.minecraft.server.MinecraftServer;
 
 import java.util.List;
 
-
 public class Mc2DiscordMinecraft {
     public static CommandSourceStack commandSource;
     public static MinecraftServer server;
@@ -47,7 +46,6 @@ public class Mc2DiscordMinecraft {
         commandSource = VersionCompat.createCommandSource(new DiscordCommandSource(), minecraftServer);
         LifecycleEvents.mcOrDiscordReady();
     }
-
 
     public static void onServerStopped(MinecraftServer ignoredMinecraftServer) {
         LifecycleEvents.onShutdown();

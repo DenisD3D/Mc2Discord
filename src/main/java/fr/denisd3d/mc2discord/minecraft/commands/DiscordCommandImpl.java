@@ -12,10 +12,12 @@ import net.minecraft.network.chat.TextColor;
 public class DiscordCommandImpl {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("discord").executes(context -> {
-            context.getSource().sendSuccess(() -> Component.literal(M2DCommands.getDiscordText())
-                    .withStyle(style -> style.withClickEvent(VersionCompat.openUrl(M2DCommands.getDiscordLink()))
-                            .withColor(TextColor.fromLegacyFormat(ChatFormatting.BLUE))
-                            .withUnderlined(true)), false);
+            context.getSource()
+                    .sendSuccess(() -> Component.literal(M2DCommands.getDiscordText())
+                            .withStyle(style -> style.withClickEvent(VersionCompat.openUrl(M2DCommands.getDiscordLink()))
+                                    .withColor(TextColor.fromLegacyFormat(ChatFormatting.BLUE))
+                                    .withUnderlined(true)),
+                            false);
             return 1;
         }));
     }

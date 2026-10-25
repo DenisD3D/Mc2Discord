@@ -31,22 +31,27 @@ public class TellrawCommandMixin {
     /*@Inject(method = {"lambda$register$1", "method_13777"}, at = @At("HEAD"), cancellable = true)
     *///?}
     private static void execute(CommandContext<CommandSourceStack> commandContext, CallbackInfoReturnable<Integer> cir) throws CommandSyntaxException {
-        if (M2DUtils.isNotConfigured()) return;
+        if (M2DUtils.isNotConfigured())
+            return;
 
-        if (!Mc2Discord.INSTANCE.config.misc.broadcast_commands.contains("tellraw")) return;
-
+        if (!Mc2Discord.INSTANCE.config.misc.broadcast_commands.contains("tellraw"))
+            return;
 
         if (commandContext.getInput().contains("@s") && (commandContext.getSource() == Mc2DiscordMinecraft.commandSource)) {
             cir.setReturnValue(1); // Do not execute the vanilla command to prevent No player was found error but still return the message to discord
-        } else if (!commandContext.getInput().contains("@a")) {  // Else if the target is not everyone it does not target discord
+        } else if (!commandContext.getInput().contains("@a")) { // Else if the target is not everyone it does not target discord
             return;
         }
 
         ServerPlayer serverPlayer = commandContext.getSource().getPlayer();
         String messageContent = VersionCompat.resolveComponentArgument(commandContext, "message").getString();
         if (serverPlayer != null) {
-            PlayerEntity player = new PlayerEntity(serverPlayer.getGameProfile().name(), serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().id());
-            MessageManager.sendChatMessage(messageContent, Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_display_name, List.of(player)), Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_avatar_api, List.of(player))).subscribe();
+            PlayerEntity player = new PlayerEntity(serverPlayer.getGameProfile().name(), serverPlayer.getDisplayName().getString(),
+                    serverPlayer.getGameProfile().id());
+            MessageManager
+                    .sendChatMessage(messageContent, Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_display_name, List.of(player)),
+                            Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_avatar_api, List.of(player)))
+                    .subscribe();
         } else {
             MessageManager.sendInfoMessage("relayed_command", messageContent).subscribe();
         }

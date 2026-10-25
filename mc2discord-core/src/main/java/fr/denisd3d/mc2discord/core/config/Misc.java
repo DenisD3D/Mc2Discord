@@ -58,7 +58,6 @@ public class Misc {
     @Path("comment")
     public String comment;
 
-
     public static class OtherModMessage {
         @Path("class_name")
         @Comment("config.misc.other_mods_messages.class_name.comment")

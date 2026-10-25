@@ -23,8 +23,12 @@ public class MessageManager {
     public static Possible<String> default_avatar = Possible.absent();
 
     public static void init() {
-        default_username = Mc2Discord.INSTANCE.config.style.bot_name.isEmpty() ? Possible.absent() : Possible.of(Entity.replace(Mc2Discord.INSTANCE.config.style.bot_name));
-        default_avatar = Mc2Discord.INSTANCE.config.style.bot_avatar.isEmpty() ? Possible.absent() : Possible.of(Entity.replace(Mc2Discord.INSTANCE.config.style.bot_avatar));
+        default_username = Mc2Discord.INSTANCE.config.style.bot_name.isEmpty()
+                ? Possible.absent()
+                : Possible.of(Entity.replace(Mc2Discord.INSTANCE.config.style.bot_name));
+        default_avatar = Mc2Discord.INSTANCE.config.style.bot_avatar.isEmpty()
+                ? Possible.absent()
+                : Possible.of(Entity.replace(Mc2Discord.INSTANCE.config.style.bot_avatar));
     }
 
     public static Mono<Void> sendInfoMessage(String type, String message) {
@@ -60,33 +64,29 @@ public class MessageManager {
                 .toList();
     }
 
-    public static Mono<Void> sendMessage(List<String> types, String message, Possible<String> username, Possible<String> avatarUrl, Snowflake forced_channel, boolean surroundWithCodeBlock) {
+    public static Mono<Void> sendMessage(List<String> types, String message, Possible<String> username, Possible<String> avatarUrl, Snowflake forced_channel,
+            boolean surroundWithCodeBlock) {
         if (M2DUtils.isNotConfigured()) // Check if mod is configured
             return Mono.empty();
         if (message.isEmpty())
             return Mono.empty();
 
-
-        return Flux.fromIterable(getMatchingChannels(types, forced_channel))
-                .flatMap(channel -> {
-                    String message_with_mention = M2DUtils.transformToMention(message, channel.channel_id);
-                    return switch (channel.mode) {
-                        case WEBHOOK ->
-                                createWebhookMessage(channel.channel_id, message_with_mention, username, avatarUrl, surroundWithCodeBlock);
-                        case PLAIN_TEXT ->
-                                createPlainTextMessage(channel.channel_id, message_with_mention, username, surroundWithCodeBlock);
-                        case EMBED ->
-                                createEmbedMessage(channel.channel_id, message_with_mention, username, avatarUrl, types);
-                    };
-                })
-                .then();
+        return Flux.fromIterable(getMatchingChannels(types, forced_channel)).flatMap(channel -> {
+            String message_with_mention = M2DUtils.transformToMention(message, channel.channel_id);
+            return switch (channel.mode) {
+                case WEBHOOK -> createWebhookMessage(channel.channel_id, message_with_mention, username, avatarUrl, surroundWithCodeBlock);
+                case PLAIN_TEXT -> createPlainTextMessage(channel.channel_id, message_with_mention, username, surroundWithCodeBlock);
+                case EMBED -> createEmbedMessage(channel.channel_id, message_with_mention, username, avatarUrl, types);
+            };
+        }).then();
     }
 
     /**
      * Send a message using a webhook
      * See {@link #createWebhookMessage(Snowflake, String, Possible, Possible, boolean, Collection, Collection)} for more details
      */
-    public static Mono<Void> createWebhookMessage(Snowflake channel, String message, Possible<String> username, Possible<String> avatarUrl, boolean surroundWithCodeBlock) {
+    public static Mono<Void> createWebhookMessage(Snowflake channel, String message, Possible<String> username, Possible<String> avatarUrl,
+            boolean surroundWithCodeBlock) {
         return createWebhookMessage(channel, message, username, avatarUrl, surroundWithCodeBlock, null, null);
     }
 
@@ -102,27 +102,26 @@ public class MessageManager {
      * @param files                 Files to send with the message, null if none
      * @return A Mono<Void> that completes when the message is sent
      */
-    public static Mono<Void> createWebhookMessage(Snowflake channel, String message, Possible<String> username, Possible<String> avatarUrl, boolean surroundWithCodeBlock, Collection<? extends EmbedCreateSpec> embeds, Collection<? extends MessageCreateFields.File> files) {
+    public static Mono<Void> createWebhookMessage(Snowflake channel, String message, Possible<String> username, Possible<String> avatarUrl,
+            boolean surroundWithCodeBlock, Collection<? extends EmbedCreateSpec> embeds, Collection<? extends MessageCreateFields.File> files) {
         if (username.isAbsent() && avatarUrl.isAbsent())
             return createPlainTextMessage(channel, message, username, surroundWithCodeBlock); // If username and avatar is absent, fallback to plain text for bot account to be used instead of a webhook with same name (allow color)
 
-
         return getMc2DiscordWebhook(channel)
-                .flatMapMany(webhook -> Flux.fromIterable(M2DUtils.breakStringInMessages(message, 2000, surroundWithCodeBlock))
-                        .flatMap(s -> {
-                            WebhookExecuteSpec.Builder builder = WebhookExecuteSpec.builder()
-                                    .username(username)
-                                    .avatarUrl(avatarUrl)
-                                    .allowedMentions(Mc2Discord.INSTANCE.vars.allowedMentions)
-                                    .content(s);
+                .flatMapMany(webhook -> Flux.fromIterable(M2DUtils.breakStringInMessages(message, 2000, surroundWithCodeBlock)).flatMap(s -> {
+                    WebhookExecuteSpec.Builder builder = WebhookExecuteSpec.builder()
+                            .username(username)
+                            .avatarUrl(avatarUrl)
+                            .allowedMentions(Mc2Discord.INSTANCE.vars.allowedMentions)
+                            .content(s);
 
-                            if (embeds != null)
-                                builder.embeds(embeds);
-                            if (files != null)
-                                builder.files(files);
+                    if (embeds != null)
+                        builder.embeds(embeds);
+                    if (files != null)
+                        builder.files(files);
 
-                            return webhook.execute(builder.build());
-                        }))
+                    return webhook.execute(builder.build());
+                }))
                 .then();
     }
 
@@ -133,7 +132,10 @@ public class MessageManager {
      * @return A Mono<Webhook> that completes when the webhook is found or created
      */
     public static Mono<Webhook> getMc2DiscordWebhook(Snowflake channel) {
-        Mono<TopLevelGuildMessageChannel> channelMono = Mc2Discord.INSTANCE.client.getChannelById(channel).ofType(TopLevelGuildMessageChannel.class).switchIfEmpty(Mono.fromRunnable(() -> Mc2Discord.LOGGER.error("Invalid channel type, channel {} must support webhooks (use another channel or another mode)", channel.asString())));
+        Mono<TopLevelGuildMessageChannel> channelMono = Mc2Discord.INSTANCE.client.getChannelById(channel)
+                .ofType(TopLevelGuildMessageChannel.class)
+                .switchIfEmpty(Mono.fromRunnable(() -> Mc2Discord.LOGGER
+                        .error("Invalid channel type, channel {} must support webhooks (use another channel or another mode)", channel.asString())));
         return channelMono.flatMapMany(TopLevelGuildMessageChannel::getWebhooks)
                 .filter(webhook -> webhook.getName().isPresent() && webhook.getName().get().equals(Mc2Discord.INSTANCE.vars.mc2discord_webhook_name))
                 .switchIfEmpty(channelMono.flatMap(channel1 -> channel1.createWebhook(Mc2Discord.INSTANCE.vars.mc2discord_webhook_name)))
@@ -159,31 +161,30 @@ public class MessageManager {
      * @param files                 Files to send with the message, null if none
      * @return A Mono<Void> that completes when the message is sent
      */
-    public static Mono<Void> createPlainTextMessage(Snowflake channel, String message, Possible<String> username, boolean surroundWithCodeBlock, Collection<? extends EmbedCreateSpec> embeds, Collection<? extends MessageCreateFields.File> files) {
+    public static Mono<Void> createPlainTextMessage(Snowflake channel, String message, Possible<String> username, boolean surroundWithCodeBlock,
+            Collection<? extends EmbedCreateSpec> embeds, Collection<? extends MessageCreateFields.File> files) {
         if (!username.isAbsent()) {
-            message = Entity.replace(Mc2Discord.INSTANCE.config.style.discord_chat_format, List.of(new MessageEntity(message), new PlayerEntity(username.toOptional().orElse(Mc2Discord.INSTANCE.vars.mc2discord_display_name), username.toOptional().orElse(Mc2Discord.INSTANCE.vars.mc2discord_display_name), new UUID(0L, 0L))));
+            message = Entity.replace(Mc2Discord.INSTANCE.config.style.discord_chat_format,
+                    List.of(new MessageEntity(message), new PlayerEntity(username.toOptional().orElse(Mc2Discord.INSTANCE.vars.mc2discord_display_name),
+                            username.toOptional().orElse(Mc2Discord.INSTANCE.vars.mc2discord_display_name), new UUID(0L, 0L))));
         }
 
         String finalMessage = message;
         return Mc2Discord.INSTANCE.client.getChannelById(channel)
                 .ofType(MessageChannel.class)
                 .switchIfEmpty(Mono.fromRunnable(() -> Mc2Discord.LOGGER.error("Invalid channel type, channel {} must support text messages", channel)))
-                .flatMapMany(messageChannel -> Flux.fromIterable(M2DUtils.breakStringInMessages(finalMessage, 2000, surroundWithCodeBlock))
-                        .flatMap(s -> {
-                            MessageCreateSpec.Builder builder = MessageCreateSpec.builder()
-                                    .allowedMentions(Mc2Discord.INSTANCE.vars.allowedMentions)
-                                    .content(s);
+                .flatMapMany(messageChannel -> Flux.fromIterable(M2DUtils.breakStringInMessages(finalMessage, 2000, surroundWithCodeBlock)).flatMap(s -> {
+                    MessageCreateSpec.Builder builder = MessageCreateSpec.builder().allowedMentions(Mc2Discord.INSTANCE.vars.allowedMentions).content(s);
 
-                            if (embeds != null)
-                                builder.embeds(embeds);
-                            if (files != null)
-                                builder.files(files);
+                    if (embeds != null)
+                        builder.embeds(embeds);
+                    if (files != null)
+                        builder.files(files);
 
-                            return messageChannel.createMessage(builder.build());
-                        }))
+                    return messageChannel.createMessage(builder.build());
+                }))
                 .then();
     }
-
 
     /**
      * Send a message using an embed
@@ -206,31 +207,36 @@ public class MessageManager {
      * @param files     Files to send with the message, null if none
      * @return A Mono<Void> that completes when the message is sent
      */
-    public static Mono<Void> createEmbedMessage(Snowflake channel, String message, Possible<String> username, Possible<String> avatarUrl, List<String> types, Collection<? extends EmbedCreateSpec> embeds, Collection<? extends MessageCreateFields.File> files) {
+    public static Mono<Void> createEmbedMessage(Snowflake channel, String message, Possible<String> username, Possible<String> avatarUrl, List<String> types,
+            Collection<? extends EmbedCreateSpec> embeds, Collection<? extends MessageCreateFields.File> files) {
         return Mc2Discord.INSTANCE.client.getChannelById(channel)
                 .ofType(MessageChannel.class)
                 .switchIfEmpty(Mono.fromRunnable(() -> Mc2Discord.LOGGER.error("Invalid channel type, channel {} must support text messages", channel)))
-                .flatMapMany(messageChannel ->
-                        Flux.fromIterable(M2DUtils.breakStringInMessages(message, 4096, false))
-                                .flatMap(s -> {
-                                    MessageCreateSpec.Builder mbuilder = MessageCreateSpec.builder();
-                                    EmbedCreateSpec.Builder ebuilder = EmbedCreateSpec.builder().description(s);
+                .flatMapMany(messageChannel -> Flux.fromIterable(M2DUtils.breakStringInMessages(message, 4096, false)).flatMap(s -> {
+                    MessageCreateSpec.Builder mbuilder = MessageCreateSpec.builder();
+                    EmbedCreateSpec.Builder ebuilder = EmbedCreateSpec.builder().description(s);
 
-                                    ebuilder.color(M2DUtils.getColorFromString(types.stream().map(type -> Mc2Discord.INSTANCE.config.style.embed_colors.<String>get(type)).filter(Objects::nonNull).findFirst().orElse("SUMMER_SKY")));
+                    ebuilder.color(M2DUtils.getColorFromString(types.stream()
+                            .map(type -> Mc2Discord.INSTANCE.config.style.embed_colors.<String>get(type))
+                            .filter(Objects::nonNull)
+                            .findFirst()
+                            .orElse("SUMMER_SKY")));
 
-                                    if (!username.toOptional().orElse(Mc2Discord.INSTANCE.vars.mc2discord_display_name).equals(Mc2Discord.INSTANCE.vars.mc2discord_display_name) || Mc2Discord.INSTANCE.config.style.embed_show_bot_avatar) {
-                                        ebuilder.author(username.toOptional().orElse(Mc2Discord.INSTANCE.vars.mc2discord_display_name), null, avatarUrl.toOptional().orElse(Mc2Discord.INSTANCE.vars.mc2discord_avatar));
-                                    }
+                    if (!username.toOptional().orElse(Mc2Discord.INSTANCE.vars.mc2discord_display_name).equals(Mc2Discord.INSTANCE.vars.mc2discord_display_name)
+                            || Mc2Discord.INSTANCE.config.style.embed_show_bot_avatar) {
+                        ebuilder.author(username.toOptional().orElse(Mc2Discord.INSTANCE.vars.mc2discord_display_name), null,
+                                avatarUrl.toOptional().orElse(Mc2Discord.INSTANCE.vars.mc2discord_avatar));
+                    }
 
-                                    mbuilder.addEmbed(ebuilder.build());
+                    mbuilder.addEmbed(ebuilder.build());
 
-                                    if (embeds != null)
-                                        mbuilder.addAllEmbeds(embeds);
-                                    if (files != null)
-                                        mbuilder.files(files);
+                    if (embeds != null)
+                        mbuilder.addAllEmbeds(embeds);
+                    if (files != null)
+                        mbuilder.files(files);
 
-                                    return messageChannel.createMessage(mbuilder.build());
-                                }))
+                    return messageChannel.createMessage(mbuilder.build());
+                }))
                 .then();
     }
 }

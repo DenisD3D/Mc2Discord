@@ -19,7 +19,7 @@ public class CommandsMixin {
     private void execute(ParseResults<CommandSourceStack> parseResults, String command, CallbackInfo ci) {
         InteractionResult result = CommandExecuteCallback.EVENT.invoker().onCommandExecute(parseResults);
 
-        if(result == InteractionResult.FAIL) {
+        if (result == InteractionResult.FAIL) {
             ci.cancel();
         }
     }

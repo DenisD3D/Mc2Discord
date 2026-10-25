@@ -19,8 +19,7 @@ public class RandomStringConverter implements Converter<RandomString, Object> {
             }
             return new RandomString(outputList);
         } else {
-            throw new IllegalArgumentException(
-                    "Cannot convert " + value + " to a RandomString");
+            throw new IllegalArgumentException("Cannot convert " + value + " to a RandomString");
         }
     }
 

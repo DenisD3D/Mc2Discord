@@ -12,7 +12,7 @@ public interface CommandExecuteCallback {
         for (CommandExecuteCallback listener : listeners) {
             InteractionResult result = listener.onCommandExecute(parseResults);
 
-            if(result != InteractionResult.PASS) {
+            if (result != InteractionResult.PASS) {
                 return result;
             }
         }

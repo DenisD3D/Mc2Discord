@@ -24,63 +24,60 @@ import java.util.Optional;
 public class ForgeEvents {
     //? if >=1.21.6 {
     @SubscribeEvent(priority = Priority.LOWEST)
-    public static void onServerChat(ServerChatEvent event) {
     //?} else {
     /^@SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onServerChat(ServerChatEvent event) {
-        if (event.isCanceled())
-            return;
     ^///?}
-        MinecraftEvents.onMinecraftChatMessageEvent(event.getMessage().getString(),
-                new PlayerEntity(event.getPlayer().getGameProfile().name(), event.getPlayer()
-                        .getDisplayName()
-                        .getString(), event.getPlayer().getGameProfile().id()));
+    public static void onServerChat(ServerChatEvent event) {
+        //? if <1.21.6 {
+        /^if (event.isCanceled())
+            return;
+        ^///?}
+        MinecraftEvents.onMinecraftChatMessageEvent(event.getMessage().getString(), new PlayerEntity(event.getPlayer().getGameProfile().name(),
+                event.getPlayer().getDisplayName().getString(), event.getPlayer().getGameProfile().id()));
     }
 
     @SubscribeEvent
     public static void onPlayerConnectEvent(PlayerEvent.PlayerLoggedInEvent event) {
-        MinecraftEvents.onPlayerConnectEvent(new PlayerEntity(event.getEntity().getGameProfile().name(),
-                event.getEntity().getDisplayName().getString(), event.getEntity().getGameProfile().id()));
+        MinecraftEvents.onPlayerConnectEvent(new PlayerEntity(event.getEntity().getGameProfile().name(), event.getEntity().getDisplayName().getString(),
+                event.getEntity().getGameProfile().id()));
     }
 
     @SubscribeEvent
     public static void onPlayerDisconnectEvent(PlayerEvent.PlayerLoggedOutEvent event) {
-        MinecraftEvents.onPlayerDisconnectEvent(new PlayerEntity(event.getEntity().getGameProfile().name(),
-                event.getEntity().getDisplayName().getString(), event.getEntity().getGameProfile().id()));
+        MinecraftEvents.onPlayerDisconnectEvent(new PlayerEntity(event.getEntity().getGameProfile().name(), event.getEntity().getDisplayName().getString(),
+                event.getEntity().getGameProfile().id()));
     }
 
     //? if >=1.21.6 {
     @SubscribeEvent(priority = Priority.LOWEST)
-    public static void onPlayerDeathEvent(LivingDeathEvent event) {
     //?} else {
     /^@SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void onPlayerDeathEvent(LivingDeathEvent event) {
-        if (event.isCanceled())
-            return;
     ^///?}
+    public static void onPlayerDeathEvent(LivingDeathEvent event) {
+        //? if <1.21.6 {
+        /^if (event.isCanceled())
+            return;
+        ^///?}
         if (event.getEntity() instanceof net.minecraft.world.entity.player.Player player) {
             MinecraftEvents.onPlayerDeathEvent(
-                    new PlayerEntity(player.getGameProfile().name(), player.getDisplayName().getString(),
-                            player.getGameProfile().id()),
-                    new DeathEntity(event.getSource()
-                            .getMsgId(), player.getCombatTracker().getDeathMessage().getString(),
-                            player.getCombatTracker().getCombatDuration(), Optional.ofNullable(event.getSource().getEntity())
-                                    .map(attacker -> attacker.getDisplayName().getString())
-                                    .orElse(""),
-                            Optional.ofNullable(event.getSource().getEntity()).filter(LivingEntity.class::isInstance).map(attacker -> ((LivingEntity) attacker).getHealth()).orElse(0.0f)));
+                    new PlayerEntity(player.getGameProfile().name(), player.getDisplayName().getString(), player.getGameProfile().id()),
+                    new DeathEntity(event.getSource().getMsgId(), player.getCombatTracker().getDeathMessage().getString(),
+                            player.getCombatTracker().getCombatDuration(),
+                            Optional.ofNullable(event.getSource().getEntity()).map(attacker -> attacker.getDisplayName().getString()).orElse(""),
+                            Optional.ofNullable(event.getSource().getEntity())
+                                    .filter(LivingEntity.class::isInstance)
+                                    .map(attacker -> ((LivingEntity) attacker).getHealth())
+                                    .orElse(0.0f)));
         }
     }
 
     @SubscribeEvent
     public static void onAdvancementEvent(AdvancementEvent.AdvancementEarnEvent event) {
-        if (event.getAdvancement().value().display().isPresent()
-                && event.getAdvancement().value().display().get().announceToChat()) {
+        if (event.getAdvancement().value().display().isPresent() && event.getAdvancement().value().display().get().announceToChat()) {
             MinecraftEvents.onAdvancementEvent(
-                    new PlayerEntity(event.getEntity().getGameProfile().name(),
-                            event.getEntity().getDisplayName().getString(),
+                    new PlayerEntity(event.getEntity().getGameProfile().name(), event.getEntity().getDisplayName().getString(),
                             event.getEntity().getGameProfile().id()),
-                    new AdvancementEntity(event.getAdvancement().id().toString(),
-                            event.getAdvancement().value().name().map(Component::getString).orElse(""),
+                    new AdvancementEntity(event.getAdvancement().id().toString(), event.getAdvancement().value().name().map(Component::getString).orElse(""),
                             event.getAdvancement().value().display().get().title().getString(),
                             event.getAdvancement().value().display().get().description().getString()));
         }

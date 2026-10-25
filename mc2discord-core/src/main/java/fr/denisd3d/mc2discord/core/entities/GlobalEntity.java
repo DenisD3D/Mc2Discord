@@ -19,7 +19,8 @@ public class GlobalEntity extends Entity {
     public final double tps;
     public final double mspt;
 
-    public GlobalEntity(int onlinePlayers, int maxPlayers, int uniquePlayers, String motd, String mcVersion, String serverHostname, String serverPort, double tps, double mspt) {
+    public GlobalEntity(int onlinePlayers, int maxPlayers, int uniquePlayers, String motd, String mcVersion, String serverHostname, String serverPort,
+            double tps, double mspt) {
         this.onlinePlayers = onlinePlayers;
         this.maxPlayers = maxPlayers;
         this.uniquePlayers = uniquePlayers;

@@ -11,8 +11,10 @@ public class SnowflakeArrayConverter implements Converter<List<Snowflake>, List<
         if (value != null) {
             List<Snowflake> list = new ArrayList<>();
             value.forEach(object -> {
-                if (object instanceof String) list.add(Snowflake.of((String) object));
-                else if (object instanceof Number) list.add(Snowflake.of(((Number) object).longValue()));
+                if (object instanceof String)
+                    list.add(Snowflake.of((String) object));
+                else if (object instanceof Number)
+                    list.add(Snowflake.of(((Number) object).longValue()));
             });
             return list;
         } else {

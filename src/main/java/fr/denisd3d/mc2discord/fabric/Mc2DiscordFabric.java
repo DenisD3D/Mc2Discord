@@ -9,14 +9,14 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
 
-
 public class Mc2DiscordFabric implements ModInitializer {
     @Override
     public void onInitialize() {
         ServerLifecycleEvents.SERVER_STARTING.register(Mc2DiscordFabric::onServerStarting);
         ServerLifecycleEvents.SERVER_STARTED.register(Mc2DiscordMinecraft::onServerStarted);
         ServerLifecycleEvents.SERVER_STOPPED.register(Mc2DiscordMinecraft::onServerStopped);
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> Mc2DiscordMinecraft.onRegisterCommands(dispatcher, registryAccess));
+        CommandRegistrationCallback.EVENT
+                .register((dispatcher, registryAccess, environment) -> Mc2DiscordMinecraft.onRegisterCommands(dispatcher, registryAccess));
 
         FabricEvents.register();
     }
@@ -25,7 +25,12 @@ public class Mc2DiscordFabric implements ModInitializer {
         Mc2DiscordMinecraft.onServerStarting(minecraftServer);
 
         Mc2Discord.INSTANCE.vars.modLoader = "Fabric";
-        Mc2Discord.INSTANCE.vars.modLoaderVersion = FabricLoader.getInstance().getModContainer("fabricloader").orElseThrow().getMetadata().getVersion().toString();
+        Mc2Discord.INSTANCE.vars.modLoaderVersion = FabricLoader.getInstance()
+                .getModContainer("fabricloader")
+                .orElseThrow()
+                .getMetadata()
+                .getVersion()
+                .toString();
         Mc2Discord.INSTANCE.vars.modCount = FabricLoader.getInstance().getAllMods().size();
     }
 }

@@ -18,7 +18,10 @@ public class MinecraftEvents {
         if (Mc2Discord.INSTANCE.hiddenPlayerList.contains(player.uuid))
             return;
 
-        MessageManager.sendChatMessage(message, Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_display_name, List.of(player)), Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_avatar_api, List.of(player))).subscribe();
+        MessageManager
+                .sendChatMessage(message, Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_display_name, List.of(player)),
+                        Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_avatar_api, List.of(player)))
+                .subscribe();
     }
 
     public static void onPlayerConnectEvent(PlayerEntity player) {
@@ -46,7 +49,8 @@ public class MinecraftEvents {
         if (Mc2Discord.INSTANCE.hiddenPlayerList.contains(player.uuid))
             return;
 
-        MessageManager.sendInfoMessage("player_death", Entity.replace(Mc2Discord.INSTANCE.config.messages.death.asString(), List.of(player, death))).subscribe();
+        MessageManager.sendInfoMessage("player_death", Entity.replace(Mc2Discord.INSTANCE.config.messages.death.asString(), List.of(player, death)))
+                .subscribe();
     }
 
     public static void onAdvancementEvent(PlayerEntity player, AdvancementEntity advancement) {
@@ -56,6 +60,8 @@ public class MinecraftEvents {
         if (Mc2Discord.INSTANCE.hiddenPlayerList.contains(player.uuid))
             return;
 
-        MessageManager.sendInfoMessage("player_advancement", Entity.replace(Mc2Discord.INSTANCE.config.messages.advancement.asString(), List.of(player, advancement))).subscribe();
+        MessageManager
+                .sendInfoMessage("player_advancement", Entity.replace(Mc2Discord.INSTANCE.config.messages.advancement.asString(), List.of(player, advancement)))
+                .subscribe();
     }
 }

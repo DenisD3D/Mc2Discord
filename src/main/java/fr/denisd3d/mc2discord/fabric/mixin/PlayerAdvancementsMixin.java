@@ -27,7 +27,8 @@ public class PlayerAdvancementsMixin {
     @Inject(method = "award", at = @At("RETURN"))
     private void grantCriterion(AdvancementHolder advancementHolder, String string, CallbackInfoReturnable<Boolean> cir) {
         AdvancementProgress advancementProgress = this.getOrStartProgress(advancementHolder);
-        if (!advancementProgress.isDone()) return;
+        if (!advancementProgress.isDone())
+            return;
         PlayerCompletedAdvancementCallback.EVENT.invoker().onPlayerAdvancement(player, advancementHolder);
     }
 }

@@ -22,7 +22,6 @@ public class M2DUtils {
     private static final Pattern ANY_DISCORD_MENTION_PATTERN = Pattern.compile("<(?:a?:\\w+:|@&*|#)\\d+>");
     private static final Pattern ANY_DISCORD_NAMED_PATTERN = Pattern.compile("@\\w+|#\\w+|:\\w+:");
 
-
     /**
      * Check if the mod is configured and discord bot is ready to use
      * @return Whether the discord bot is ready or not
@@ -45,7 +44,6 @@ public class M2DUtils {
             return false;
         }
     }
-
 
     /**
      * Breaks a string into multiple messages
@@ -111,11 +109,25 @@ public class M2DUtils {
             if (replacement.matches("<a?(:\\w+:)\\d+>")) { // Emojis
                 matcher.appendReplacement(builder, Matcher.quoteReplacement(":" + replacement.split(":")[1].toLowerCase() + ":"));
             } else if (replacement.matches("<@(\\d+)>")) { // Users
-                users.stream().filter(partialMember -> partialMember.getId().asString().equals(replacement.substring(2, replacement.length() - 1))).findFirst().ifPresent(user -> matcher.appendReplacement(builder, Matcher.quoteReplacement("@" + user.getUsername())));
+                users.stream()
+                        .filter(partialMember -> partialMember.getId().asString().equals(replacement.substring(2, replacement.length() - 1)))
+                        .findFirst()
+                        .ifPresent(user -> matcher.appendReplacement(builder, Matcher.quoteReplacement("@" + user.getUsername())));
             } else if (replacement.matches("<@&(\\d+)>")) { // Roles
-                roles.stream().filter(role -> role.getId().asString().equals(replacement.substring(3, replacement.length() - 1))).findFirst().ifPresent(role -> matcher.appendReplacement(builder, Matcher.quoteReplacement("@" + role.getName())));
+                roles.stream()
+                        .filter(role -> role.getId().asString().equals(replacement.substring(3, replacement.length() - 1)))
+                        .findFirst()
+                        .ifPresent(role -> matcher.appendReplacement(builder, Matcher.quoteReplacement("@" + role.getName())));
             } else if (replacement.matches("<#(\\d+)>")) { // Channels
-                matcher.appendReplacement(builder, Matcher.quoteReplacement("#" + Mc2Discord.INSTANCE.vars.channelCache.rowMap().get(guildId).entrySet().stream().filter(entry -> entry.getValue().equals(Snowflake.of(replacement.substring(2, replacement.length() - 1)))).findFirst().map(Map.Entry::getKey).orElse("unknown")));
+                matcher.appendReplacement(builder,
+                        Matcher.quoteReplacement("#" + Mc2Discord.INSTANCE.vars.channelCache.rowMap()
+                                .get(guildId)
+                                .entrySet()
+                                .stream()
+                                .filter(entry -> entry.getValue().equals(Snowflake.of(replacement.substring(2, replacement.length() - 1))))
+                                .findFirst()
+                                .map(Map.Entry::getKey)
+                                .orElse("unknown")));
             }
         }
         matcher.appendTail(builder);
@@ -168,7 +180,10 @@ public class M2DUtils {
      * @return The color of the member
      */
     public static Mono<Integer> getMemberColor(Member member) {
-        return MathFlux.max(member.getRoles().filter(role -> role.getColor().getRGB() != 0), OrderUtil.ROLE_ORDER).map(Role::getColor).map(Color::getRGB).defaultIfEmpty(16777215);
+        return MathFlux.max(member.getRoles().filter(role -> role.getColor().getRGB() != 0), OrderUtil.ROLE_ORDER)
+                .map(Role::getColor)
+                .map(Color::getRGB)
+                .defaultIfEmpty(16777215);
     }
 
     /**

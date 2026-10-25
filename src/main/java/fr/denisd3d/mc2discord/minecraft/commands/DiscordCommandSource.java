@@ -44,7 +44,10 @@ public class DiscordCommandSource implements CommandSource {
             messageScheduler = new Thread(() -> {
                 while (true) {
                     if (System.currentTimeMillis() - time > 50) {
-                        MessageManager.sendMessage(Collections.singletonList("command"), answer, MessageManager.default_username, MessageManager.default_avatar, channelId, Mc2Discord.INSTANCE.config.commands.use_codeblocks).subscribe();
+                        MessageManager
+                                .sendMessage(Collections.singletonList("command"), answer, MessageManager.default_username, MessageManager.default_avatar,
+                                        channelId, Mc2Discord.INSTANCE.config.commands.use_codeblocks)
+                                .subscribe();
 
                         answer = "";
                         break;

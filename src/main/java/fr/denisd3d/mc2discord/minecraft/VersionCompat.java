@@ -15,12 +15,14 @@ import net.minecraft.world.phys.Vec3;
 //? if >=1.21.5 {
 import java.net.URI;
 //?}
+
 //? if >=1.21.11 {
 import net.minecraft.server.permissions.Permission;
 import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.server.permissions.PermissionSet;
 import net.minecraft.server.permissions.Permissions;
 //?}
+
 //? if >=26.2 {
 import net.minecraft.network.chat.ResolutionContext;
 //?}
@@ -98,9 +100,11 @@ public class VersionCompat {
         //? if >=26.3 {
         return new CommandSourceStack(source, Vec3.ZERO, Vec2.ZERO, server.overworld(), PermissionSet.ALL_PERMISSIONS, Component.literal("Discord"), server);
         //?} elif >=1.21.11 {
-        /*return new CommandSourceStack(source, Vec3.ZERO, Vec2.ZERO, server.overworld(), PermissionSet.ALL_PERMISSIONS, "Discord", Component.literal("Discord"), server, null);
+        /*return new CommandSourceStack(source, Vec3.ZERO, Vec2.ZERO, server.overworld(), PermissionSet.ALL_PERMISSIONS, "Discord", Component.literal("Discord"),
+                server, null);
         *///?} else {
-        /*return new CommandSourceStack(source, Vec3.ZERO, Vec2.ZERO, server.overworld(), Integer.MAX_VALUE, "Discord", Component.literal("Discord"), server, null);
+        /*return new CommandSourceStack(source, Vec3.ZERO, Vec2.ZERO, server.overworld(), Integer.MAX_VALUE, "Discord", Component.literal("Discord"), server,
+                null);
         *///?}
     }
 
@@ -125,7 +129,6 @@ public class VersionCompat {
         if (levelId <= 0) {
             return PermissionSet.NO_PERMISSIONS;
         }
-
         PermissionLevel level = PermissionLevel.byId(levelId);
         return permission -> {
             if (permission instanceof Permission.HasCommandLevel hasCommandLevel) {

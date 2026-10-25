@@ -91,10 +91,8 @@ public class MinecraftImpl implements IMinecraft {
 
         MutableComponent attachmentsComponent = Component.literal(" ");
         for (Map.Entry<String, String> entry : attachments.entrySet()) {
-            attachmentsComponent.append(Component.literal("[" + entry.getKey() + "]").withStyle(style -> style
-                    .withClickEvent(VersionCompat.openUrl(entry.getValue()))
-                    .withColor(ChatFormatting.BLUE)
-                    .withUnderlined(true)));
+            attachmentsComponent.append(Component.literal("[" + entry.getKey() + "]")
+                    .withStyle(style -> style.withClickEvent(VersionCompat.openUrl(entry.getValue())).withColor(ChatFormatting.BLUE).withUnderlined(true)));
         }
         replacements.put("attachments", attachmentsComponent);
 
@@ -120,7 +118,8 @@ public class MinecraftImpl implements IMinecraft {
         response.append("Available commands:\n").append(prefix).append("help\n");
 
         if (permissionLevel >= 0) {
-            Map<CommandNode<CommandSourceStack>, String> map = commandDispatcher.getSmartUsage(commandDispatcher.getRoot(), VersionCompat.withPermissionLevel(Mc2DiscordMinecraft.commandSource, permissionLevel));
+            Map<CommandNode<CommandSourceStack>, String> map = commandDispatcher.getSmartUsage(commandDispatcher.getRoot(),
+                    VersionCompat.withPermissionLevel(Mc2DiscordMinecraft.commandSource, permissionLevel));
 
             for (String string : map.values()) {
                 response.append(prefix).append(string).append("\n");
@@ -176,15 +175,11 @@ public class MinecraftImpl implements IMinecraft {
         MinecraftServer server = Mc2DiscordMinecraft.server;
         double mspt = Stats.meanOf(server.getTickTimesNanos()) / TimeUtil.NANOSECONDS_PER_MILLISECOND;
         double tps = TimeUtil.MILLISECONDS_PER_SECOND / Math.max(mspt, server.tickRateManager().millisecondsPerTick());
-        return new GlobalEntity(onlinePlayerCount,
-                server.getMaxPlayers(),
-                Optional.ofNullable(server.playerDataStorage.playerDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".dat"))).map(files -> files.length).orElse(0),
-                server.getMotd(),
-                server.getServerVersion(),
-                server.getLocalIp(),
-                String.valueOf(server.getPort()),
-                tps,
-                mspt);
+        return new GlobalEntity(onlinePlayerCount, server.getMaxPlayers(),
+                Optional.ofNullable(server.playerDataStorage.playerDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".dat")))
+                        .map(files -> files.length)
+                        .orElse(0),
+                server.getMotd(), server.getServerVersion(), server.getLocalIp(), String.valueOf(server.getPort()), tps, mspt);
     }
 
     @Override
@@ -192,7 +187,10 @@ public class MinecraftImpl implements IMinecraft {
         //? if >=1.21.9 {
         return Mc2DiscordMinecraft.server.services().nameToIdCache().get(uuid).map(NameAndId::name).orElse(uuid.toString());
         //?} else {
-        /*return Optional.ofNullable(Mc2DiscordMinecraft.server.getProfileCache()).flatMap(gameProfileCache -> gameProfileCache.get(uuid)).map(GameProfile::getName).orElse(uuid.toString());
+        /*return Optional.ofNullable(Mc2DiscordMinecraft.server.getProfileCache())
+                .flatMap(gameProfileCache -> gameProfileCache.get(uuid))
+                .map(GameProfile::getName)
+                .orElse(uuid.toString());
         *///?}
     }
 

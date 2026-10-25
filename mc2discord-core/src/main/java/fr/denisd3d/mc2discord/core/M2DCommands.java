@@ -26,12 +26,25 @@ public class M2DCommands {
         if (M2DUtils.isNotConfigured()) {
             result.add(Mc2Discord.INSTANCE.langManager.translate("commands.status.invalid_config"));
         } else {
-            result.add(Mc2Discord.INSTANCE.langManager.translate("commands.status.bot_name", Mc2Discord.INSTANCE.vars.bot_name, Mc2Discord.INSTANCE.vars.bot_discriminator));
+            result.add(Mc2Discord.INSTANCE.langManager.translate("commands.status.bot_name", Mc2Discord.INSTANCE.vars.bot_name,
+                    Mc2Discord.INSTANCE.vars.bot_discriminator));
             result.add(Mc2Discord.INSTANCE.langManager.translate("commands.status.bot_id", Mc2Discord.INSTANCE.vars.bot_id.asString()));
-            result.add(Mc2Discord.INSTANCE.langManager.translate("commands.status.state", Mc2Discord.INSTANCE.client.getGatewayClient(0).flatMap(gatewayClient -> gatewayClient.isConnected().blockOptional()).map(connected -> connected ? "Connected" : "Disconnected").orElse("Disconnected")));
+            result.add(Mc2Discord.INSTANCE.langManager.translate("commands.status.state",
+                    Mc2Discord.INSTANCE.client.getGatewayClient(0)
+                            .flatMap(gatewayClient -> gatewayClient.isConnected().blockOptional())
+                            .map(connected -> connected ? "Connected" : "Disconnected")
+                            .orElse("Disconnected")));
             for (int shard_id = 0; shard_id < Mc2Discord.INSTANCE.client.getGatewayClientGroup().getShardCount(); shard_id++) {
                 if (Mc2Discord.INSTANCE.client.getGatewayClientGroup().find(shard_id).isPresent()) {
-                    result.add(Mc2Discord.INSTANCE.langManager.translate("commands.status.shard", shard_id, Mc2Discord.INSTANCE.client.getGatewayClientGroup().find(shard_id).get().getResponseTime().toString().substring(2).replaceAll("(\\d[HMS])(?!$)", "$1 ").toLowerCase()));
+                    result.add(Mc2Discord.INSTANCE.langManager.translate("commands.status.shard", shard_id,
+                            Mc2Discord.INSTANCE.client.getGatewayClientGroup()
+                                    .find(shard_id)
+                                    .get()
+                                    .getResponseTime()
+                                    .toString()
+                                    .substring(2)
+                                    .replaceAll("(\\d[HMS])(?!$)", "$1 ")
+                                    .toLowerCase()));
                 }
             }
         }
@@ -70,15 +83,27 @@ public class M2DCommands {
 
             int token_start_index = config.indexOf("token = ") + 9;
             String token = config.substring(token_start_index, config.indexOf("\"", token_start_index + 1));
-            String configWithoutToken = config.substring(0, token_start_index) + "REMOVED|" + (M2DUtils.isTokenValid(token) ? ("VALID|" + TokenUtil.getSelfId(token)) : token.isEmpty() ? "EMPTY" : "INVALID") + "\"" + config.substring(config.indexOf("\n", token_start_index));
+            String configWithoutToken = config.substring(0, token_start_index) + "REMOVED|"
+                    + (M2DUtils.isTokenValid(token) ? ("VALID|" + TokenUtil.getSelfId(token)) : token.isEmpty() ? "EMPTY" : "INVALID") + "\""
+                    + config.substring(config.indexOf("\n", token_start_index));
 
-            String responseBody = HttpClient.create().post().uri("http://m2d.denisd3d.fr/api/v1/upload/").sendForm((httpClientRequest, httpClientForm) -> httpClientForm.attr("config", configWithoutToken).attr("errors", Mc2Discord.INSTANCE.errors.isEmpty() ? "None" : String.join("\n", Mc2Discord.INSTANCE.errors)).attr("env", Mc2Discord.INSTANCE.minecraft.getEnvInfo())).responseSingle((response, bytes) -> {
-                if (response.status().code() != 200)
-                    return Mono.error(new Exception("Unexpected response status: " + response.status().code()));
-                else return bytes.asString();
-            }).onErrorResume(throwable -> Mono.just("_" + throwable.getMessage())).block();
+            String responseBody = HttpClient.create()
+                    .post()
+                    .uri("http://m2d.denisd3d.fr/api/v1/upload/")
+                    .sendForm((httpClientRequest, httpClientForm) -> httpClientForm.attr("config", configWithoutToken)
+                            .attr("errors", Mc2Discord.INSTANCE.errors.isEmpty() ? "None" : String.join("\n", Mc2Discord.INSTANCE.errors))
+                            .attr("env", Mc2Discord.INSTANCE.minecraft.getEnvInfo()))
+                    .responseSingle((response, bytes) -> {
+                        if (response.status().code() != 200)
+                            return Mono.error(new Exception("Unexpected response status: " + response.status().code()));
+                        else
+                            return bytes.asString();
+                    })
+                    .onErrorResume(throwable -> Mono.just("_" + throwable.getMessage()))
+                    .block();
 
-            if (responseBody != null && responseBody.startsWith("_")) throw new Exception(responseBody.substring(1));
+            if (responseBody != null && responseBody.startsWith("_"))
+                throw new Exception(responseBody.substring(1));
 
             return new String[]{Mc2Discord.INSTANCE.langManager.translate("commands.upload.success"), responseBody};
         } catch (Exception e) {
@@ -95,7 +120,10 @@ public class M2DCommands {
     }
 
     public static String getInviteLink() {
-        return M2DUtils.isTokenValid(Mc2Discord.INSTANCE.config.general.token) ? "https://discord.com/api/oauth2/authorize?client_id=" + TokenUtil.getSelfId(Mc2Discord.INSTANCE.config.general.token) + "&permissions=604359761&scope=bot" : Mc2Discord.INSTANCE.langManager.translate("commands.invite.error");
+        return M2DUtils.isTokenValid(Mc2Discord.INSTANCE.config.general.token)
+                ? "https://discord.com/api/oauth2/authorize?client_id=" + TokenUtil.getSelfId(Mc2Discord.INSTANCE.config.general.token)
+                        + "&permissions=604359761&scope=bot"
+                : Mc2Discord.INSTANCE.langManager.translate("commands.invite.error");
     }
 
     public static String listHiddenPlayers() {
@@ -103,7 +131,8 @@ public class M2DCommands {
         if (hiddenPlayersUUID.length == 0) {
             return Mc2Discord.INSTANCE.langManager.translate("commands.hidden.empty");
         } else {
-            return Mc2Discord.INSTANCE.langManager.translate("commands.hidden.list", hiddenPlayersUUID.length, String.join(", ", Arrays.stream(hiddenPlayersUUID).map(uuid -> Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid)).toList()));
+            return Mc2Discord.INSTANCE.langManager.translate("commands.hidden.list", hiddenPlayersUUID.length,
+                    String.join(", ", Arrays.stream(hiddenPlayersUUID).map(uuid -> Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid)).toList()));
         }
     }
 
@@ -144,10 +173,13 @@ public class M2DCommands {
         if (linkedPlayersUUID.length == 0) {
             return Tuples.of(Mc2Discord.INSTANCE.langManager.translate("commands.linked.empty"), 0);
         } else {
-            return Tuples.of(Mc2Discord.INSTANCE.langManager.translate("commands.linked.list", linkedPlayersUUID.length, String.join(", ", Arrays.stream(linkedPlayersUUID).map(uuid -> Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid)).toList())), linkedPlayersUUID.length);
+            return Tuples.of(
+                    Mc2Discord.INSTANCE.langManager.translate("commands.linked.list", linkedPlayersUUID.length,
+                            String.join(", ",
+                                    Arrays.stream(linkedPlayersUUID).map(uuid -> Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid)).toList())),
+                    linkedPlayersUUID.length);
         }
     }
-
 
     public static String addLinkedPlayers(UUID target_uuid, long discord_id) {
         if (Mc2Discord.INSTANCE.linkedPlayerList.contains(target_uuid))

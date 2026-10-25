@@ -37,9 +37,7 @@ public class LoggingManager {
         }
 
         @PluginFactory
-        public static DiscordAppender createAppender(
-                @PluginAttribute("name") String name,
-                @PluginElement("Filter") Filter filter) {
+        public static DiscordAppender createAppender(@PluginAttribute("name") String name, @PluginElement("Filter") Filter filter) {
             return new DiscordAppender(name, filter);
         }
 
@@ -49,8 +47,8 @@ public class LoggingManager {
                 return;
 
             if (event.getLevel().intLevel() <= Level.getLevel(Mc2Discord.INSTANCE.config.misc.logs_level).intLevel()) {
-                logs += Entity.replace(Mc2Discord.INSTANCE.config.misc.logs_format, Collections.singletonList(new LogEntity(event.getLoggerName(), event.getThreadName(), event.getInstant()
-                        .getEpochMillisecond(), event.getLevel(), event.getMessage()))) + "\n";
+                logs += Entity.replace(Mc2Discord.INSTANCE.config.misc.logs_format, Collections.singletonList(new LogEntity(event.getLoggerName(),
+                        event.getThreadName(), event.getInstant().getEpochMillisecond(), event.getLevel(), event.getMessage()))) + "\n";
                 scheduleMessage();
             }
         }
@@ -65,7 +63,8 @@ public class LoggingManager {
                             if (M2DUtils.isNotConfigured())
                                 return;
 
-                            MessageManager.sendMessage(Collections.singletonList("logs"), logs, MessageManager.default_username, MessageManager.default_avatar).subscribe();
+                            MessageManager.sendMessage(Collections.singletonList("logs"), logs, MessageManager.default_username, MessageManager.default_avatar)
+                                    .subscribe();
                             logs = "";
                             break;
                         }

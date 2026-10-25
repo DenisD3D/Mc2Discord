@@ -21,7 +21,7 @@ import java.util.List;
 @Mixin(EmoteCommands.class)
 public class EmoteCommandsMixin {
 
-    @SuppressWarnings({ "target", "Duplicates" })
+    @SuppressWarnings({"target", "Duplicates"})
     //? if >=26.1 {
     @Inject(method = {"lambda$register$1"}, at = @At("HEAD"))
     //?} else {
@@ -38,14 +38,12 @@ public class EmoteCommandsMixin {
         ServerPlayer serverPlayer = null;
         serverPlayer = source.getPlayer();
 
-        String messageContent = ChatType.bind(ChatType.EMOTE_COMMAND, source).decorate(message.decoratedContent())
-                .getString();
+        String messageContent = ChatType.bind(ChatType.EMOTE_COMMAND, source).decorate(message.decoratedContent()).getString();
         if (serverPlayer != null) {
-            PlayerEntity player = new PlayerEntity(serverPlayer.getGameProfile().name(),
-                    serverPlayer.getDisplayName().getString(), serverPlayer.getGameProfile().id());
+            PlayerEntity player = new PlayerEntity(serverPlayer.getGameProfile().name(), serverPlayer.getDisplayName().getString(),
+                    serverPlayer.getGameProfile().id());
             MessageManager
-                    .sendChatMessage(messageContent,
-                            Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_display_name, List.of(player)),
+                    .sendChatMessage(messageContent, Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_display_name, List.of(player)),
                             Entity.replace(Mc2Discord.INSTANCE.config.style.webhook_avatar_api, List.of(player)))
                     .subscribe();
         } else {

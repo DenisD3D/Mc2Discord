@@ -15,7 +15,6 @@ public class LogEntity extends Entity {
     public final Level level;
     public final Message message;
 
-
     public LogEntity(String loggerName, String threadName, long time, Level level, Message message) {
 
         this.loggerName = loggerName;
@@ -37,4 +36,3 @@ public class LogEntity extends Entity {
 
     }
 }
-

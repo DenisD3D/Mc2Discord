@@ -14,8 +14,7 @@ public class SnowflakeConverter implements Converter<Snowflake, Object> {
         } else if (value instanceof Number) {
             return Snowflake.of(((Number) value).longValue());
         } else {
-            throw new IllegalArgumentException(
-                    "Cannot convert " + value + " to a Snowflake");
+            throw new IllegalArgumentException("Cannot convert " + value + " to a Snowflake");
         }
     }
 

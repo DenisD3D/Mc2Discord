@@ -33,12 +33,10 @@ public class LifecycleEvents {
         Mc2Discord.INSTANCE.vars.bot_id = readyEvent.getSelf().getId();
 
         Mc2Discord.INSTANCE.vars.mc2discord_display_name = Mc2Discord.INSTANCE.config.style.bot_name.isEmpty()
-                ? readyEvent.getSelf()
-                        .getUsername()
+                ? readyEvent.getSelf().getUsername()
                 : Entity.replace(Mc2Discord.INSTANCE.config.style.bot_name);
         Mc2Discord.INSTANCE.vars.mc2discord_avatar = Mc2Discord.INSTANCE.config.style.bot_avatar.isEmpty()
-                ? readyEvent.getSelf()
-                        .getAvatarUrl()
+                ? readyEvent.getSelf().getAvatarUrl()
                 : Entity.replace(Mc2Discord.INSTANCE.config.style.bot_avatar);
         Mc2Discord.INSTANCE.vars.mc2discord_webhook_name = "Mc2Dis Webhook - " + Mc2Discord.INSTANCE.vars.bot_name + "#"
                 + Mc2Discord.INSTANCE.vars.bot_discriminator;
@@ -49,15 +47,11 @@ public class LifecycleEvents {
                 continue;
             }
 
-            Mc2Discord.INSTANCE.client.getChannelById(channel.channel_id)
-                    .ofType(GuildChannel.class)
-                    .doOnError(ClientException.class, e -> {
-                        Map<String, Object> stringObjectMap = e.getErrorResponse().map(ErrorResponse::getFields)
-                                .orElse(Collections.emptyMap());
-                        Mc2Discord.INSTANCE.errors.add(stringObjectMap.getOrDefault("message", "") + " (code "
-                                + stringObjectMap.getOrDefault("code", "xxx") + ") for channel "
-                                + channel.channel_id.asString());
-                    })
+            Mc2Discord.INSTANCE.client.getChannelById(channel.channel_id).ofType(GuildChannel.class).doOnError(ClientException.class, e -> {
+                Map<String, Object> stringObjectMap = e.getErrorResponse().map(ErrorResponse::getFields).orElse(Collections.emptyMap());
+                Mc2Discord.INSTANCE.errors.add(stringObjectMap.getOrDefault("message", "") + " (code " + stringObjectMap.getOrDefault("code", "xxx")
+                        + ") for channel " + channel.channel_id.asString());
+            })
                     .flatMap(guildChannel -> guildChannel.getEffectivePermissions(Mc2Discord.INSTANCE.vars.bot_id)
                             .map(permissions -> Tuples.of(guildChannel, permissions)))
                     .subscribe(tuple -> {
@@ -72,19 +66,17 @@ public class LifecycleEvents {
                             if (!permissionSet.contains(Permission.SEND_MESSAGES)) {
                                 missingPermissions.add("SEND_MESSAGES");
                             }
-                            if (channel.mode == Channels.Channel.SendMode.WEBHOOK
-                                    && !permissionSet.contains(Permission.MANAGE_WEBHOOKS)) {
+                            if (channel.mode == Channels.Channel.SendMode.WEBHOOK && !permissionSet.contains(Permission.MANAGE_WEBHOOKS)) {
                                 missingPermissions.add("MANAGE_WEBHOOKS");
                             }
-                            if (guildChannel instanceof ThreadChannel
-                                    && !permissionSet.contains(Permission.SEND_MESSAGES_IN_THREADS)) {
+                            if (guildChannel instanceof ThreadChannel && !permissionSet.contains(Permission.SEND_MESSAGES_IN_THREADS)) {
                                 missingPermissions.add("SEND_MESSAGES_IN_THREADS");
                             }
                         }
 
                         if (!missingPermissions.isEmpty()) {
-                            Mc2Discord.INSTANCE.errors.add("Missing permissions for message channel "
-                                    + channel.channel_id.asString() + ": " + String.join(", ", missingPermissions));
+                            Mc2Discord.INSTANCE.errors.add(
+                                    "Missing permissions for message channel " + channel.channel_id.asString() + ": " + String.join(", ", missingPermissions));
                         }
                     });
         }
@@ -92,37 +84,30 @@ public class LifecycleEvents {
         if (Mc2Discord.INSTANCE.config.features.status_channels) {
             for (StatusChannels.StatusChannel channel : Mc2Discord.INSTANCE.config.statusChannels.channels) {
                 if (channel.channel_id.equals(M2DUtils.NIL_SNOWFLAKE)) {
-                    Mc2Discord.INSTANCE.errors
-                            .add("Invalid channel id for status channel " + channel.channel_id.asString());
+                    Mc2Discord.INSTANCE.errors.add("Invalid channel id for status channel " + channel.channel_id.asString());
                     continue;
                 }
 
-                Mc2Discord.INSTANCE.client.getChannelById(channel.channel_id)
-                        .ofType(GuildChannel.class)
-                        .doOnError(ClientException.class, e -> {
-                            Map<String, Object> stringObjectMap = e.getErrorResponse().map(ErrorResponse::getFields)
-                                    .orElse(Collections.emptyMap());
-                            Mc2Discord.INSTANCE.errors.add(stringObjectMap.getOrDefault("message", "") + " (code "
-                                    + stringObjectMap.getOrDefault("code", "xxx") + ") for status channel "
-                                    + channel.channel_id.asString());
-                        })
-                        .flatMap(guildChannel -> guildChannel.getEffectivePermissions(Mc2Discord.INSTANCE.vars.bot_id))
-                        .subscribe(permissionSet -> {
-                            ArrayList<String> missingPermissions = new ArrayList<>();
-                            if (!permissionSet.contains(Permission.ADMINISTRATOR)) {
-                                if (!permissionSet.contains(Permission.VIEW_CHANNEL)) {
-                                    missingPermissions.add("VIEW_CHANNEL");
-                                }
-                                if (!permissionSet.contains(Permission.MANAGE_CHANNELS)) {
-                                    missingPermissions.add("MANAGE_CHANNELS");
-                                }
-                            }
+                Mc2Discord.INSTANCE.client.getChannelById(channel.channel_id).ofType(GuildChannel.class).doOnError(ClientException.class, e -> {
+                    Map<String, Object> stringObjectMap = e.getErrorResponse().map(ErrorResponse::getFields).orElse(Collections.emptyMap());
+                    Mc2Discord.INSTANCE.errors.add(stringObjectMap.getOrDefault("message", "") + " (code " + stringObjectMap.getOrDefault("code", "xxx")
+                            + ") for status channel " + channel.channel_id.asString());
+                }).flatMap(guildChannel -> guildChannel.getEffectivePermissions(Mc2Discord.INSTANCE.vars.bot_id)).subscribe(permissionSet -> {
+                    ArrayList<String> missingPermissions = new ArrayList<>();
+                    if (!permissionSet.contains(Permission.ADMINISTRATOR)) {
+                        if (!permissionSet.contains(Permission.VIEW_CHANNEL)) {
+                            missingPermissions.add("VIEW_CHANNEL");
+                        }
+                        if (!permissionSet.contains(Permission.MANAGE_CHANNELS)) {
+                            missingPermissions.add("MANAGE_CHANNELS");
+                        }
+                    }
 
-                            if (!missingPermissions.isEmpty()) {
-                                Mc2Discord.INSTANCE.errors.add("Missing permissions for status channel "
-                                        + channel.channel_id.asString() + ": " + String.join(", ", missingPermissions));
-                            }
-                        });
+                    if (!missingPermissions.isEmpty()) {
+                        Mc2Discord.INSTANCE.errors
+                                .add("Missing permissions for status channel " + channel.channel_id.asString() + ": " + String.join(", ", missingPermissions));
+                    }
+                });
             }
         }
 
@@ -134,8 +119,7 @@ public class LifecycleEvents {
 
         // Allowed mentions
         Mc2Discord.INSTANCE.vars.allowedMentions = Possible.of(AllowedMentions.builder()
-                .parseType(Mc2Discord.INSTANCE.config.misc.allowed_mention.stream().map(AllowedMentions.Type::valueOf)
-                        .toArray(AllowedMentions.Type[]::new))
+                .parseType(Mc2Discord.INSTANCE.config.misc.allowed_mention.stream().map(AllowedMentions.Type::valueOf).toArray(AllowedMentions.Type[]::new))
                 .build());
 
         // Channels, emojis and members caches
@@ -147,18 +131,17 @@ public class LifecycleEvents {
                 .flatMap(GuildChannel::getGuild)
                 .distinct();
 
-        Flux<GuildEmoji> guildEmojiFlux = guilds.flatMap(Guild::getEmojis).doOnNext(
-                emoji -> Mc2Discord.INSTANCE.vars.emojiCache.put(emoji.getGuildId(), emoji.getName(), emoji.getId()));
+        Flux<GuildEmoji> guildEmojiFlux = guilds.flatMap(Guild::getEmojis)
+                .doOnNext(emoji -> Mc2Discord.INSTANCE.vars.emojiCache.put(emoji.getGuildId(), emoji.getName(), emoji.getId()));
         Flux<GuildChannel> guildChannelFlux = guilds.flatMap(Guild::getChannels).doOnNext(channel -> {
             Mc2Discord.INSTANCE.vars.channelCache.put(channel.getGuildId(), channel.getName(), channel.getId());
             Mc2Discord.INSTANCE.vars.channelCacheReverse.put(channel.getId(), channel.getGuildId());
         });
-        Flux<Member> guildMemberFlux = guilds.flatMap(Guild::getMembers).doOnError(
-                throwable -> Mc2Discord.INSTANCE.errors.add("Missing SERVER MEMBERS intent, cannot cache members list"))
+        Flux<Member> guildMemberFlux = guilds.flatMap(Guild::getMembers)
+                .doOnError(throwable -> Mc2Discord.INSTANCE.errors.add("Missing SERVER MEMBERS intent, cannot cache members list"))
                 .doOnNext(M2DUtils::cacheMember);
 
-        Mono.when(guildEmojiFlux, guildChannelFlux, guildMemberFlux)
-                .doOnSuccess(unused -> LifecycleEvents.mcOrDiscordReady()).subscribe();
+        Mono.when(guildEmojiFlux, guildChannelFlux, guildMemberFlux).doOnSuccess(unused -> LifecycleEvents.mcOrDiscordReady()).subscribe();
     }
 
     public static void mcOrDiscordReady() {
@@ -171,8 +154,7 @@ public class LifecycleEvents {
         LoggingManager.init();
         AccountManager.init();
 
-        Mc2Discord.LOGGER.info("Mc2Discord started as " + Mc2Discord.INSTANCE.vars.bot_name + "#"
-                + Mc2Discord.INSTANCE.vars.bot_discriminator);
+        Mc2Discord.LOGGER.info("Mc2Discord started as " + Mc2Discord.INSTANCE.vars.bot_name + "#" + Mc2Discord.INSTANCE.vars.bot_discriminator);
         String newVersion = Mc2Discord.INSTANCE.minecraft.getNewVersion();
         if (newVersion != null) {
             Mc2Discord.LOGGER.info("New Mc2Discord version available: " + newVersion);
@@ -181,9 +163,7 @@ public class LifecycleEvents {
             Mc2Discord.LOGGER.warn(error);
         }
 
-        MessageManager
-                .sendInfoMessage("server_start",
-                        Entity.replace(Mc2Discord.INSTANCE.config.messages.start.asString(), Collections.emptyList()))
+        MessageManager.sendInfoMessage("server_start", Entity.replace(Mc2Discord.INSTANCE.config.messages.start.asString(), Collections.emptyList()))
                 .subscribe();
     }
 
