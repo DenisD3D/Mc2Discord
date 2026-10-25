@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
@@ -14,6 +16,7 @@ import java.util.regex.Pattern;
 
 public abstract class Entity {
     public static final Pattern VARIABLE_PATTERN = Pattern.compile("\\$\\{(.*?)(?:\\|(.*?))?}");
+    private static final Set<String> invalidFormatsWarned = ConcurrentHashMap.newKeySet(); // Warn only once per invalid format, as logs are also formatted
 
 
     public static String replace(String content) {
@@ -59,7 +62,13 @@ public abstract class Entity {
             }
 
             if (matcher.group(2) != null) {
-                replacement = formatters.getOrDefault(matcher.group(1), (format, value) -> value).apply(matcher.group(2), replacement);
+                try {
+                    replacement = formatters.getOrDefault(matcher.group(1), (format, value) -> value).apply(matcher.group(2), replacement);
+                } catch (RuntimeException e) {
+                    if (invalidFormatsWarned.add(matcher.group())) {
+                        Mc2Discord.LOGGER.warn("Invalid format for variable {}: {}", matcher.group(), e.toString());
+                    }
+                }
             }
 
             if (replacement != null) {
