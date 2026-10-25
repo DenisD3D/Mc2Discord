@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+    Java formatting rules, shared by Spotless (./gradlew spotlessApply) and VS Code (.vscode/settings.json).
+    Only the settings differing from the Eclipse defaults are listed.
+-->
+<profiles version="23">
+    <profile kind="CodeFormatterProfile" name="Mc2Discord" version="23">
+        <!-- Indentation -->
+        <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="space"/>
+        <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="4"/>
+        <setting id="org.eclipse.jdt.core.formatter.indentation.size" value="4"/>
+
+        <!-- Line wrapping -->
+        <setting id="org.eclipse.jdt.core.formatter.lineSplit" value="160"/>
+        <setting id="org.eclipse.jdt.core.formatter.comment.line_length" value="160"/>
+        <!-- Method chains too long for one line get one call per line: wrap all elements, except first element if not necessary -->
+        <setting id="org.eclipse.jdt.core.formatter.alignment_for_selector_in_method_invocation" value="80"/>
+        <!-- The body of an "if" / "else" without braces always goes on its own line -->
+        <setting id="org.eclipse.jdt.core.formatter.keep_then_statement_on_same_line" value="false"/>
+        <setting id="org.eclipse.jdt.core.formatter.keep_simple_if_on_one_line" value="false"/>
+        <setting id="org.eclipse.jdt.core.formatter.keep_else_statement_on_same_line" value="false"/>
+
+        <!-- Comments are left untouched: Stonecutter stores the code of the other Minecraft versions / loaders in comments -->
+        <setting id="org.eclipse.jdt.core.formatter.comment.format_line_comments" value="false"/>
+        <setting id="org.eclipse.jdt.core.formatter.comment.format_block_comments" value="false"/>
+        <setting id="org.eclipse.jdt.core.formatter.comment.format_javadoc_comments" value="false"/>
+        <setting id="org.eclipse.jdt.core.formatter.comment.format_header" value="false"/>
+
+        <!-- Allow "// @formatter:off" / "// @formatter:on" -->
+        <setting id="org.eclipse.jdt.core.formatter.use_on_off_tags" value="true"/>
+
+        <setting id="org.eclipse.jdt.core.formatter.insert_new_line_at_end_of_file_if_missing" value="insert"/>
+    </profile>
+</profiles>

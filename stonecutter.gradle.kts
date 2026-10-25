@@ -1,5 +1,19 @@
 plugins {
     id("dev.kikugie.stonecutter")
+    id("com.diffplug.spotless") version "8.0.0"
+}
+
+repositories {
+    mavenCentral()
+}
+
+// Java formatting (./gradlew spotlessApply), rules in eclipse-formatter.xml, also used by VS Code (.vscode/settings.json).
+// Only formats the code of the active version: the other versions are in comments, which are left untouched.
+spotless {
+    java {
+        target("src/*/java/**/*.java", "mc2discord-core/src/*/java/**/*.java")
+        eclipse().configFile("eclipse-formatter.xml")
+    }
 }
 
 stonecutter active "26.3-fabric"

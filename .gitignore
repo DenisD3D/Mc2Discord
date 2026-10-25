@@ -4,7 +4,8 @@ build/
 
 # ide
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json
 .kotlin/
 .settings/
 .classpath

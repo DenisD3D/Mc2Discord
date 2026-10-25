@@ -1,0 +1,11 @@
+{
+    "java.format.enabled": true,
+    "java.format.settings.url": "eclipse-formatter.xml",
+    "java.format.settings.profile": "Mc2Discord",
+    "[java]": {
+        "editor.defaultFormatter": "redhat.java",
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "never"
+        }
+    },
+}
