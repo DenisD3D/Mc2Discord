@@ -87,7 +87,7 @@ public class DiscordEvent {
         // Content
         MessageEntity messageEntity = new MessageEntity(M2DUtils.replaceAllMentions(event.getMessage().getContent(), event.getMessage().getUserMentions(), event.getMessage().getRoleMentions().collectList().block(), event.getGuildId().orElse(null)));
         MemberEntity memberEntity = new MemberEntity(member.getGlobalName().orElse(member.getUsername()), member.getUsername(), member.getNickname().orElse(""), member.getAvatarUrl(), M2DUtils.getMemberColor(member).blockOptional().orElseThrow());
-        String content = Entity.replace(Mc2Discord.INSTANCE.config.style.minecraft_chat_format, Arrays.asList(messageEntity, memberEntity));
+        String content = Entity.replaceForMinecraft(Mc2Discord.INSTANCE.config.style.minecraft_chat_format, Arrays.asList(messageEntity, memberEntity));
 
         // Attachements
         HashMap<String, String> attachments = event.getMessage().getAttachments().stream().map(attachment -> new HashMap.SimpleEntry<>(attachment.getFilename(), attachment.getUrl())).collect(HashMap::new, (m, v) -> m.put(v.getKey(), v.getValue()), HashMap::putAll);

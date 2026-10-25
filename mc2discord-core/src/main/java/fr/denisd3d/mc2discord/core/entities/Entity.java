@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +21,19 @@ public abstract class Entity {
     }
 
     public static String replace(String content, List<Entity> entities) {
+        return replace(content, entities, UnaryOperator.identity());
+    }
+
+    /**
+     * Same as {@link #replace(String, List)} but for content that will then be parsed by the Minecraft formatter.
+     * Each "$" of the replaced values is doubled so that values (e.g. a Discord message) can't inject formatting variables.
+     * The Minecraft formatter turns "$$" back into "$".
+     */
+    public static String replaceForMinecraft(String content, List<Entity> entities) {
+        return replace(content, entities, value -> value.replace("$", "$$"));
+    }
+
+    private static String replace(String content, List<Entity> entities, UnaryOperator<String> escaper) {
         Map<String, String> replacements = new HashMap<>();
         Map<String, BiFunction<String, String, String>> formatters = new HashMap<>();
 
@@ -29,17 +43,20 @@ public abstract class Entity {
             entity.getReplacements(replacements, formatters);
         }
 
-        return replace(content, replacements, formatters);
+        return replace(content, replacements, formatters, escaper);
     }
 
     abstract void getReplacements(Map<String, String> replacements, Map<String, BiFunction<String, String, String>> formatters);
 
-    private static String replace(String content, Map<String, String> replacements, Map<String, BiFunction<String, String, String>> formatters) {
+    private static String replace(String content, Map<String, String> replacements, Map<String, BiFunction<String, String, String>> formatters, UnaryOperator<String> escaper) {
         Matcher matcher = VARIABLE_PATTERN.matcher(content);
         StringBuilder builder = new StringBuilder();
 
         while (matcher.find()) {
             String replacement = replacements.get(matcher.group(1));
+            if (replacement != null) {
+                replacement = escaper.apply(replacement);
+            }
 
             if (matcher.group(2) != null) {
                 replacement = formatters.getOrDefault(matcher.group(1), (format, value) -> value).apply(matcher.group(2), replacement);

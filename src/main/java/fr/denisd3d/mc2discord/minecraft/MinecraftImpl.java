@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 
 public class MinecraftImpl implements IMinecraft {
     private static final Pattern URL_PATTERN = Pattern.compile("(\\b(?:https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|])");
-    private static final Pattern COMBINED_PATTERN = Pattern.compile(Entity.VARIABLE_PATTERN.pattern() + "|" + URL_PATTERN.pattern()); // Capturing group 1: variable name, capturing group 2: variable format, capturing group 3: url
+    private static final Pattern COMBINED_PATTERN = Pattern.compile("\\$\\$|" + Entity.VARIABLE_PATTERN.pattern() + "|" + URL_PATTERN.pattern()); // Escaped "$$", or capturing group 1: variable name, capturing group 2: variable format, capturing group 3: url
 
     public static MutableComponent convertToComponent(String content) {
         return convertToComponent(content, Collections.emptyMap());
@@ -52,7 +52,11 @@ public class MinecraftImpl implements IMinecraft {
 
             if (variable_name != null) {
                 switch (variable_name) {
-                    case "color_start" -> baseStyle = baseStyle.withColor(TextColor.parseColor(matcher.group(2)).getOrThrow());
+                    case "color_start" -> {
+                        if (matcher.group(2) != null) {
+                            baseStyle = TextColor.parseColor(matcher.group(2)).result().map(baseStyle::withColor).orElse(baseStyle);
+                        }
+                    }
                     case "color_end" -> baseStyle = baseStyle.withColor(ChatFormatting.WHITE);
                     case "bold_start" -> baseStyle = baseStyle.withBold(true);
                     case "bold_end" -> baseStyle = baseStyle.withBold(false);
@@ -73,6 +77,8 @@ public class MinecraftImpl implements IMinecraft {
                 }
             } else if (url != null) {
                 component.append(Component.literal(url).withStyle(baseStyle).withStyle(style -> style.withClickEvent(VersionCompat.openUrl(url))));
+            } else { // "$$", see Entity#replaceForMinecraft
+                component.append(Component.literal("$").withStyle(baseStyle));
             }
         }
         component.append(Component.literal(content.substring(lastAppendPosition)).withStyle(baseStyle));

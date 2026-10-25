@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,6 +64,6 @@ public class AccountCommands {
                         .withColor(ChatFormatting.BLUE)
                         .withUnderlined(true)));
 
-        return MinecraftImpl.convertToComponent(Entity.replace(Mc2Discord.INSTANCE.config.account.messages.link_get_code.asString()), replacements);
+        return MinecraftImpl.convertToComponent(Entity.replaceForMinecraft(Mc2Discord.INSTANCE.config.account.messages.link_get_code.asString(), Collections.emptyList()), replacements);
     }
 }
