@@ -50,12 +50,12 @@ public class NeoForgeEvents {
                                                         .getMsgId(),
                                                         player.getCombatTracker().getDeathMessage().getString(),
                                                         player.getCombatTracker().getCombatDuration(),
-                                                        Optional.of(player.getCombatTracker().mob)
-                                                                        .map(livingEntity -> livingEntity
+                                                        Optional.ofNullable(event.getSource().getEntity())
+                                                                        .map(attacker -> attacker
                                                                                         .getDisplayName().getString())
                                                                         .orElse(""),
-                                                        Optional.of(player.getCombatTracker().mob)
-                                                                        .map(LivingEntity::getHealth).orElse(0.0f)));
+                                                        Optional.ofNullable(event.getSource().getEntity())
+                                                                        .filter(LivingEntity.class::isInstance).map(attacker -> ((LivingEntity) attacker).getHealth()).orElse(0.0f)));
                 }
         }
 
