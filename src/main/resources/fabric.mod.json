@@ -21,7 +21,7 @@
         "mc2discord.mixins.json",
         "mc2discord.fabric.mixins.json"
     ],
-    "accessWidener" : "${modId}.accesswidener",
+    "accessWidener": "${modId}.accesswidener",
     "depends": {
         "fabricloader": ">=${fabricLoaderVersion}",
         "minecraft": "${minecraftVersionRange}",

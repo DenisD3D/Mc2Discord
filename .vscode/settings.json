@@ -8,4 +8,14 @@
             "source.organizeImports": "never"
         }
     },
+    "files.associations": {
+        "*.mcmeta": "json"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features",
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false,
+        "files.insertFinalNewline": true
+    }
 }

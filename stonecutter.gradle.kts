@@ -20,6 +20,11 @@ spotless {
         target("*.gradle.kts", "mc2discord-core/*.gradle.kts", "buildSrc/*.gradle.kts", "buildSrc/src/main/kotlin/*.gradle.kts")
         ktlint()
     }
+
+    json {
+        target("*.json", "src/*/resources/**/*.json", "src/*/resources/**/*.mcmeta", "mc2discord-core/src/*/resources/**/*.json")
+        gson().indentWithSpaces(4)
+    }
 }
 
 stonecutter active "26.3-fabric"
