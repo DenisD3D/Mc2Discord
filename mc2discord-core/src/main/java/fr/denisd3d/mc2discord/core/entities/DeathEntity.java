@@ -9,14 +9,14 @@ public class DeathEntity extends Entity {
     private static final String prefix = "death_";
     public final String damageType;
     public final String message;
-    public final int combatDuration;
+    public final long combatDuration; // In milliseconds
     public final String attackerName;
     public final float attackerHealth;
 
-    public DeathEntity(String damageType, String message, int combatDuration, String attackerName, float attackerHealth) {
+    public DeathEntity(String damageType, String message, int combatDurationTicks, String attackerName, float attackerHealth) {
         this.damageType = damageType;
         this.message = message;
-        this.combatDuration = combatDuration;
+        this.combatDuration = combatDurationTicks * 50L; // 20 ticks per second
         this.attackerName = attackerName;
         this.attackerHealth = attackerHealth;
     }
@@ -25,7 +25,7 @@ public class DeathEntity extends Entity {
     public void getReplacements(Map<String, String> replacements, Map<String, BiFunction<String, String, String>> formatters) {
         replacements.put(prefix + "damage_type", this.damageType);
         replacements.put(prefix + "message", this.message);
-        replacements.put(prefix + "combat_duration", Integer.toString(this.combatDuration));
+        replacements.put(prefix + "combat_duration", Long.toString(this.combatDuration));
         replacements.put(prefix + "attacker_name", this.attackerName);
         replacements.put(prefix + "attacker_health", Float.toString(this.attackerHealth));
 
