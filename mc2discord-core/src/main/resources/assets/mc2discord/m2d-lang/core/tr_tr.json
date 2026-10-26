@@ -12,7 +12,7 @@
     "config.account.messages.unlink_successful.value": "Hesabınız şimdi bağlantısı kesildi",
     "config.account.messages.unlink_error.value": "Hesabınızın bağlantısını kesemezsiniz",
     "config.account.messages.missing_roles.value": "Hesabınızı bağlamak için gerekli rollere sahip değilsiniz",
-    "config.style.reply_format.value": "${member_nickname} yanıt olarak: ",
+    "config.style.reply_format.value": "${member_display_name} yanıt olarak: ",
     "config.style.presence.message.value": "${online_players} / ${max_players} oyuncu",
     "config.misc.discord_text.value": "Davet bağlantısı tanımlanmamış"
 }

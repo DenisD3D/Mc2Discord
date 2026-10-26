@@ -36,7 +36,7 @@
     "config.account.messages.unlink_successful.value": "Sua conta agora está desvinculada",
     "config.account.messages.unlink_error.value": "Não é possível desvincular sua conta",
     "config.account.messages.missing_roles.value": "Você não tem os papéis necessários para vincular sua conta",
-    "config.style.reply_format.value": "Respondendo a ${member_nickname}: ",
+    "config.style.reply_format.value": "Respondendo a ${member_display_name}: ",
     "config.style.presence.message.value": "${online_players} / ${max_players} jogadores",
     "config.misc.discord_text.value": "Link de convite não definido"
 }

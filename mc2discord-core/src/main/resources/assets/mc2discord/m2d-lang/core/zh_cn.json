@@ -13,7 +13,7 @@
     "config.account.messages.unlink_successful.value": "您已成功解绑了您的账户",
     "config.account.messages.unlink_error.value": "解绑失败",
     "config.account.messages.missing_roles.value": "您没有足够的权限来绑定您的账户",
-    "config.style.reply_format.value": "回复给 ${member_nickname}: ",
+    "config.style.reply_format.value": "回复给 ${member_display_name}: ",
     "config.style.presence.message.value": "当前有 ${online_players} / ${max_players} 个玩家",
     "config.misc.discord_text.value": "尚未设置邀请链接"
 }
