@@ -1,30 +1,15 @@
 package fr.denisd3d.mc2discord.minecraft;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.ParseResults;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.context.StringRange;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import fr.denisd3d.mc2discord.core.M2DUtils;
 import fr.denisd3d.mc2discord.core.Mc2Discord;
-import fr.denisd3d.mc2discord.core.MessageManager;
 import fr.denisd3d.mc2discord.core.Vars;
-import fr.denisd3d.mc2discord.core.entities.Entity;
-import fr.denisd3d.mc2discord.core.entities.PlayerEntity;
 import fr.denisd3d.mc2discord.core.events.LifecycleEvents;
 import fr.denisd3d.mc2discord.minecraft.commands.DiscordCommandImpl;
 import fr.denisd3d.mc2discord.minecraft.commands.DiscordCommandSource;
 import fr.denisd3d.mc2discord.minecraft.commands.M2DCommandImpl;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.arguments.ComponentArgument;
-import net.minecraft.commands.arguments.MessageArgument;
-import net.minecraft.network.chat.ChatType;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.server.MinecraftServer;
-
-import java.util.List;
 
 public class Mc2DiscordMinecraft {
     public static CommandSourceStack commandSource;

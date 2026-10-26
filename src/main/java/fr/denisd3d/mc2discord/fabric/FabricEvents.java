@@ -1,24 +1,19 @@
 package fr.denisd3d.mc2discord.fabric;
 
 //? if fabric {
-import com.mojang.brigadier.ParseResults;
 import fr.denisd3d.mc2discord.core.events.MinecraftEvents;
-import fr.denisd3d.mc2discord.fabric.events.CommandExecuteCallback;
 import fr.denisd3d.mc2discord.fabric.events.PlayerCompletedAdvancementCallback;
 import fr.denisd3d.mc2discord.fabric.events.PlayerDeathCallback;
 import fr.denisd3d.mc2discord.minecraft.Entities;
-import fr.denisd3d.mc2discord.minecraft.Mc2DiscordMinecraft;
 import net.fabricmc.fabric.api.message.v1.ServerMessageEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.PlayerChatMessage;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 
 public class FabricEvents {
