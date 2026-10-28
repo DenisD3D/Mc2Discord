@@ -1,54 +1,54 @@
 package fr.denisd3d.mc2discord.core.config;
 
-import com.electronwill.nightconfig.core.conversion.Conversion;
-import com.electronwill.nightconfig.core.conversion.Path;
-import com.electronwill.nightconfig.core.conversion.PreserveNotNull;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeComment;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeKey;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeSkipDeserializingIf;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeSkipDeserializingIf.SkipDeIf;
 import discord4j.common.util.Snowflake;
-import fr.denisd3d.config4j.Comment;
 import fr.denisd3d.mc2discord.core.M2DUtils;
-import fr.denisd3d.mc2discord.core.config.converters.SnowflakeConverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Commands {
-    @Path("prefix")
-    @Comment("config.commands.prefix.comment")
-    @PreserveNotNull
+    @SerdeKey("prefix")
+    @SerdeComment("config.commands.prefix.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public String prefix = "!";
 
-    @Path("use_codeblocks")
-    @Comment("config.commands.use_codeblocks.comment")
-    @PreserveNotNull
+    @SerdeKey("use_codeblocks")
+    @SerdeComment("config.commands.use_codeblocks.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public boolean use_codeblocks = true;
 
-    @Path("Permission")
-    @Comment("config.commands.permission.comment")
-    @PreserveNotNull
+    @SerdeKey("Permission")
+    @SerdeComment("config.commands.permission.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public List<CommandPermission> permissions = new ArrayList<>();
 
-    @Path("comment")
+    @SerdeKey("comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public String comment;
 
     public static class CommandPermission {
-        @Path("id")
-        @Comment("config.commands.permission.id.comment")
-        @Conversion(SnowflakeConverter.class)
-        @PreserveNotNull
+        @SerdeKey("id")
+        @SerdeComment("config.commands.permission.id.comment")
+        @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
         public Snowflake id = M2DUtils.NIL_SNOWFLAKE;
 
-        @Path("permission_level")
-        @Comment("config.commands.permission.permission_level.comment")
-        @PreserveNotNull
+        @SerdeKey("permission_level")
+        @SerdeComment("config.commands.permission.permission_level.comment")
+        @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
         public Integer permission_level = -1;
 
-        @Path("commands")
-        @Comment("config.commands.permission.commands.comment")
-        @PreserveNotNull
+        @SerdeKey("commands")
+        @SerdeComment("config.commands.permission.commands.comment")
+        @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
         public List<String> commands = new ArrayList<>();
 
-        @Path("comment")
+        @SerdeKey("comment")
+        @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
         public String comment;
 
         public CommandPermission(String... commands) {

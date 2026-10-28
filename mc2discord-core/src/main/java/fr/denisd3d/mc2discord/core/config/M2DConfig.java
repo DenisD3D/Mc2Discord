@@ -1,10 +1,21 @@
 package fr.denisd3d.mc2discord.core.config;
 
-import com.electronwill.nightconfig.core.conversion.Path;
-import com.electronwill.nightconfig.core.conversion.PreserveNotNull;
-import fr.denisd3d.config4j.Comment;
+import com.electronwill.nightconfig.core.serde.ObjectDeserializerBuilder;
+import com.electronwill.nightconfig.core.serde.ObjectSerializerBuilder;
+import com.electronwill.nightconfig.core.serde.ValueDeserializer;
+import com.electronwill.nightconfig.core.serde.ValueDeserializerProvider;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeComment;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeKey;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeSkipDeserializingIf;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeSkipDeserializingIf.SkipDeIf;
+import discord4j.common.util.Snowflake;
 import fr.denisd3d.config4j.Config4J;
 import fr.denisd3d.config4j.OnlyIf;
+import fr.denisd3d.mc2discord.core.config.converters.RandomTemplate;
+import fr.denisd3d.mc2discord.core.config.converters.RandomTemplateConverter;
+import fr.denisd3d.mc2discord.core.config.converters.SnowflakeConverter;
+import fr.denisd3d.mc2discord.core.config.converters.TemplateConverter;
+import fr.denisd3d.mc2discord.core.entities.Template;
 
 import java.io.File;
 import java.util.List;
@@ -12,64 +23,86 @@ import java.util.function.Function;
 
 public class M2DConfig extends Config4J {
 
-    @Path("lang")
-    @Comment("config.lang.comment")
-    @PreserveNotNull
+    @SerdeKey("lang")
+    @SerdeComment("config.lang.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     @SuppressWarnings("unused")
     public String lang = "en_us";
 
-    @Path("General")
-    @Comment("config.general.comment")
-    @PreserveNotNull
+    @SerdeKey("General")
+    @SerdeComment("config.general.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public General general = new General();
 
-    @Path("Channels")
-    @Comment("config.channels.comment")
-    @PreserveNotNull
+    @SerdeKey("Channels")
+    @SerdeComment("config.channels.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public Channels channels = new Channels();
 
-    @Path("Messages")
-    @Comment("config.messages.comment")
-    @PreserveNotNull
+    @SerdeKey("Messages")
+    @SerdeComment("config.messages.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public Messages messages = new Messages();
 
-    @Path("Commands")
-    @Comment("config.commands.comment")
-    @PreserveNotNull
+    @SerdeKey("Commands")
+    @SerdeComment("config.commands.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public Commands commands = new Commands();
 
-    @Path("Features")
-    @Comment("config.features.comment")
-    @PreserveNotNull
+    @SerdeKey("Features")
+    @SerdeComment("config.features.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public Features features = new Features();
 
-    @Path("StatusChannels")
-    @Comment("config.status_channels.comment")
-    @PreserveNotNull
+    @SerdeKey("StatusChannels")
+    @SerdeComment("config.status_channels.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     @OnlyIf("Features.status_channels")
     public StatusChannels statusChannels = new StatusChannels();
 
-    @Path("Account")
-    @Comment("config.account.comment")
-    @PreserveNotNull
+    @SerdeKey("Account")
+    @SerdeComment("config.account.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     @OnlyIf("Features.account_linking")
     public Account account = new Account();
 
-    @Path("Style")
-    @Comment("config.style.comment")
-    @PreserveNotNull()
+    @SerdeKey("Style")
+    @SerdeComment("config.style.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public Style style = new Style();
 
-    @Path("Misc")
-    @Comment("config.misc.comment")
-    @PreserveNotNull()
+    @SerdeKey("Misc")
+    @SerdeComment("config.misc.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public Misc misc = new Misc();
 
-    @Path("comment")
+    @SerdeKey("comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public String comment;
 
     public M2DConfig(File file, Function<String, String> translator) {
         super(file, translator);
+    }
+
+    @Override
+    protected void registerSerializers(ObjectSerializerBuilder builder) {
+        builder.withSerializerForClass(Snowflake.class, new SnowflakeConverter());
+        builder.withSerializerForClass(Template.class, new TemplateConverter());
+        builder.withSerializerForClass(RandomTemplate.class, new RandomTemplateConverter());
+    }
+
+    @Override
+    protected void registerDeserializers(ObjectDeserializerBuilder builder) {
+        builder.withDeserializerProvider(deserializerFor(Snowflake.class, new SnowflakeConverter()));
+        builder.withDeserializerProvider(deserializerFor(Template.class, new TemplateConverter()));
+        builder.withDeserializerProvider(deserializerFor(RandomTemplate.class, new RandomTemplateConverter()));
+    }
+
+    /**
+     * @return A provider giving the deserializer for fields (or list elements) of the given type, whatever the config value type
+     */
+    private static <R> ValueDeserializerProvider<Object, R> deserializerFor(Class<R> type, ValueDeserializer<Object, R> deserializer) {
+        return (valueClass, resultType) -> resultType.getSatisfyingRawType().filter(type::equals).isPresent() ? deserializer : null;
     }
 
     @Override

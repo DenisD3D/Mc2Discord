@@ -20,8 +20,7 @@ dependencies {
     }
 
     // Config
-    implementation(group = "com.github.denisd3d", name = "config4j", version = "1.1.6")
-    implementation(group = "com.electronwill.night-config", name = "toml", version = "3.6.6")
+    implementation(group = "com.github.denisd3d", name = "config4j", version = "2.0.0") // Brings Night Config TOML
 
     // Messages
     @Suppress("VulnerableDependency")

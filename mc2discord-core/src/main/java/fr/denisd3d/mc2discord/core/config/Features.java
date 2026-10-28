@@ -1,20 +1,22 @@
 package fr.denisd3d.mc2discord.core.config;
 
-import com.electronwill.nightconfig.core.conversion.Path;
-import com.electronwill.nightconfig.core.conversion.PreserveNotNull;
-import fr.denisd3d.config4j.Comment;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeComment;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeKey;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeSkipDeserializingIf;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeSkipDeserializingIf.SkipDeIf;
 
 public class Features {
-    @Path("status_channels")
-    @Comment("config.features.status_channels.comment")
-    @PreserveNotNull
+    @SerdeKey("status_channels")
+    @SerdeComment("config.features.status_channels.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public boolean status_channels = false;
 
-    @Path("account_linking")
-    @Comment("config.features.account_linking.comment")
-    @PreserveNotNull
+    @SerdeKey("account_linking")
+    @SerdeComment("config.features.account_linking.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public boolean account_linking = false;
 
-    @Path("comment")
+    @SerdeKey("comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public String comment;
 }

@@ -1,14 +1,19 @@
 package fr.denisd3d.mc2discord.core.config.converters;
 
-import com.electronwill.nightconfig.core.conversion.Converter;
+import com.electronwill.nightconfig.core.serde.DeserializerContext;
+import com.electronwill.nightconfig.core.serde.SerializerContext;
+import com.electronwill.nightconfig.core.serde.TypeConstraint;
+import com.electronwill.nightconfig.core.serde.ValueDeserializer;
+import com.electronwill.nightconfig.core.serde.ValueSerializer;
 import fr.denisd3d.mc2discord.core.entities.Template;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-public class RandomTemplateConverter implements Converter<RandomTemplate, Object> {
+public class RandomTemplateConverter implements ValueSerializer<RandomTemplate, Object>, ValueDeserializer<Object, RandomTemplate> {
     @Override
-    public RandomTemplate convertToField(Object value) {
+    public RandomTemplate deserialize(Object value, Optional<TypeConstraint> resultType, DeserializerContext ctx) {
         if (value == null) {
             return new RandomTemplate("");
         } else if (value instanceof String) {
@@ -27,7 +32,7 @@ public class RandomTemplateConverter implements Converter<RandomTemplate, Object
     }
 
     @Override
-    public Object convertFromField(RandomTemplate value) {
+    public Object serialize(RandomTemplate value, SerializerContext ctx) {
         if (value == null)
             return null;
         else if (value.getValues().size() == 1)

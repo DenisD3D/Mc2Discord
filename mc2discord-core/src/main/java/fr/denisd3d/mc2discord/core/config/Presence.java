@@ -1,36 +1,35 @@
 package fr.denisd3d.mc2discord.core.config;
 
-import com.electronwill.nightconfig.core.conversion.Conversion;
-import com.electronwill.nightconfig.core.conversion.Path;
-import com.electronwill.nightconfig.core.conversion.PreserveNotNull;
-import fr.denisd3d.config4j.Comment;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeComment;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeKey;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeSkipDeserializingIf;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeSkipDeserializingIf.SkipDeIf;
 import fr.denisd3d.config4j.DefaultValue;
 import fr.denisd3d.mc2discord.core.config.converters.RandomTemplate;
-import fr.denisd3d.mc2discord.core.config.converters.RandomTemplateConverter;
 
 public class Presence {
-    @Path("message")
-    @Comment("config.style.presence.message.comment")
+    @SerdeKey("message")
+    @SerdeComment("config.style.presence.message.comment")
     @DefaultValue("config.style.presence.message.value")
-    @Conversion(RandomTemplateConverter.class)
-    @PreserveNotNull
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public RandomTemplate message;
 
-    @Path("type")
-    @Comment("config.status.presence.type.comment")
-    @PreserveNotNull
+    @SerdeKey("type")
+    @SerdeComment("config.status.presence.type.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public String type = "PLAYING";
 
-    @Path("update")
-    @Comment("config.status.presence.update.comment")
-    @PreserveNotNull
+    @SerdeKey("update")
+    @SerdeComment("config.status.presence.update.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public long update = 60L;
 
-    @Path("link")
-    @Comment("config.status.presence.link.comment")
-    @PreserveNotNull
+    @SerdeKey("link")
+    @SerdeComment("config.status.presence.link.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public String link = "";
 
-    @Path("comment")
+    @SerdeKey("comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public String comment;
 }

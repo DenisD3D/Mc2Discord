@@ -1,40 +1,39 @@
 package fr.denisd3d.mc2discord.core.config;
 
-import com.electronwill.nightconfig.core.conversion.Conversion;
-import com.electronwill.nightconfig.core.conversion.Path;
-import com.electronwill.nightconfig.core.conversion.PreserveNotNull;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeComment;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeKey;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeSkipDeserializingIf;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeSkipDeserializingIf.SkipDeIf;
 import discord4j.common.util.Snowflake;
-import fr.denisd3d.config4j.Comment;
 import fr.denisd3d.mc2discord.core.M2DUtils;
-import fr.denisd3d.mc2discord.core.config.converters.SnowflakeConverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Channels {
-    @Path("Channel")
-    @PreserveNotNull
+    @SerdeKey("Channel")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public List<Channel> channels = new ArrayList<>();
 
     public static class Channel {
-        @Path("id")
-        @Comment("config.channels.id.comment")
-        @Conversion(SnowflakeConverter.class)
-        @PreserveNotNull
+        @SerdeKey("id")
+        @SerdeComment("config.channels.id.comment")
+        @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
         public Snowflake channel_id = M2DUtils.NIL_SNOWFLAKE;
 
-        @Path("subscriptions")
-        @Comment("config.channels.subscriptions.comment")
-        @PreserveNotNull
+        @SerdeKey("subscriptions")
+        @SerdeComment("config.channels.subscriptions.comment")
+        @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
         public List<String> subscriptions = new ArrayList<>();
 
-        @Path("mode")
-        @Comment("config.channels.mode.comment")
-        @PreserveNotNull
+        @SerdeKey("mode")
+        @SerdeComment("config.channels.mode.comment")
+        @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
         public SendMode mode = SendMode.WEBHOOK;
 
-        @Path("comment")
+        @SerdeKey("comment")
+        @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
         public String comment;
 
         public Channel(String... subscriptions) {

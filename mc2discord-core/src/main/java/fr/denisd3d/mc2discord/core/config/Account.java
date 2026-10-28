@@ -1,71 +1,66 @@
 package fr.denisd3d.mc2discord.core.config;
 
-import com.electronwill.nightconfig.core.conversion.Conversion;
-import com.electronwill.nightconfig.core.conversion.Path;
-import com.electronwill.nightconfig.core.conversion.PreserveNotNull;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeComment;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeKey;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeSkipDeserializingIf;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeSkipDeserializingIf.SkipDeIf;
 import discord4j.common.util.Snowflake;
-import fr.denisd3d.config4j.Comment;
 import fr.denisd3d.config4j.DefaultValue;
 import fr.denisd3d.mc2discord.core.M2DUtils;
-import fr.denisd3d.mc2discord.core.config.converters.SnowflakeArrayConverter;
-import fr.denisd3d.mc2discord.core.config.converters.SnowflakeConverter;
-import fr.denisd3d.mc2discord.core.config.converters.TemplateConverter;
 import fr.denisd3d.mc2discord.core.entities.Template;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Account {
-    @Path("guild_id")
-    @Comment("config.account.guild_id.comment")
-    @Conversion(SnowflakeConverter.class)
-    @PreserveNotNull
+    @SerdeKey("guild_id")
+    @SerdeComment("config.account.guild_id.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public Snowflake guild_id = M2DUtils.NIL_SNOWFLAKE;
 
-    @Path("rename_discord_member")
-    @Comment("config.account.rename_discord_member.comment")
-    @PreserveNotNull
+    @SerdeKey("rename_discord_member")
+    @SerdeComment("config.account.rename_discord_member.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public boolean rename_discord_member = true;
 
-    @Path("discord_pseudo_format")
-    @Comment("config.account.discord_pseudo_format.comment")
+    @SerdeKey("discord_pseudo_format")
+    @SerdeComment("config.account.discord_pseudo_format.comment")
     @DefaultValue("config.account.discord_pseudo_format.value")
-    @Conversion(TemplateConverter.class)
-    @PreserveNotNull
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public Template discord_pseudo_format;
 
-    @Path("Messages")
-    @Comment("config.account.messages.comment")
-    @PreserveNotNull
+    @SerdeKey("Messages")
+    @SerdeComment("config.account.messages.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public AccountMessages messages = new AccountMessages();
 
-    @Path("force_link")
-    @Comment("config.account.force_link.comment")
-    @PreserveNotNull
+    @SerdeKey("force_link")
+    @SerdeComment("config.account.force_link.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public boolean force_link = false;
 
-    @Path("Policy")
-    @Comment("config.account.policies.comment")
-    @PreserveNotNull
+    @SerdeKey("Policy")
+    @SerdeComment("config.account.policies.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public List<AccountPolicy> policies = new ArrayList<>();
 
-    @Path("comment")
+    @SerdeKey("comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public String comment;
 
     public static class AccountPolicy {
-        @Path("required_roles_id")
-        @Comment("config.account.policies.required_roles_id.comment")
-        @Conversion(SnowflakeArrayConverter.class)
-        @PreserveNotNull
+        @SerdeKey("required_roles_id")
+        @SerdeComment("config.account.policies.required_roles_id.comment")
+        @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
         public List<Snowflake> required_roles_id = new ArrayList<>();
 
-        @Path("roles_id_to_give")
-        @Comment("config.account.policies.roles_id_to_give.comment")
-        @Conversion(SnowflakeArrayConverter.class)
-        @PreserveNotNull
+        @SerdeKey("roles_id_to_give")
+        @SerdeComment("config.account.policies.roles_id_to_give.comment")
+        @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
         public List<Snowflake> roles_id_to_give = new ArrayList<>();
 
-        @Path("comment")
+        @SerdeKey("comment")
+        @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
         public String comment;
 
         public AccountPolicy() {

@@ -1,15 +1,17 @@
 package fr.denisd3d.mc2discord.core.config;
 
-import com.electronwill.nightconfig.core.conversion.Path;
-import com.electronwill.nightconfig.core.conversion.PreserveNotNull;
-import fr.denisd3d.config4j.Comment;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeComment;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeKey;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeSkipDeserializingIf;
+import com.electronwill.nightconfig.core.serde.annotations.SerdeSkipDeserializingIf.SkipDeIf;
 
 public class General {
-    @Path("token")
-    @Comment("config.general.token.comment")
-    @PreserveNotNull
+    @SerdeKey("token")
+    @SerdeComment("config.general.token.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public String token = "";
 
-    @Path("comment")
+    @SerdeKey("comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public String comment;
 }

@@ -1,12 +1,18 @@
 package fr.denisd3d.mc2discord.core.config.converters;
 
-import com.electronwill.nightconfig.core.conversion.Converter;
+import com.electronwill.nightconfig.core.serde.DeserializerContext;
+import com.electronwill.nightconfig.core.serde.SerializerContext;
+import com.electronwill.nightconfig.core.serde.TypeConstraint;
+import com.electronwill.nightconfig.core.serde.ValueDeserializer;
+import com.electronwill.nightconfig.core.serde.ValueSerializer;
 import discord4j.common.util.Snowflake;
 import fr.denisd3d.mc2discord.core.M2DUtils;
 
-public class SnowflakeConverter implements Converter<Snowflake, Object> {
+import java.util.Optional;
+
+public class SnowflakeConverter implements ValueSerializer<Snowflake, Object>, ValueDeserializer<Object, Snowflake> {
     @Override
-    public Snowflake convertToField(Object value) {
+    public Snowflake deserialize(Object value, Optional<TypeConstraint> resultType, DeserializerContext ctx) {
         if (value == null) {
             return M2DUtils.NIL_SNOWFLAKE;
         } else if (value instanceof String) {
@@ -19,7 +25,7 @@ public class SnowflakeConverter implements Converter<Snowflake, Object> {
     }
 
     @Override
-    public Object convertFromField(Snowflake value) {
+    public Object serialize(Snowflake value, SerializerContext ctx) {
         return value.asLong();
     }
 }
