@@ -111,7 +111,7 @@ public class MinecraftImpl implements IMinecraft {
             component.withStyle(style -> style.withClickEvent(VersionCompat.suggestCommand("@" + senderUsername)).withInsertion("@" + senderUsername));
         }
 
-        Mc2DiscordMinecraft.server.getPlayerList().broadcastSystemMessage(component, false);
+        Mc2DiscordMinecraft.server.execute(() -> Mc2DiscordMinecraft.server.getPlayerList().broadcastSystemMessage(component, false));
     }
 
     @Override
@@ -154,9 +154,11 @@ public class MinecraftImpl implements IMinecraft {
 
     @Override
     public void executeCommand(String command, int permissionLevel, Snowflake channelId) {
-        DiscordCommandSource.channelId = channelId;
-        Mc2DiscordMinecraft.server.getCommands()
-                .performPrefixedCommand(VersionCompat.withPermissionLevel(Mc2DiscordMinecraft.commandSource, permissionLevel), command);
+        Mc2DiscordMinecraft.server.execute(() -> {
+            DiscordCommandSource.channelId = channelId;
+            Mc2DiscordMinecraft.server.getCommands()
+                    .performPrefixedCommand(VersionCompat.withPermissionLevel(Mc2DiscordMinecraft.commandSource, permissionLevel), command);
+        });
     }
 
     @Override
