@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LangManager {
@@ -16,6 +17,7 @@ public class LangManager {
     public static final List<String> LANG_CONTRIBUTORS = Arrays.asList("Morty#0273 (ru_ru)", "PixelVoxel#4327 (ko_kr)", "thearchy.helios (zh_cn)",
             "Axolotl Agatsuma (tr_tr)", "Veenx67 (pt_br)");
     private static final Gson GSON = new Gson();
+    private static final Pattern LANG_PATTERN = Pattern.compile("^\\s*lang\\s*=\\s*[\"']([^\"']*)[\"']");
     private static final Pattern FLOAT_REPLACE_PATTERN = Pattern.compile("%(\\d+\\$)?[\\d.]*[df]");
 
     protected final Map<String, String> properties = new HashMap<>();
@@ -26,10 +28,9 @@ public class LangManager {
             if (M2DUtils.CONFIG_FILE.exists()) {
                 Scanner scanner = new Scanner(M2DUtils.CONFIG_FILE);
                 while (scanner.hasNextLine()) {
-                    String line = scanner.nextLine().trim();
-                    int index = line.indexOf("lang = ");
-                    if (index != -1) {
-                        lang = line.substring(index + 8, index + 13); // get 4 letter
+                    Matcher matcher = LANG_PATTERN.matcher(scanner.nextLine());
+                    if (matcher.find()) {
+                        lang = matcher.group(1);
                         break;
                     }
                 }
