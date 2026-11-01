@@ -15,6 +15,7 @@ import discord4j.rest.util.PermissionSet;
 import fr.denisd3d.mc2discord.core.*;
 import fr.denisd3d.mc2discord.core.config.Channels;
 import fr.denisd3d.mc2discord.core.config.StatusChannels;
+import org.apache.commons.lang3.EnumUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuples;
@@ -117,8 +118,16 @@ public class LifecycleEvents {
         }
 
         // Allowed mentions
+        for (String type : Mc2Discord.INSTANCE.config.misc.allowed_mention) {
+            if (!EnumUtils.isValidEnum(AllowedMentions.Type.class, type)) {
+                Mc2Discord.INSTANCE.errors.add("Invalid allowed mention " + type + ", valid values are " + EnumUtils.getEnumList(AllowedMentions.Type.class));
+            }
+        }
         Mc2Discord.INSTANCE.vars.allowedMentions = Possible.of(AllowedMentions.builder()
-                .parseType(Mc2Discord.INSTANCE.config.misc.allowed_mention.stream().map(AllowedMentions.Type::valueOf).toArray(AllowedMentions.Type[]::new))
+                .parseType(Mc2Discord.INSTANCE.config.misc.allowed_mention.stream()
+                        .filter(type -> EnumUtils.isValidEnum(AllowedMentions.Type.class, type))
+                        .map(AllowedMentions.Type::valueOf)
+                        .toArray(AllowedMentions.Type[]::new))
                 .build());
 
         // Channels, emojis and members caches
