@@ -102,13 +102,13 @@ public class M2DCommandImpl {
             result.forEach(s -> context.getSource().sendSuccess(() -> Component.literal(s), false));
             return 1;
         }))).then(Commands.literal("reload").executes((context) -> {
-            context.getSource().sendSuccess(() -> {
-                try {
-                    return Component.literal(M2DCommands.reloadHiddenPlayers());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }, false);
+            String result;
+            try {
+                result = M2DCommands.reloadHiddenPlayers();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            context.getSource().sendSuccess(() -> Component.literal(result), false);
             return 1;
         }))
 
@@ -150,13 +150,13 @@ public class M2DCommandImpl {
             result.forEach(s -> context.getSource().sendSuccess(() -> Component.literal(s), false));
             return 1;
         }))).then(Commands.literal("reload").executes((context) -> {
-            context.getSource().sendSuccess(() -> {
-                try {
-                    return Component.literal(M2DCommands.reloadLinkedPlayers());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }, false);
+            String result;
+            try {
+                result = M2DCommands.reloadLinkedPlayers();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            context.getSource().sendSuccess(() -> Component.literal(result), false);
             return 1;
         })))
                 .then(Commands.literal("tellraw")
