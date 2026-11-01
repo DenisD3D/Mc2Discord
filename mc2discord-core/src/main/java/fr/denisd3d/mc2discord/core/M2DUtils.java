@@ -62,24 +62,25 @@ public class M2DUtils {
         StringBuilder output = new StringBuilder(input.length());
         List<String> lines = new ArrayList<>();
 
-        int lineLen = 0;
         while (tok.hasMoreTokens()) {
-            String word = tok.nextToken();
+            String line = tok.nextToken();
 
-            if (lineLen + word.length() >= maxLineLength) {
-                if (surroundWithCodeBlock) {
-                    output.insert(0, "```");
-                    output.append("```");
+            for (int start = 0; start < line.length(); start += maxLineLength) { // Cut the lines that are too long by themselves
+                String word = line.substring(start, Math.min(line.length(), start + maxLineLength));
+
+                if (!output.isEmpty() && output.length() + 1 + word.length() > maxLineLength) {
+                    if (surroundWithCodeBlock) {
+                        output.insert(0, "```");
+                        output.append("```");
+                    }
+                    lines.add(output.toString());
+                    output.setLength(0);
                 }
-                lines.add(output.toString());
-                output.setLength(0);
-                lineLen = 0;
-            } else {
-                output.append("\n");
-                lineLen++;
+                if (!output.isEmpty()) {
+                    output.append("\n");
+                }
+                output.append(word);
             }
-            output.append(word);
-            lineLen += word.length();
         }
         if (!output.isEmpty()) {
             if (surroundWithCodeBlock) {
