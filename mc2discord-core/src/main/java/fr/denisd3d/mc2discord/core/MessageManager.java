@@ -9,19 +9,24 @@ import discord4j.core.spec.MessageCreateFields;
 import discord4j.core.spec.MessageCreateSpec;
 import discord4j.core.spec.WebhookExecuteSpec;
 import discord4j.discordjson.possible.Possible;
+import discord4j.rest.http.client.ClientException;
 import fr.denisd3d.mc2discord.core.config.Channels;
 import fr.denisd3d.mc2discord.core.entities.MessageEntity;
 import fr.denisd3d.mc2discord.core.entities.PlayerEntity;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageManager {
     public static Possible<String> default_username = Possible.absent();
     public static Possible<String> default_avatar = Possible.absent();
+    private static final Map<Snowflake, Mono<Webhook>> webhooks = new ConcurrentHashMap<>();
 
     public static void init() {
+        webhooks.clear();
         default_username = Mc2Discord.INSTANCE.config.style.bot_name.isEmpty()
                 ? Possible.absent()
                 : Possible.of(Mc2Discord.INSTANCE.config.style.bot_name.render());
@@ -124,7 +129,7 @@ public class MessageManager {
                     if (files != null)
                         builder.files(files);
 
-                    return webhook.execute(builder.build());
+                    return webhook.execute(builder.build()).doOnError(ClientException.isStatusCode(404), throwable -> webhooks.remove(channel)); // Webhook deleted
                 }))
                 .then();
     }
@@ -136,6 +141,11 @@ public class MessageManager {
      * @return A Mono<Webhook> that completes when the webhook is found or created
      */
     public static Mono<Webhook> getMc2DiscordWebhook(Snowflake channel) {
+        return webhooks.computeIfAbsent(channel, MessageManager::findOrCreateWebhook);
+    }
+
+    // Only the found webhook is cached, errors are retried
+    private static Mono<Webhook> findOrCreateWebhook(Snowflake channel) {
         Mono<TopLevelGuildMessageChannel> channelMono = Mc2Discord.INSTANCE.client.getChannelById(channel)
                 .ofType(TopLevelGuildMessageChannel.class)
                 .switchIfEmpty(Mono.fromRunnable(() -> Mc2Discord.LOGGER
@@ -143,7 +153,8 @@ public class MessageManager {
         return channelMono.flatMapMany(TopLevelGuildMessageChannel::getWebhooks)
                 .filter(webhook -> webhook.getName().isPresent() && webhook.getName().get().equals(Mc2Discord.INSTANCE.vars.mc2discord_webhook_name))
                 .switchIfEmpty(channelMono.flatMap(channel1 -> channel1.createWebhook(Mc2Discord.INSTANCE.vars.mc2discord_webhook_name)))
-                .next();
+                .next()
+                .cache(webhook -> Duration.ofMillis(Long.MAX_VALUE), throwable -> Duration.ZERO, () -> Duration.ZERO);
     }
 
     /**
