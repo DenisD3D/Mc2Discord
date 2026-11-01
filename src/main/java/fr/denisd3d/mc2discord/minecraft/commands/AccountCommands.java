@@ -39,8 +39,7 @@ public class AccountCommands {
                     player.connection.disconnect(MinecraftImpl.toComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_successful.pick()));
                 } else {
                     context.getSource()
-                            .sendSuccess(() -> MinecraftImpl.toComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_successful.pick()),
-                                    false);
+                            .sendSuccess(() -> MinecraftImpl.toComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_successful.pick()), false);
                 }
             } else {
                 context.getSource().sendFailure(MinecraftImpl.toComponent(Mc2Discord.INSTANCE.config.account.messages.unlink_error.pick()));

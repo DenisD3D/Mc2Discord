@@ -60,10 +60,9 @@ public class AccountManager {
                     Integer color = memberIntegerTuple2.getT2();
 
                     return member.edit(GuildMemberEditSpec.builder()
-                            .nicknameOrNull(Mc2Discord.INSTANCE.config.account.discord_pseudo_format.render(
-                                    new PlayerEntity(Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid),
-                                            Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid), uuid),
-                                    MemberEntity.of(member, color)))
+                            .nicknameOrNull(Mc2Discord.INSTANCE.config.account.discord_pseudo_format
+                                    .render(new PlayerEntity(Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid),
+                                            Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid), uuid), MemberEntity.of(member, color)))
                             .build());
                 })
                 .subscribe();

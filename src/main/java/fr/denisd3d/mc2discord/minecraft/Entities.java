@@ -25,8 +25,7 @@ public final class Entities {
 
     public static DeathEntity death(Player player, DamageSource source, Component deathMessage) {
         Entity attacker = source.getEntity();
-        return new DeathEntity(source.getMsgId(), deathMessage.getString(),
-                Duration.ofMillis(player.getCombatTracker().getCombatDuration() * 50L), // 50 ms per tick
+        return new DeathEntity(source.getMsgId(), deathMessage.getString(), Duration.ofMillis(player.getCombatTracker().getCombatDuration() * 50L), // 50 ms per tick
                 attacker != null ? attacker.getDisplayName().getString() : "",
                 attacker instanceof LivingEntity livingAttacker ? livingAttacker.getHealth() : 0.0f);
     }

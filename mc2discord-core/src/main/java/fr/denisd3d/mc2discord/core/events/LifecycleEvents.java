@@ -178,8 +178,6 @@ public class LifecycleEvents {
         if (M2DUtils.isNotConfigured())
             return;
 
-        MessageManager.sendInfoMessage("server_stop", Mc2Discord.INSTANCE.config.messages.stop.render())
-                .then(Mc2Discord.INSTANCE.shutdown())
-                .block();
+        MessageManager.sendInfoMessage("server_stop", Mc2Discord.INSTANCE.config.messages.stop.render()).then(Mc2Discord.INSTANCE.shutdown()).block();
     }
 }
