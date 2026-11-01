@@ -17,8 +17,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class M2DCommands {
+    private static final Pattern TOKEN_PATTERN = Pattern.compile("(?m)^(\\s*token\\s*=\\s*)[\"']?([^\"'\\r\\n]*).*$");
+
     public static List<String> getStatus() {
         List<String> result = new ArrayList<>();
 
@@ -81,15 +85,15 @@ public class M2DCommands {
         try {
             String config = String.join("\n", Files.readAllLines(M2DUtils.CONFIG_FILE.toPath()));
 
-            int token_start_index = config.indexOf("token = ") + 9;
-            String token = config.substring(token_start_index, config.indexOf("\"", token_start_index + 1));
-            String configWithoutToken = config.substring(0, token_start_index) + "REMOVED|"
-                    + (M2DUtils.isTokenValid(token) ? ("VALID|" + TokenUtil.getSelfId(token)) : token.isEmpty() ? "EMPTY" : "INVALID") + "\""
-                    + config.substring(config.indexOf("\n", token_start_index));
+            String configWithoutToken = TOKEN_PATTERN.matcher(config).replaceAll(result -> {
+                String token = result.group(2);
+                return Matcher.quoteReplacement(result.group(1) + "\"REMOVED|"
+                        + (M2DUtils.isTokenValid(token) ? ("VALID|" + TokenUtil.getSelfId(token)) : token.isEmpty() ? "EMPTY" : "INVALID") + "\"");
+            });
 
             String responseBody = HttpClient.create()
                     .post()
-                    .uri("http://m2d.denisd3d.fr/api/v1/upload/")
+                    .uri("https://m2d.denisd3d.fr/api/v1/upload/")
                     .sendForm((httpClientRequest, httpClientForm) -> httpClientForm.attr("config", configWithoutToken)
                             .attr("errors", Mc2Discord.INSTANCE.errors.isEmpty() ? "None" : String.join("\n", Mc2Discord.INSTANCE.errors))
                             .attr("env", Mc2Discord.INSTANCE.minecraft.getEnvInfo()))
