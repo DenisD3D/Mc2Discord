@@ -49,7 +49,7 @@ public class MinecraftImpl implements IMinecraft {
                 case Template.Placeholder placeholder -> {
                     switch (placeholder.name()) {
                         case "color_start" -> style = parseColor(placeholder.format(), entities).map(style::withColor).orElse(style);
-                        case "color_end" -> style = style.withColor(ChatFormatting.WHITE);
+                        case "color_end" -> style = style.withColor((TextColor) null); // Back to the default color
                         case "bold_start" -> style = style.withBold(true);
                         case "bold_end" -> style = style.withBold(false);
                         case "italic_start" -> style = style.withItalic(true);
