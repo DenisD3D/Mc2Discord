@@ -1,0 +1,144 @@
+name: "Publish"
+run-name: Publish ${{ inputs.minecraft }}-${{ inputs.version }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version"
+        required: true
+        default: "0.0.0-dev"
+      minecraft:
+        description: "Minecraft version"
+        type: choice
+        options: ["all", "1.21.1", "1.21.x", "26.2", "26.3"]
+        default: all
+
+# The jars are published one after another to keep their order on Modrinth and CurseForge.
+# The jobs of the other Minecraft versions are skipped, and a failure stops the next ones.
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    with:
+      version: ${{ inputs.version }}
+      minecraft: ${{ inputs.minecraft }}
+
+  forge-1-21-1:
+    needs: build
+    if: ${{ !failure() && !cancelled() && (inputs.minecraft == 'all' || inputs.minecraft == '1.21.1') }}
+    uses: ./.github/workflows/publish-loader.yml
+    with:
+      version: ${{ inputs.version }}
+      minecraft: "1.21.1"
+      loader: forge
+    secrets: inherit
+
+  fabric-1-21-1:
+    needs: forge-1-21-1
+    if: ${{ !failure() && !cancelled() && (inputs.minecraft == 'all' || inputs.minecraft == '1.21.1') }}
+    uses: ./.github/workflows/publish-loader.yml
+    with:
+      version: ${{ inputs.version }}
+      minecraft: "1.21.1"
+      loader: fabric
+    secrets: inherit
+
+  neoforge-1-21-1:
+    needs: fabric-1-21-1
+    if: ${{ !failure() && !cancelled() && (inputs.minecraft == 'all' || inputs.minecraft == '1.21.1') }}
+    uses: ./.github/workflows/publish-loader.yml
+    with:
+      version: ${{ inputs.version }}
+      minecraft: "1.21.1"
+      loader: neoforge
+    secrets: inherit
+
+  forge-1-21-x:
+    needs: neoforge-1-21-1
+    if: ${{ !failure() && !cancelled() && (inputs.minecraft == 'all' || inputs.minecraft == '1.21.x') }}
+    uses: ./.github/workflows/publish-loader.yml
+    with:
+      version: ${{ inputs.version }}
+      minecraft: "1.21.x"
+      loader: forge
+    secrets: inherit
+
+  fabric-1-21-x:
+    needs: forge-1-21-x
+    if: ${{ !failure() && !cancelled() && (inputs.minecraft == 'all' || inputs.minecraft == '1.21.x') }}
+    uses: ./.github/workflows/publish-loader.yml
+    with:
+      version: ${{ inputs.version }}
+      minecraft: "1.21.x"
+      loader: fabric
+    secrets: inherit
+
+  neoforge-1-21-x:
+    needs: fabric-1-21-x
+    if: ${{ !failure() && !cancelled() && (inputs.minecraft == 'all' || inputs.minecraft == '1.21.x') }}
+    uses: ./.github/workflows/publish-loader.yml
+    with:
+      version: ${{ inputs.version }}
+      minecraft: "1.21.x"
+      loader: neoforge
+    secrets: inherit
+
+  forge-26-2:
+    needs: neoforge-1-21-x
+    if: ${{ !failure() && !cancelled() && (inputs.minecraft == 'all' || inputs.minecraft == '26.2') }}
+    uses: ./.github/workflows/publish-loader.yml
+    with:
+      version: ${{ inputs.version }}
+      minecraft: "26.2"
+      loader: forge
+    secrets: inherit
+
+  fabric-26-2:
+    needs: forge-26-2
+    if: ${{ !failure() && !cancelled() && (inputs.minecraft == 'all' || inputs.minecraft == '26.2') }}
+    uses: ./.github/workflows/publish-loader.yml
+    with:
+      version: ${{ inputs.version }}
+      minecraft: "26.2"
+      loader: fabric
+    secrets: inherit
+
+  neoforge-26-2:
+    needs: fabric-26-2
+    if: ${{ !failure() && !cancelled() && (inputs.minecraft == 'all' || inputs.minecraft == '26.2') }}
+    uses: ./.github/workflows/publish-loader.yml
+    with:
+      version: ${{ inputs.version }}
+      minecraft: "26.2"
+      loader: neoforge
+    secrets: inherit
+
+  forge-26-3:
+    needs: neoforge-26-2
+    if: ${{ !failure() && !cancelled() && (inputs.minecraft == 'all' || inputs.minecraft == '26.3') }}
+    uses: ./.github/workflows/publish-loader.yml
+    with:
+      version: ${{ inputs.version }}
+      minecraft: "26.3"
+      loader: forge
+    secrets: inherit
+
+  fabric-26-3:
+    needs: forge-26-3
+    if: ${{ !failure() && !cancelled() && (inputs.minecraft == 'all' || inputs.minecraft == '26.3') }}
+    uses: ./.github/workflows/publish-loader.yml
+    with:
+      version: ${{ inputs.version }}
+      minecraft: "26.3"
+      loader: fabric
+    secrets: inherit
+
+  neoforge-26-3:
+    needs: fabric-26-3
+    if: ${{ !failure() && !cancelled() && (inputs.minecraft == 'all' || inputs.minecraft == '26.3') }}
+    uses: ./.github/workflows/publish-loader.yml
+    with:
+      version: ${{ inputs.version }}
+      minecraft: "26.3"
+      loader: neoforge
+    secrets: inherit

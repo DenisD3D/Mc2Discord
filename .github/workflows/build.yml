@@ -1,0 +1,74 @@
+name: "Build"
+run-name: Build ${{ inputs.minecraft }}-${{ inputs.version }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version"
+        required: true
+        default: "0.0.0-dev"
+      minecraft:
+        description: "Minecraft version"
+        type: choice
+        options: ["all", "1.21.1", "1.21.x", "26.2", "26.3"]
+        default: all
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      minecraft:
+        type: string
+        default: all
+
+jobs:
+  # Minecraft versions to build, from .github/minecraft-versions.json
+  versions:
+    runs-on: ubuntu-latest
+    outputs:
+      minecraft: ${{ steps.versions.outputs.minecraft }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: versions
+        run: echo "minecraft=$(jq -c --arg minecraft "$MINECRAFT" 'map(select($minecraft == "all" or .display == $minecraft))' .github/minecraft-versions.json)" >> "$GITHUB_OUTPUT"
+        env:
+          MINECRAFT: ${{ inputs.minecraft }}
+
+  build:
+    needs: versions
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        minecraft: ${{ fromJSON(needs.versions.outputs.minecraft) }}
+        loader: [forge, fabric, neoforge]
+    steps:
+      - uses: actions/checkout@v7
+      - name: Set up JDK
+        uses: actions/setup-java@v6
+        with:
+          distribution: 'temurin'
+          java-version: |
+            21
+            25
+      - name: Cache Gradle
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ matrix.minecraft.project }}-${{ matrix.loader }}-${{ runner.os }}-${{ hashFiles('gradle.properties', 'stonecutter.properties.toml', '*.gradle.kts', 'buildSrc/**', 'mc2discord-core/build.gradle.kts', 'gradle/wrapper/gradle-wrapper.jar') }}
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build with Gradle
+        run: ./gradlew :${{ matrix.minecraft.project }}-${{ matrix.loader }}:build
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: mc2discord-${{ matrix.loader }}-${{ matrix.minecraft.display }}-${{ inputs.version }}
+          path: |
+            versions/${{ matrix.minecraft.project }}-${{ matrix.loader }}/build/libs/
+            !versions/${{ matrix.minecraft.project }}-${{ matrix.loader }}/build/libs/*-slim.jar
+            !versions/${{ matrix.minecraft.project }}-${{ matrix.loader }}/build/libs/*-all.jar
+            !versions/${{ matrix.minecraft.project }}-${{ matrix.loader }}/build/libs/*-dev.jar

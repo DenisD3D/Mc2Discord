@@ -1,0 +1,67 @@
+name: "Publish loader"
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      minecraft:
+        description: "Minecraft version, as displayed in .github/minecraft-versions.json"
+        required: true
+        type: string
+      loader:
+        required: true
+        type: string
+    secrets:
+      MODRINTH_TOKEN:
+        required: true
+      CURSEFORGE_TOKEN:
+        required: true
+      WEBHOOK_URL:
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          name: mc2discord-${{ inputs.loader }}-${{ inputs.minecraft }}-${{ inputs.version }}
+          path: artifact
+      - id: info
+        run: |
+          echo "name=[${LOADER^} $MINECRAFT] $VERSION" >> "$GITHUB_OUTPUT"
+          {
+            echo "loaders<<EOF"
+            echo "$LOADER"
+            if [ "$LOADER" = "fabric" ]; then echo "quilt"; fi
+            echo "EOF"
+            echo "game-versions<<EOF"
+            jq -r --arg minecraft "$MINECRAFT" '.[] | select(.display == $minecraft) | .game_versions[]' .github/minecraft-versions.json
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+        env:
+          VERSION: ${{ inputs.version }}
+          MINECRAFT: ${{ inputs.minecraft }}
+          LOADER: ${{ inputs.loader }}
+      - uses: Kir-Antipov/mc-publish@v3.3.1
+        with:
+          modrinth-id: Cfbcv7uF
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-id: 325235
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+          modrinth-unfeature-mode: intersection
+
+          files: artifact/mc2discord-${{ inputs.loader }}-${{ inputs.minecraft }}-${{ inputs.version }}.jar
+          name: ${{ steps.info.outputs.name }}
+          changelog-file: CHANGELOG.md
+          loaders: ${{ steps.info.outputs.loaders }}
+          game-versions: ${{ steps.info.outputs.game-versions }}
+          environment: server
+      - uses: tsickert/discord-webhook@v7.0.0
+        with:
+          webhook-url: ${{ secrets.WEBHOOK_URL }}
+          content: "New Mc2Discord version released: ${{ steps.info.outputs.name }}"
