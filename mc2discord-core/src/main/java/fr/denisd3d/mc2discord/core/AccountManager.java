@@ -135,18 +135,20 @@ public class AccountManager {
                         .getAuthor()
                         .orElseThrow(() -> new RuntimeException("Message author is null"))
                         .asMember(Mc2Discord.INSTANCE.config.account.guild_id)
-                        .flatMapMany(member -> Mono.fromSupplier(() -> Mc2Discord.INSTANCE.config.account.policies)
-                                .flatMapMany(Flux::fromIterable)
+                        .flatMapMany(member -> Flux.fromIterable(Mc2Discord.INSTANCE.config.account.policies)
                                 .filter(policy -> policy.required_roles_id.size() == 0
                                         || (member.getRoleIds().size() != 0 && member.getRoleIds().containsAll(policy.required_roles_id)))
-                                .switchIfEmpty(event.getMessage()
-                                        .getRestChannel()
-                                        .createMessage(Mc2Discord.INSTANCE.config.account.messages.missing_roles.render())
-                                        .then(Mono.empty()))
-                                .doOnNext(accountPolicy -> validate_link(player_uuid, event))
-                                .map(policy -> policy.roles_id_to_give)
-                                .flatMap(Flux::fromIterable)
-                                .flatMap(member::addRole))
+                                .collectList()
+                                .flatMapMany(policies -> {
+                                    if (policies.isEmpty())
+                                        return event.getMessage()
+                                                .getRestChannel()
+                                                .createMessage(Mc2Discord.INSTANCE.config.account.messages.missing_roles.render())
+                                                .then();
+
+                                    validate_link(player_uuid, event); // Once, even if several policies match
+                                    return Flux.fromIterable(policies).flatMapIterable(policy -> policy.roles_id_to_give).distinct().flatMap(member::addRole);
+                                }))
                         .subscribe();
             } else {
                 validate_link(player_uuid, event);
