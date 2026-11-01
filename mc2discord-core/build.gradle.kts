@@ -23,11 +23,10 @@ dependencies {
     implementation(group = "com.github.denisd3d", name = "config4j", version = "2.0.0") // Brings Night Config TOML
 
     // Messages
-    @Suppress("VulnerableDependency")
-    implementation(group = "com.vdurmont", name = "emoji-java", version = "5.1.1")
+    implementation(group = "net.fellbaum", name = "jemoji", version = "2.1.0") // Brings Jackson 3
 
     // Account
-    implementation(group = "org.apache.commons", name = "commons-collections4", version = "4.4")
+    implementation(group = "org.apache.commons", name = "commons-collections4", version = "4.6.0")
 
     // Minecraft dependencies (Shipped in Minecraft)
     compileOnly(group = "com.google.code.gson", name = "gson", version = "2.10")

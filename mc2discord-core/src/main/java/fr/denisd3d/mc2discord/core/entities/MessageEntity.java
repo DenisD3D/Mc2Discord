@@ -1,10 +1,10 @@
 package fr.denisd3d.mc2discord.core.entities;
 
-import com.vdurmont.emoji.EmojiParser;
+import net.fellbaum.jemoji.EmojiManager;
 
 public record MessageEntity(String message) implements Entity {
     public MessageEntity {
-        message = EmojiParser.parseToAliases(message);
+        message = EmojiManager.replaceAllEmojis(message, emoji -> emoji.getDiscordAliases().stream().findFirst().orElse(emoji.getEmoji()));
     }
 
     @Override

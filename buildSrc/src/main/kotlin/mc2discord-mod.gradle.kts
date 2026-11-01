@@ -148,9 +148,11 @@ tasks {
         configurations = listOf(shade)
 
         // Drop the classes that are not reachable from the mod, like the server side of reactor-netty.
-        // Jackson and Caffeine load classes by name and must be kept whole.
+        // Jackson, Caffeine and jemoji (read by Jackson) load classes by name and must be kept whole.
         minimize {
             exclude(dependency("com.fasterxml.jackson.*:.*:.*"))
+            exclude(dependency("tools.jackson.*:.*:.*"))
+            exclude(dependency("net.fellbaum:jemoji:.*"))
             exclude(dependency("com.github.ben-manes.caffeine:.*:.*"))
         }
 
@@ -167,8 +169,8 @@ tasks {
             "fr.denisd3d.config4j",
             "com.electronwill.nightconfig",
             // Messages
-            "com.vdurmont.emoji",
-            "org.json",
+            "net.fellbaum.jemoji",
+            "tools.jackson",
             // Account
             "org.apache.commons.collections4",
         )
