@@ -102,7 +102,7 @@ public class DiscordEvent {
                     .sendMessage(Collections.singletonList("command"), result, MessageManager.default_username, MessageManager.default_avatar,
                             event.getMessage().getChannelId(), Mc2Discord.INSTANCE.config.commands.use_codeblocks)
                     .subscribe();
-        } else if (commands.stream().anyMatch(command::startsWith)) { // Command listed as allowed
+        } else if (commands.stream().anyMatch(allowed -> command.equals(allowed) || command.startsWith(allowed + " "))) { // Command listed as allowed
             Mc2Discord.INSTANCE.minecraft.executeCommand(command, Integer.MAX_VALUE, event.getMessage().getChannelId());
         } else {
             Mc2Discord.INSTANCE.minecraft.executeCommand(command, permission_level, event.getMessage().getChannelId());
