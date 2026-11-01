@@ -34,18 +34,19 @@ public class PlayerListMixin {
         if (M2DUtils.isNotConfigured())
             return;
 
-        if (Mc2Discord.INSTANCE.config.misc.verbose_other_mods_messages) {
-            // Log the stacktrace with index in front
-            Mc2Discord.LOGGER.info("Mc2Discord detected a message from another mod (verbose_other_mods_messages is enabled): " + component.getString());
-            for (int i = 1; i < Thread.currentThread().getStackTrace().length; i++) {
-                StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[i];
-                Mc2Discord.LOGGER
-                        .info("[Stacktrace index: " + i + "] Class name: " + stackTraceElement.getClassName() + "." + stackTraceElement.getMethodName());
-            }
-
-        }
+        boolean verbose = Mc2Discord.INSTANCE.config.misc.verbose_other_mods_messages;
+        if (!verbose && Mc2Discord.INSTANCE.config.misc.other_mods_messages.stream().allMatch(otherModMessage -> otherModMessage.class_index <= 0))
+            return; // Nothing to relay, don't capture the stacktrace
 
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        if (verbose) {
+            // Log the stacktrace with index in front
+            Mc2Discord.LOGGER.info("Mc2Discord detected a message from another mod (verbose_other_mods_messages is enabled): " + component.getString());
+            for (int i = 1; i < stackTrace.length; i++) {
+                Mc2Discord.LOGGER.info("[Stacktrace index: " + i + "] Class name: " + stackTrace[i].getClassName() + "." + stackTrace[i].getMethodName());
+            }
+        }
+
         Mc2Discord.INSTANCE.config.misc.other_mods_messages.stream().filter(otherModMessage -> {
             if (otherModMessage.class_index <= 0 || otherModMessage.class_index >= stackTrace.length)
                 return false;
