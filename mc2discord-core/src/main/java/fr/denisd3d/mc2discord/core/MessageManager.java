@@ -4,6 +4,7 @@ import discord4j.common.util.Snowflake;
 import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.Webhook;
 import discord4j.core.object.entity.channel.MessageChannel;
+import discord4j.core.object.entity.channel.ThreadChannel;
 import discord4j.core.object.entity.channel.TopLevelGuildMessageChannel;
 import discord4j.core.spec.EmbedCreateSpec;
 import discord4j.core.spec.MessageCreateFields;
@@ -16,6 +17,7 @@ import fr.denisd3d.mc2discord.core.entities.MessageEntity;
 import fr.denisd3d.mc2discord.core.entities.PlayerEntity;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuples;
 
 import java.time.Duration;
 import java.util.*;
@@ -24,7 +26,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MessageManager {
     public static Possible<String> default_username = Possible.absent();
     public static Possible<String> default_avatar = Possible.absent();
-    private static final Map<Snowflake, Mono<Webhook>> webhooks = new ConcurrentHashMap<>();
+    private static final Map<Snowflake, Mono<WebhookTarget>> webhooks = new ConcurrentHashMap<>();
+
+    /**
+     * @param threadId The thread to send the messages in, the webhook being the one of its parent channel
+     */
+    private record WebhookTarget(Webhook webhook, Possible<Snowflake> threadId) {
+    }
 
     public static void init() {
         webhooks.clear();
@@ -132,12 +140,13 @@ public class MessageManager {
         if (username.isAbsent() && avatarUrl.isAbsent())
             return createPlainTextMessage(channel, message, username, surroundWithCodeBlock); // If username and avatar is absent, fallback to plain text for bot account to be used instead of a webhook with same name (allow color)
 
-        Mono<Void> send = Mono.defer(() -> getMc2DiscordWebhook(channel)
-                .flatMapMany(webhook -> Flux.fromIterable(M2DUtils.breakStringInMessages(message, 2000, surroundWithCodeBlock)).flatMap(s -> {
+        Mono<Void> send = Mono.defer(() -> webhooks.computeIfAbsent(channel, MessageManager::findOrCreateWebhook)
+                .flatMapMany(target -> Flux.fromIterable(M2DUtils.breakStringInMessages(message, 2000, surroundWithCodeBlock)).flatMap(s -> {
                     WebhookExecuteSpec.Builder builder = WebhookExecuteSpec.builder()
                             .username(username)
                             .avatarUrl(avatarUrl)
                             .allowedMentions(Mc2Discord.INSTANCE.vars.allowedMentions)
+                            .threadId(target.threadId())
                             .content(s);
 
                     if (embeds != null)
@@ -147,7 +156,7 @@ public class MessageManager {
                     if (isSilent(channel))
                         builder.addFlag(Message.Flag.SUPPRESS_NOTIFICATIONS);
 
-                    return webhook.execute(builder.build());
+                    return target.webhook().execute(builder.build());
                 }))
                 .then());
 
@@ -161,23 +170,27 @@ public class MessageManager {
     /**
      * Get the webhook used by the mod for a channel
      *
-     * @param channel Channel to get the webhook from
+     * @param channel Channel to get the webhook from, for a thread the webhook of its parent channel
      * @return A Mono<Webhook> that completes when the webhook is found or created
      */
     public static Mono<Webhook> getMc2DiscordWebhook(Snowflake channel) {
-        return webhooks.computeIfAbsent(channel, MessageManager::findOrCreateWebhook);
+        return webhooks.computeIfAbsent(channel, MessageManager::findOrCreateWebhook).map(WebhookTarget::webhook);
     }
 
     // Only the found webhook is cached, errors are retried
-    private static Mono<Webhook> findOrCreateWebhook(Snowflake channel) {
-        Mono<TopLevelGuildMessageChannel> channelMono = Mc2Discord.INSTANCE.client.getChannelById(channel)
-                .ofType(TopLevelGuildMessageChannel.class)
+    private static Mono<WebhookTarget> findOrCreateWebhook(Snowflake channel) {
+        return Mc2Discord.INSTANCE.client.getChannelById(channel)
+                .flatMap(guildChannel -> guildChannel instanceof ThreadChannel thread // Threads use the webhook of their parent
+                        ? thread.getParent().ofType(TopLevelGuildMessageChannel.class).map(parent -> Tuples.of(parent, Possible.of(thread.getId())))
+                        : Mono.just(guildChannel).ofType(TopLevelGuildMessageChannel.class).map(topLevel -> Tuples.of(topLevel, Possible.<Snowflake>absent())))
                 .switchIfEmpty(Mono.fromRunnable(() -> Mc2Discord.LOGGER
-                        .error("Invalid channel type, channel {} must support webhooks (use another channel or another mode)", channel.asString())));
-        return channelMono.flatMapMany(TopLevelGuildMessageChannel::getWebhooks)
-                .filter(webhook -> webhook.getName().isPresent() && webhook.getName().get().equals(Mc2Discord.INSTANCE.vars.mc2discord_webhook_name))
-                .switchIfEmpty(channelMono.flatMap(channel1 -> channel1.createWebhook(Mc2Discord.INSTANCE.vars.mc2discord_webhook_name)))
-                .next()
+                        .error("Invalid channel type, channel {} must support webhooks (use another channel or another mode)", channel.asString())))
+                .flatMap(target -> target.getT1()
+                        .getWebhooks()
+                        .filter(webhook -> webhook.getName().isPresent() && webhook.getName().get().equals(Mc2Discord.INSTANCE.vars.mc2discord_webhook_name))
+                        .next()
+                        .switchIfEmpty(target.getT1().createWebhook(Mc2Discord.INSTANCE.vars.mc2discord_webhook_name))
+                        .map(webhook -> new WebhookTarget(webhook, target.getT2())))
                 .cache(webhook -> Duration.ofMillis(Long.MAX_VALUE), throwable -> Duration.ZERO, () -> Duration.ZERO);
     }
 

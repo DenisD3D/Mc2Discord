@@ -78,6 +78,11 @@ public class LifecycleEvents {
                             Mc2Discord.INSTANCE.errors.add(
                                     "Missing permissions for message channel " + channel.channel_id.asString() + ": " + String.join(", ", missingPermissions));
                         }
+
+                        // Messages of a thread are only received by its members
+                        if (guildChannel instanceof ThreadChannel thread) {
+                            thread.join().subscribe(null, M2DUtils.warnOnError("Cannot join the thread " + channel.channel_id.asString()));
+                        }
                     });
         }
 
