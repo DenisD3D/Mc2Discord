@@ -61,12 +61,10 @@ public class DiscordEvent {
             if (member.isBot() && !Mc2Discord.INSTANCE.config.misc.relay_bot_messages)
                 return; // Bot messages
 
-            if (event.getMessage().getContent().isEmpty())
-                return; // no text content to process
-
-            if (event.getMessage().getContent().startsWith(Mc2Discord.INSTANCE.config.commands.prefix) && Mc2Discord.INSTANCE.config.channels.channels.stream()
-                    .filter(channel -> channel.subscriptions.contains("command"))
-                    .anyMatch(channel -> channel.channel_id.equals(event.getMessage().getChannelId()))) { // Commands
+            if (!event.getMessage().getContent().isEmpty() && event.getMessage().getContent().startsWith(Mc2Discord.INSTANCE.config.commands.prefix)
+                    && Mc2Discord.INSTANCE.config.channels.channels.stream()
+                            .filter(channel -> channel.subscriptions.contains("command"))
+                            .anyMatch(channel -> channel.channel_id.equals(event.getMessage().getChannelId()))) { // Commands
                 processCommand(event, member);
             } else if (Mc2Discord.INSTANCE.config.channels.channels.stream()
                     .filter(channel -> channel.subscriptions.contains("chat") || channel.subscriptions.contains("discord"))
@@ -97,6 +95,9 @@ public class DiscordEvent {
      * @param senderUsername The Discord username of the sender for quick @, null if it can't be mentioned
      */
     private static void processMessage(MessageCreateEvent event, MemberEntity memberEntity, String senderUsername) {
+        if (event.getMessage().getContent().isEmpty() && event.getMessage().getAttachments().isEmpty())
+            return; // Nothing to display, eg: embed only messages
+
         // Content
         MessageEntity messageEntity = new MessageEntity(M2DUtils.replaceAllMentions(event.getMessage().getContent(), event.getMessage().getUserMentions(),
                 event.getMessage().getRoleMentions().collectList().block(), event.getGuildId().orElse(null)));
