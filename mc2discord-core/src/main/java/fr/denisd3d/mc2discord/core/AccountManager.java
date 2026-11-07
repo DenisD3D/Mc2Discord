@@ -22,6 +22,11 @@ public class AccountManager {
             10, TimeUnit.MINUTES);
     public static final PassiveExpiringMap<UUID, String> codes = new PassiveExpiringMap<>(expirationPolicy);
     public static final Random random = new Random();
+    /**
+     * Failed attempts per Discord user, to prevent trying every code
+     */
+    private static final PassiveExpiringMap<Snowflake, Integer> failedAttempts = new PassiveExpiringMap<>(10, TimeUnit.MINUTES);
+    private static final int MAX_FAILED_ATTEMPTS = 5;
 
     public static void init() {
         if (!Mc2Discord.INSTANCE.config.features.account_linking)
@@ -47,6 +52,7 @@ public class AccountManager {
             return;
 
         codes.clear();
+        failedAttempts.clear();
     }
 
     public static void renameDiscordAccount(UUID uuid, Snowflake discordId) {
@@ -126,15 +132,14 @@ public class AccountManager {
             return false; // The message is not a code
 
         String code = message.substring(5).trim();
+        Snowflake authorId = event.getMessage().getAuthor().map(User::getId).orElse(M2DUtils.NIL_SNOWFLAKE);
 
-        UUID player_uuid = codes.entrySet()
-                .stream()
-                .filter(entry -> entry.getValue().equals(code))
-                .map(PassiveExpiringMap.Entry::getKey)
-                .findFirst()
-                .orElse(null);
+        UUID player_uuid = failedAttempts.getOrDefault(authorId, 0) >= MAX_FAILED_ATTEMPTS
+                ? null // Too many attempts, the code isn't checked
+                : codes.entrySet().stream().filter(entry -> entry.getValue().equals(code)).map(PassiveExpiringMap.Entry::getKey).findFirst().orElse(null);
 
         if (player_uuid == null) {
+            failedAttempts.merge(authorId, 1, Integer::sum);
             event.getMessage()
                     .getRestChannel()
                     .createMessage(Mc2Discord.INSTANCE.config.account.messages.link_invalid_code.render())
