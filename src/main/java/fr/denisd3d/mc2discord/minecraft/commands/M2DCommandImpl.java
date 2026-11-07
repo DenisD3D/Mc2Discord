@@ -39,6 +39,8 @@ public class M2DCommandImpl {
     private static final SimpleCommandExceptionType PLAYER_NOT_HIDDEN = new SimpleCommandExceptionType(Component.literal("Player wasn't in the list"));
     private static final SimpleCommandExceptionType PLAYER_ALREADY_LINKED = new SimpleCommandExceptionType(Component.literal("Player is already linked"));
     private static final SimpleCommandExceptionType PLAYER_NOT_LINKED = new SimpleCommandExceptionType(Component.literal("Player isn't linked"));
+    private static final SimpleCommandExceptionType ONLY_ONE_PLAYER = new SimpleCommandExceptionType(
+            Component.literal("Only one player can be linked at a time"));
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
         dispatcher.register(Commands.literal("mc2discord").requires(VersionCompat::isGameMaster).then(Commands.literal("status").executes(context -> {
@@ -126,7 +128,7 @@ public class M2DCommandImpl {
         }).then(Commands.argument("discord_id", LongArgumentType.longArg(0)).executes((context) -> {
             List<UUID> targets = getTargets(context);
             if (targets.size() > 1)
-                throw new RuntimeException("Only one player can be added at a time");
+                throw ONLY_ONE_PLAYER.create();
 
             String result = M2DCommands.addLinkedPlayers(targets.iterator().next(), LongArgumentType.getLong(context, "discord_id"));
             if (result == null)
