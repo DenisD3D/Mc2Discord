@@ -81,7 +81,10 @@ public class StatusManager {
                                 }
                             }
                         })
-                        .subscribe();
+                        .subscribe(null, throwable -> {
+                            if (!(throwable instanceof TimeoutException)) // Handled above
+                                M2DUtils.warnOnError("Cannot update the status channel " + this.statusChannel.channel_id.asString()).accept(throwable);
+                        });
             } catch (Exception e) {
                 Mc2Discord.LOGGER.error("Error while updating channel " + this.statusChannel.channel_id.asString(), e);
             }
@@ -127,7 +130,10 @@ public class StatusManager {
                         Mc2Discord.INSTANCE.errors.add("Seem that the presence is updated too quickly. Try increasing the update period");
                         this.cancel();
                     }
-                }).subscribe();
+                }).subscribe(null, throwable -> {
+                    if (!(throwable instanceof TimeoutException)) // Handled above
+                        M2DUtils.warnOnError("Cannot update the presence").accept(throwable);
+                });
             } catch (Exception e) {
                 Mc2Discord.LOGGER.error("Error while updating presence", e);
             }

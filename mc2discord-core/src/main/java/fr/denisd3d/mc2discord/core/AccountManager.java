@@ -36,7 +36,8 @@ public class AccountManager {
                             Mc2Discord.INSTANCE.linkedPlayerList.remove(linkedPlayerEntry.getPlayerUuid());
                             return Mono.empty();
                         })
-                        .subscribe(member -> renameDiscordAccount(linkedPlayerEntry.getPlayerUuid(), linkedPlayerEntry.getDiscordId()));
+                        .subscribe(member -> renameDiscordAccount(linkedPlayerEntry.getPlayerUuid(), linkedPlayerEntry.getDiscordId()),
+                                M2DUtils.warnOnError("Cannot get the linked Discord member " + linkedPlayerEntry.getDiscordId().asString()));
             }
         }
     }
@@ -65,7 +66,7 @@ public class AccountManager {
                                             Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid), uuid), MemberEntity.of(member, color)))
                             .build());
                 })
-                .subscribe();
+                .subscribe(null, M2DUtils.warnOnError("Cannot rename the Discord member " + discordId.asString()));
 
     }
 
@@ -134,7 +135,10 @@ public class AccountManager {
                 .orElse(null);
 
         if (player_uuid == null) {
-            event.getMessage().getRestChannel().createMessage(Mc2Discord.INSTANCE.config.account.messages.link_invalid_code.render()).subscribe();
+            event.getMessage()
+                    .getRestChannel()
+                    .createMessage(Mc2Discord.INSTANCE.config.account.messages.link_invalid_code.render())
+                    .subscribe(null, M2DUtils.warnOnError("Cannot answer the link code"));
         } else {
             codes.remove(player_uuid);
 
@@ -157,7 +161,7 @@ public class AccountManager {
                                     validate_link(player_uuid, event); // Once, even if several policies match
                                     return Flux.fromIterable(policies).flatMapIterable(policy -> policy.roles_id_to_give).distinct().flatMap(member::addRole);
                                 }))
-                        .subscribe();
+                        .subscribe(null, M2DUtils.warnOnError("Cannot apply the account linking policies"));
             } else {
                 validate_link(player_uuid, event);
             }
@@ -172,7 +176,10 @@ public class AccountManager {
 
         Mc2Discord.INSTANCE.linkedPlayerList.add(new LinkedPlayerEntry(uuid, event.getMessage().getAuthor().get().getId()));
 
-        event.getMessage().getRestChannel().createMessage(Mc2Discord.INSTANCE.config.account.messages.link_successful.render()).subscribe();
+        event.getMessage()
+                .getRestChannel()
+                .createMessage(Mc2Discord.INSTANCE.config.account.messages.link_successful.render())
+                .subscribe(null, M2DUtils.warnOnError("Cannot answer the link code"));
         codes.remove(uuid);
 
         if (!Mc2Discord.INSTANCE.config.account.guild_id.equals(M2DUtils.NIL_SNOWFLAKE)) {

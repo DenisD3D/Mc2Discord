@@ -83,11 +83,18 @@ public class MessageManager {
 
         return Flux.fromIterable(getMatchingChannels(types, forced_channel)).flatMap(channel -> {
             String message_with_mention = M2DUtils.transformToMention(message, channel.channel_id);
-            return switch (channel.mode) {
+            Mono<Void> send = switch (channel.mode) {
                 case WEBHOOK -> createWebhookMessage(channel.channel_id, message_with_mention, username, avatarUrl, surroundWithCodeBlock);
                 case PLAIN_TEXT -> createPlainTextMessage(channel.channel_id, message_with_mention, username, surroundWithCodeBlock);
                 case EMBED -> createEmbedMessage(channel.channel_id, message_with_mention, username, avatarUrl, types);
             };
+            // An error in a channel must not prevent sending to the others. Logs errors aren't logged as they would be sent again
+            return send.onErrorResume(throwable -> {
+                if (!types.contains("logs")) {
+                    M2DUtils.warnOnError("Cannot send message to channel " + channel.channel_id.asString()).accept(throwable);
+                }
+                return Mono.empty();
+            });
         }).then();
     }
 

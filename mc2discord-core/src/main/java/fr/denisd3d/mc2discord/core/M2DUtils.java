@@ -13,6 +13,7 @@ import reactor.math.MathFlux;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +22,14 @@ public class M2DUtils {
     public static final Snowflake NIL_SNOWFLAKE = Snowflake.of(0);
     private static final Pattern ANY_DISCORD_MENTION_PATTERN = Pattern.compile("<(?:a?:\\w+:|@&*|#)\\d+>");
     private static final Pattern ANY_DISCORD_NAMED_PATTERN = Pattern.compile("@\\w+|#\\w+|:\\w+:");
+
+    /**
+     * @param action What failed, eg: "Cannot rename member 123"
+     * @return An error consumer for subscribe() that logs a warning instead of the "onErrorDropped" stacktrace
+     */
+    public static Consumer<Throwable> warnOnError(String action) {
+        return throwable -> Mc2Discord.LOGGER.warn("{}: {}", action, throwable.toString());
+    }
 
     /**
      * Check if the mod is configured and discord bot is ready to use
