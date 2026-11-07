@@ -4,6 +4,7 @@ import discord4j.core.event.domain.guild.MemberJoinEvent;
 import discord4j.core.event.domain.guild.MemberLeaveEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.core.object.MessageReference;
+import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.Webhook;
@@ -43,13 +44,10 @@ public class DiscordEvent {
                     .block(), Mc2Discord.INSTANCE.vars.mc2discord_webhook_name))
                 return; // Self messages or slash commands
 
-            if (event.getMember().isEmpty())
-                return;
-
             if (Mc2Discord.INSTANCE.config.channels.channels.stream()
                     .filter(channel -> channel.subscriptions.contains("chat") || channel.subscriptions.contains("discord"))
                     .anyMatch(channel -> channel.channel_id.equals(event.getMessage().getChannelId()))) { // Chat or Discord
-                processMessage(event, event.getMember().get());
+                processMessage(event, MemberEntity.of(getWebhookAuthor(event.getMessage())), null); // Webhooks aren't members
             }
 
         } else { // User messages
@@ -73,9 +71,17 @@ public class DiscordEvent {
             } else if (Mc2Discord.INSTANCE.config.channels.channels.stream()
                     .filter(channel -> channel.subscriptions.contains("chat") || channel.subscriptions.contains("discord"))
                     .anyMatch(channel -> channel.channel_id.equals(event.getMessage().getChannelId()))) { // Chat or Discord
-                processMessage(event, member);
+                processMessage(event, MemberEntity.of(member, M2DUtils.getMemberColor(member).blockOptional().orElseThrow()),
+                        "0".equals(member.getDiscriminator()) ? member.getUsername() : null);
             }
         }
+    }
+
+    /**
+     * {@link Message#getAuthor()} is empty for webhooks, but the message contains the name and avatar used
+     */
+    private static User getWebhookAuthor(Message message) {
+        return new User(message.getClient(), message.getData().author());
     }
 
     private static void processCommand(MessageCreateEvent event, Member member) {
@@ -87,11 +93,13 @@ public class DiscordEvent {
                 .subscribe();
     }
 
-    private static void processMessage(MessageCreateEvent event, Member member) {
+    /**
+     * @param senderUsername The Discord username of the sender for quick @, null if it can't be mentioned
+     */
+    private static void processMessage(MessageCreateEvent event, MemberEntity memberEntity, String senderUsername) {
         // Content
         MessageEntity messageEntity = new MessageEntity(M2DUtils.replaceAllMentions(event.getMessage().getContent(), event.getMessage().getUserMentions(),
                 event.getMessage().getRoleMentions().collectList().block(), event.getGuildId().orElse(null)));
-        MemberEntity memberEntity = MemberEntity.of(member, M2DUtils.getMemberColor(member).blockOptional().orElseThrow());
 
         // Attachements
         HashMap<String, String> attachments = event.getMessage()
@@ -111,7 +119,7 @@ public class DiscordEvent {
                 .map(referencedMemberEntity -> Mc2Discord.INSTANCE.config.style.reply_format.render(referencedMemberEntity));
 
         Mc2Discord.INSTANCE.minecraft.sendMessage(Mc2Discord.INSTANCE.config.style.minecraft_chat_format, List.of(messageEntity, memberEntity), attachments,
-                reply.orElse(null), "0".equals(member.getDiscriminator()) ? member.getUsername() : null);
+                reply.orElse(null), senderUsername);
     }
 
     public static void onMemberJoin(MemberJoinEvent memberJoinEvent) {

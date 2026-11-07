@@ -1,6 +1,7 @@
 package fr.denisd3d.mc2discord.core.entities;
 
 import discord4j.core.object.entity.Member;
+import discord4j.core.object.entity.User;
 
 public record MemberEntity(String globalName, String username, String nickname, String avatarUrl, int topRoleColor) implements Entity {
     /**
@@ -9,6 +10,13 @@ public record MemberEntity(String globalName, String username, String nickname, 
     public static MemberEntity of(Member member, int topRoleColor) {
         return new MemberEntity(member.getGlobalName().orElse(member.getUsername()), member.getUsername(), member.getNickname().orElse(""),
                 member.getAvatarUrl(), topRoleColor);
+    }
+
+    /**
+     * For authors that aren't guild members, like webhooks: no nickname and the default color
+     */
+    public static MemberEntity of(User user) {
+        return new MemberEntity(user.getGlobalName().orElse(user.getUsername()), user.getUsername(), "", user.getAvatarUrl(), 16777215);
     }
 
     @Override
