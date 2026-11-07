@@ -21,7 +21,8 @@ public class M2DUtils {
     public static final File CONFIG_FILE = new File("config", "mc2discord.toml");
     public static final Snowflake NIL_SNOWFLAKE = Snowflake.of(0);
     private static final Pattern ANY_DISCORD_MENTION_PATTERN = Pattern.compile("<(?:a?:\\w+:|@&*|#)\\d+>");
-    private static final Pattern ANY_DISCORD_NAMED_PATTERN = Pattern.compile("@\\w+|#\\w+|:\\w+:");
+    // Usernames may contain dots and channel names dashes, but not at the end to exclude the punctuation, eg: "Hi @john.doe."
+    private static final Pattern ANY_DISCORD_NAMED_PATTERN = Pattern.compile("@[\\w.]*\\w|#[\\w-]*\\w|:\\w+:");
 
     /**
      * @param action What failed, eg: "Cannot rename member 123"
