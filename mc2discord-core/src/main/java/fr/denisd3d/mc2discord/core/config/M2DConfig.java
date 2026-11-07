@@ -135,7 +135,7 @@ public class M2DConfig extends Config4J {
             this.style.embed_colors.add("info", "SUMMER_SKY");
             this.style.embed_colors.add("chat", "MEDIUM_SEA_GREEN");
             this.style.embed_colors.add("command", "MEDIUM_SEA_GREEN");
-            this.style.embed_colors.add("log", "SUMMER_SKY");
+            this.style.embed_colors.add("logs", "SUMMER_SKY");
         }
 
         if (this.account.policies.isEmpty()) {
