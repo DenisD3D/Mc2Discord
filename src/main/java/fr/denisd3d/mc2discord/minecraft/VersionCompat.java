@@ -17,7 +17,7 @@ import java.net.URI;
 //?}
 
 //? if >=1.21.11 {
-import net.minecraft.server.permissions.Permission;
+import net.minecraft.server.permissions.LevelBasedPermissionSet;
 import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.server.permissions.PermissionSet;
 import net.minecraft.server.permissions.Permissions;
@@ -129,13 +129,8 @@ public class VersionCompat {
         if (levelId <= 0) {
             return PermissionSet.NO_PERMISSIONS;
         }
-        PermissionLevel level = PermissionLevel.byId(levelId);
-        return permission -> {
-            if (permission instanceof Permission.HasCommandLevel hasCommandLevel) {
-                return level.isEqualOrHigherThan(hasCommandLevel.level());
-            }
-            return false;
-        };
+        // Same permissions as a player of this level, including the entity selectors
+        return LevelBasedPermissionSet.forLevel(PermissionLevel.byId(levelId));
     }
     //?}
 }
