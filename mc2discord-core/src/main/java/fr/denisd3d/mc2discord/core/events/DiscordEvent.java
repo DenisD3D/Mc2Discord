@@ -1,6 +1,5 @@
 package fr.denisd3d.mc2discord.core.events;
 
-import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.guild.MemberJoinEvent;
 import discord4j.core.event.domain.guild.MemberLeaveEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
@@ -9,6 +8,7 @@ import discord4j.core.object.entity.Member;
 import discord4j.core.object.entity.User;
 import discord4j.core.object.entity.Webhook;
 import fr.denisd3d.mc2discord.core.AccountManager;
+import fr.denisd3d.mc2discord.core.CommandManager;
 import fr.denisd3d.mc2discord.core.M2DUtils;
 import fr.denisd3d.mc2discord.core.Mc2Discord;
 import fr.denisd3d.mc2discord.core.MessageManager;
@@ -79,35 +79,12 @@ public class DiscordEvent {
     }
 
     private static void processCommand(MessageCreateEvent event, Member member) {
-        Set<Snowflake> memberIds = member.getRoleIds(); // Roles ids
-        memberIds.add(member.getId()); // Self id
-        memberIds.add(M2DUtils.NIL_SNOWFLAKE); // Everyone id
-
-        Integer permission_level = Mc2Discord.INSTANCE.config.commands.permissions.stream()
-                .filter(commandRule -> memberIds.contains(commandRule.id))
-                .map(commandRule -> commandRule.permission_level)
-                .max(Integer::compareTo)
-                .orElse(-1);
-        List<String> commands = Mc2Discord.INSTANCE.config.commands.permissions.stream()
-                .filter(commandRule -> memberIds.contains(commandRule.id))
-                .flatMap(commandRule -> commandRule.commands.stream())
-                .filter(s -> !s.isEmpty())
-                .toList();
-
         String command = event.getMessage().getContent().substring(Mc2Discord.INSTANCE.config.commands.prefix.length());
 
-        if (command.equals("help")) { // Help command
-            String result = Mc2Discord.INSTANCE.minecraft.executeHelpCommand(permission_level, commands);
-            MessageManager
-                    .sendMessage(Collections.singletonList("command"), result, MessageManager.default_username, MessageManager.default_avatar,
-                            event.getMessage().getChannelId(), Mc2Discord.INSTANCE.config.commands.use_codeblocks)
-                    .subscribe();
-        } else if (commands.stream().anyMatch(allowed -> command.equals(allowed) || command.startsWith(allowed + " "))) { // Command listed as allowed
-            Mc2Discord.INSTANCE.minecraft.executeCommand(command, Integer.MAX_VALUE, event.getMessage().getChannelId());
-        } else {
-            Mc2Discord.INSTANCE.minecraft.executeCommand(command, permission_level, event.getMessage().getChannelId());
-        }
-
+        CommandManager.execute(command, member)
+                .flatMap(result -> MessageManager.sendMessage(Collections.singletonList("command"), result, MessageManager.default_username,
+                        MessageManager.default_avatar, event.getMessage().getChannelId(), Mc2Discord.INSTANCE.config.commands.use_codeblocks))
+                .subscribe();
     }
 
     private static void processMessage(MessageCreateEvent event, Member member) {

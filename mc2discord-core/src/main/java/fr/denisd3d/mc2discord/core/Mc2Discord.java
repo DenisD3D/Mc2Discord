@@ -7,6 +7,8 @@ import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.guild.MemberJoinEvent;
 import discord4j.core.event.domain.guild.MemberLeaveEvent;
+import discord4j.core.event.domain.interaction.ChatInputAutoCompleteEvent;
+import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import discord4j.gateway.GatewayReactorResources;
@@ -89,6 +91,8 @@ public class Mc2Discord {
                     this.client.on(MessageCreateEvent.class).subscribe(DiscordEvent::onMessageCreate);
                     this.client.on(MemberJoinEvent.class).subscribe(DiscordEvent::onMemberJoin);
                     this.client.on(MemberLeaveEvent.class).subscribe(DiscordEvent::onMemberLeave);
+                    this.client.on(ChatInputInteractionEvent.class, CommandManager::onChatInputInteraction).subscribe();
+                    this.client.on(ChatInputAutoCompleteEvent.class, CommandManager::onChatInputAutoComplete).subscribe();
                 });
     }
 

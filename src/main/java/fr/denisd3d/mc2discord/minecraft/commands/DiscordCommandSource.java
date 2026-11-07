@@ -1,25 +1,42 @@
 package fr.denisd3d.mc2discord.minecraft.commands;
 
-import discord4j.common.util.Snowflake;
-import fr.denisd3d.mc2discord.core.Mc2Discord;
-import fr.denisd3d.mc2discord.core.MessageManager;
 import fr.denisd3d.mc2discord.minecraft.VersionCompat;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.network.chat.Component;
 
-import java.util.Collections;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
+/**
+ * Collect the output of a command executed from Discord to send it as a single message
+ */
 public class DiscordCommandSource implements CommandSource {
-    public static String answer = ""; // This is a hack to have only one string as result for the command. We need to clear it after each use and get the result by our self
-    public static Snowflake channelId;
-    private long time;
-    private Thread messageScheduler;
+    private static final ScheduledExecutorService SCHEDULER = Executors.newSingleThreadScheduledExecutor(runnable -> {
+        Thread thread = new Thread(runnable, "Mc2Discord command output");
+        thread.setDaemon(true);
+        return thread;
+    });
+
+    private final StringBuilder answer = new StringBuilder();
+    private final Consumer<String> onResult;
+    private ScheduledFuture<?> flushTask;
+    private boolean flushed = false;
+
+    /**
+     * @param onResult Called once with the whole output of the command
+     */
+    public DiscordCommandSource(Consumer<String> onResult) {
+        this.onResult = onResult;
+    }
 
     @Override
-    public void sendSystemMessage(Component component) {
+    public synchronized void sendSystemMessage(Component component) {
         String url = VersionCompat.getOpenedUrl(component.getStyle().getClickEvent());
-        answer += component.getString() + (url != null ? " <" + url + ">" : "") + "\n";
-        scheduleMessage();
+        answer.append(component.getString()).append(url != null ? " <" + url + ">" : "").append("\n");
+        scheduleFlush();
     }
 
     @Override
@@ -37,29 +54,24 @@ public class DiscordCommandSource implements CommandSource {
         return true;
     }
 
-    @SuppressWarnings("BusyWait")
-    private void scheduleMessage() {
-        time = System.currentTimeMillis();
-        if (messageScheduler == null || !messageScheduler.isAlive()) {
-            messageScheduler = new Thread(() -> {
-                while (true) {
-                    if (System.currentTimeMillis() - time > 50) {
-                        MessageManager
-                                .sendMessage(Collections.singletonList("command"), answer, MessageManager.default_username, MessageManager.default_avatar,
-                                        channelId, Mc2Discord.INSTANCE.config.commands.use_codeblocks)
-                                .subscribe();
+    /**
+     * Send the output once nothing has been output for 50ms
+     */
+    public synchronized void scheduleFlush() {
+        if (flushed)
+            return;
 
-                        answer = "";
-                        break;
-                    }
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        Mc2Discord.LOGGER.error("An error occurred while waiting for the command result", e);
-                    }
-                }
-            });
-            messageScheduler.start();
+        if (flushTask != null) {
+            flushTask.cancel(false);
         }
+        flushTask = SCHEDULER.schedule(this::flush, 50, TimeUnit.MILLISECONDS);
+    }
+
+    private synchronized void flush() {
+        if (flushed)
+            return;
+
+        flushed = true;
+        onResult.accept(answer.toString());
     }
 }

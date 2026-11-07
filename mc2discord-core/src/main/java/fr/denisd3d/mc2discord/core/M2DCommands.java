@@ -126,7 +126,7 @@ public class M2DCommands {
     public static String getInviteLink() {
         return M2DUtils.isTokenValid(Mc2Discord.INSTANCE.config.general.token)
                 ? "https://discord.com/api/oauth2/authorize?client_id=" + TokenUtil.getSelfId(Mc2Discord.INSTANCE.config.general.token)
-                        + "&permissions=604359761&scope=bot"
+                        + "&permissions=604359761&scope=bot+applications.commands"
                 : Mc2Discord.INSTANCE.langManager.translate("commands.invite.error");
     }
 

@@ -5,9 +5,9 @@ import fr.denisd3d.mc2discord.core.Mc2Discord;
 import fr.denisd3d.mc2discord.core.Vars;
 import fr.denisd3d.mc2discord.core.events.LifecycleEvents;
 import fr.denisd3d.mc2discord.minecraft.commands.DiscordCommandImpl;
-import fr.denisd3d.mc2discord.minecraft.commands.DiscordCommandSource;
 import fr.denisd3d.mc2discord.minecraft.commands.M2DCommandImpl;
 import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
 
@@ -27,8 +27,8 @@ public class Mc2DiscordMinecraft {
     }
 
     public static void onServerStarted(MinecraftServer minecraftServer) {
+        commandSource = VersionCompat.createCommandSource(CommandSource.NULL, minecraftServer);
         LifecycleEvents.minecraftReady = true;
-        commandSource = VersionCompat.createCommandSource(new DiscordCommandSource(), minecraftServer);
         LifecycleEvents.mcOrDiscordReady();
     }
 

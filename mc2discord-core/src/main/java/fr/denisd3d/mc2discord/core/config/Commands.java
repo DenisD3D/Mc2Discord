@@ -22,6 +22,11 @@ public class Commands {
     @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public boolean use_codeblocks = true;
 
+    @SerdeKey("slash_command")
+    @SerdeComment("config.commands.slash_command.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
+    public boolean slash_command = true;
+
     @SerdeKey("Permission")
     @SerdeComment("config.commands.permission.comment")
     @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)

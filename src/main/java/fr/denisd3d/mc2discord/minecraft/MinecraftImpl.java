@@ -2,8 +2,10 @@ package fr.denisd3d.mc2discord.minecraft;
 
 import com.google.common.math.Stats;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.ParseResults;
+import com.mojang.brigadier.context.SuggestionContext;
 import com.mojang.brigadier.tree.CommandNode;
-import discord4j.common.util.Snowflake;
+import com.mojang.brigadier.tree.LiteralCommandNode;
 import fr.denisd3d.mc2discord.core.IMinecraft;
 import fr.denisd3d.mc2discord.core.Mc2Discord;
 import fr.denisd3d.mc2discord.core.entities.Entity;
@@ -22,6 +24,7 @@ import net.minecraft.server.players.NameAndId;
 /*import com.mojang.authlib.GameProfile;
 *///?}
 import net.minecraft.util.TimeUtil;
+import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.util.*;
@@ -153,12 +156,44 @@ public class MinecraftImpl implements IMinecraft {
     }
 
     @Override
-    public void executeCommand(String command, int permissionLevel, Snowflake channelId) {
-        Mc2DiscordMinecraft.server.execute(() -> {
-            DiscordCommandSource.channelId = channelId;
-            Mc2DiscordMinecraft.server.getCommands()
-                    .performPrefixedCommand(VersionCompat.withPermissionLevel(Mc2DiscordMinecraft.commandSource, permissionLevel), command);
-        });
+    public Mono<String> executeCommand(String command, int permissionLevel) {
+        return Mono.create(sink -> Mc2DiscordMinecraft.server.execute(() -> {
+            DiscordCommandSource discordCommandSource = new DiscordCommandSource(sink::success);
+            CommandSourceStack source = VersionCompat.createCommandSource(discordCommandSource, Mc2DiscordMinecraft.server);
+            Mc2DiscordMinecraft.server.getCommands().performPrefixedCommand(VersionCompat.withPermissionLevel(source, permissionLevel), command);
+            discordCommandSource.scheduleFlush(); // Also complete if the command did not output anything
+        }));
+    }
+
+    @Override
+    public Mono<CommandCompletion> getCommandCompletion(String input, int permissionLevel) {
+        CommandDispatcher<CommandSourceStack> commandDispatcher = Mc2DiscordMinecraft.server.getCommands().getDispatcher();
+        CommandSourceStack source = VersionCompat.withPermissionLevel(Mc2DiscordMinecraft.commandSource, permissionLevel);
+
+        // Parsed on the server thread as argument suggestions may read the world
+        return Mono.fromFuture(() -> Mc2DiscordMinecraft.server.submit(() -> {
+            ParseResults<CommandSourceStack> parseResults = commandDispatcher.parse(input, source);
+            List<String> usages = getUsages(commandDispatcher, parseResults);
+            return commandDispatcher.getCompletionSuggestions(parseResults)
+                    .thenApply(
+                            suggestions -> new CommandCompletion(suggestions.getList().stream().map(suggestion -> suggestion.apply(input)).toList(), usages));
+        }).thenCompose(completion -> completion));
+    }
+
+    /**
+     * Same as the hints shown in game: the usage of the arguments that can be typed at the end of the input
+     */
+    private static List<String> getUsages(CommandDispatcher<CommandSourceStack> commandDispatcher, ParseResults<CommandSourceStack> parseResults) {
+        String input = parseResults.getReader().getString();
+        SuggestionContext<CommandSourceStack> suggestionContext = parseResults.getContext().findSuggestionContext(input.length());
+        String start = input.substring(0, suggestionContext.startPos);
+
+        return commandDispatcher.getSmartUsage(suggestionContext.parent, parseResults.getContext().getSource())
+                .entrySet()
+                .stream()
+                .filter(entry -> !(entry.getKey() instanceof LiteralCommandNode)) // Literals are already suggested
+                .map(entry -> start + entry.getValue())
+                .toList();
     }
 
     @Override

@@ -1,8 +1,8 @@
 package fr.denisd3d.mc2discord.core;
 
-import discord4j.common.util.Snowflake;
 import fr.denisd3d.mc2discord.core.entities.Entity;
 import fr.denisd3d.mc2discord.core.entities.Template;
+import reactor.core.publisher.Mono;
 import reactor.util.annotation.Nullable;
 
 import java.util.List;
@@ -42,9 +42,26 @@ public interface IMinecraft {
      * Execute a command in the minecraft server
      * @param command The command to execute
      * @param permissionLevel The permission level granted, if < of the command permission level, the command will not be executed
-     * @param channelId The channel id where the command was executed to send the response
+     * @return The output of the command, empty if the command did not output anything
      */
-    void executeCommand(String command, int permissionLevel, Snowflake channelId);
+    Mono<String> executeCommand(String command, int permissionLevel);
+
+    /**
+     * Get the completions of a partially typed command, like the tab completion of the console
+     * @param input The partially typed command
+     * @param permissionLevel The permission level granted, commands above it are not suggested
+     * @return The suggestions and usage hints for the end of the input
+     */
+    Mono<CommandCompletion> getCommandCompletion(String input, int permissionLevel);
+
+    /**
+     * @param suggestions The input completed with each suggestion
+     * @param usages The input with the usage of each argument that can be typed at its end (eg: "give Steve diamond <count>"), shown in game when
+     *        there is no suggestion
+     */
+    record CommandCompletion(List<String> suggestions, List<String> usages) {
+        public static final CommandCompletion EMPTY = new CommandCompletion(List.of(), List.of());
+    }
 
     /**
      * Check if a new version of the mod is available

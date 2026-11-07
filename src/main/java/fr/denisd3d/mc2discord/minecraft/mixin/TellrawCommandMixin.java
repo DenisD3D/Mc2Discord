@@ -6,8 +6,8 @@ import fr.denisd3d.mc2discord.core.M2DUtils;
 import fr.denisd3d.mc2discord.core.Mc2Discord;
 import fr.denisd3d.mc2discord.core.MessageManager;
 import fr.denisd3d.mc2discord.minecraft.Entities;
-import fr.denisd3d.mc2discord.minecraft.Mc2DiscordMinecraft;
 import fr.denisd3d.mc2discord.minecraft.VersionCompat;
+import fr.denisd3d.mc2discord.minecraft.commands.DiscordCommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.commands.TellRawCommand;
 import net.minecraft.server.level.ServerPlayer;
@@ -34,7 +34,7 @@ public class TellrawCommandMixin {
         if (!Mc2Discord.INSTANCE.config.misc.broadcast_commands.contains("tellraw"))
             return;
 
-        if (commandContext.getInput().contains("@s") && (commandContext.getSource() == Mc2DiscordMinecraft.commandSource)) {
+        if (commandContext.getInput().contains("@s") && (commandContext.getSource().source instanceof DiscordCommandSource)) {
             cir.setReturnValue(1); // Do not execute the vanilla command to prevent No player was found error but still return the message to discord
         } else if (!commandContext.getInput().contains("@a")) { // Else if the target is not everyone it does not target discord
             return;

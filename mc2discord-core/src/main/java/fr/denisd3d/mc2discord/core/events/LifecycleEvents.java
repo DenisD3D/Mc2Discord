@@ -161,6 +161,7 @@ public class LifecycleEvents {
         StatusManager.init();
         LoggingManager.init();
         AccountManager.init();
+        CommandManager.init();
 
         Mc2Discord.LOGGER.info("Mc2Discord started as " + Mc2Discord.INSTANCE.vars.bot_name + "#" + Mc2Discord.INSTANCE.vars.bot_discriminator);
         String newVersion = Mc2Discord.INSTANCE.minecraft.getNewVersion();
