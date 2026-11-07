@@ -27,6 +27,9 @@ public class FabricEvents {
     }
 
     public static void onChatMessageEvent(PlayerChatMessage playerChatMessage, ServerPlayer serverPlayer, ChatType.Bound bound) {
+        if (bound.chatType().is(ChatType.SAY_COMMAND) || bound.chatType().is(ChatType.EMOTE_COMMAND))
+            return; // The say and me commands are relayed by their mixins
+
         MinecraftEvents.onMinecraftChatMessageEvent(playerChatMessage.signedContent(), Entities.player(serverPlayer));
     }
 
