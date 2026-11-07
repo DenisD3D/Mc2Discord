@@ -130,24 +130,32 @@ public class LifecycleEvents {
                         .toArray(AllowedMentions.Type[]::new))
                 .build());
 
-        // Channels, emojis and members caches
+        // Channels, emojis and members caches, an error must not prevent the mod from starting
         Flux<Guild> guilds = Flux.fromIterable(Mc2Discord.INSTANCE.config.channels.channels)
                 .map(channel -> channel.channel_id)
                 .filter(channelId -> !channelId.equals(M2DUtils.NIL_SNOWFLAKE))
-                .flatMap(channelId -> Mc2Discord.INSTANCE.client.getChannelById(channelId))
+                .flatMap(channelId -> Mc2Discord.INSTANCE.client.getChannelById(channelId).onErrorResume(e -> Mono.empty())) // Already reported above
                 .ofType(GuildChannel.class)
                 .flatMap(GuildChannel::getGuild)
                 .distinct();
 
         Flux<GuildEmoji> guildEmojiFlux = guilds.flatMap(Guild::getEmojis)
-                .doOnNext(emoji -> Mc2Discord.INSTANCE.vars.emojiCache.put(emoji.getGuildId(), emoji.getName(), emoji.getId()));
+                .doOnNext(emoji -> Mc2Discord.INSTANCE.vars.emojiCache.put(emoji.getGuildId(), emoji.getName(), emoji.getId()))
+                .onErrorResume(throwable -> {
+                    Mc2Discord.INSTANCE.errors.add("Cannot cache emojis list: " + throwable.getMessage());
+                    return Flux.empty();
+                });
         Flux<GuildChannel> guildChannelFlux = guilds.flatMap(Guild::getChannels).doOnNext(channel -> {
             Mc2Discord.INSTANCE.vars.channelCache.put(channel.getGuildId(), channel.getName(), channel.getId());
             Mc2Discord.INSTANCE.vars.channelCacheReverse.put(channel.getId(), channel.getGuildId());
+        }).onErrorResume(throwable -> {
+            Mc2Discord.INSTANCE.errors.add("Cannot cache channels list: " + throwable.getMessage());
+            return Flux.empty();
         });
-        Flux<Member> guildMemberFlux = guilds.flatMap(Guild::getMembers)
-                .doOnError(throwable -> Mc2Discord.INSTANCE.errors.add("Missing SERVER MEMBERS intent, cannot cache members list"))
-                .doOnNext(M2DUtils::cacheMember);
+        Flux<Member> guildMemberFlux = guilds.flatMap(Guild::getMembers).doOnNext(M2DUtils::cacheMember).onErrorResume(throwable -> {
+            Mc2Discord.INSTANCE.errors.add("Missing SERVER MEMBERS intent, cannot cache members list");
+            return Flux.empty();
+        });
 
         Mono.when(guildEmojiFlux, guildChannelFlux, guildMemberFlux).doOnSuccess(unused -> LifecycleEvents.mcOrDiscordReady()).subscribe();
     }
