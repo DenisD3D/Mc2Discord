@@ -114,6 +114,26 @@ public class LifecycleEvents {
         if (Mc2Discord.INSTANCE.config.features.account_linking) {
             if (Mc2Discord.INSTANCE.config.account.guild_id.equals(M2DUtils.NIL_SNOWFLAKE)) {
                 Mc2Discord.INSTANCE.errors.add("Invalid guild id for account linking");
+            } else {
+                Mc2Discord.INSTANCE.client.getSelfMember(Mc2Discord.INSTANCE.config.account.guild_id)
+                        .flatMap(Member::getBasePermissions)
+                        .subscribe(permissionSet -> {
+                            ArrayList<String> missingPermissions = new ArrayList<>();
+                            if (!permissionSet.contains(Permission.ADMINISTRATOR)) {
+                                if (Mc2Discord.INSTANCE.config.account.rename_discord_member && !permissionSet.contains(Permission.MANAGE_NICKNAMES)) {
+                                    missingPermissions.add("MANAGE_NICKNAMES");
+                                }
+                                if (Mc2Discord.INSTANCE.config.account.policies.stream().anyMatch(policy -> !policy.roles_id_to_give.isEmpty())
+                                        && !permissionSet.contains(Permission.MANAGE_ROLES)) {
+                                    missingPermissions.add("MANAGE_ROLES");
+                                }
+                            }
+
+                            if (!missingPermissions.isEmpty()) {
+                                Mc2Discord.INSTANCE.errors.add("Missing permissions for account linking: " + String.join(", ", missingPermissions));
+                            }
+                        }, throwable -> Mc2Discord.INSTANCE.errors.add("Cannot access the account linking guild "
+                                + Mc2Discord.INSTANCE.config.account.guild_id.asString() + ": " + throwable.getMessage()));
             }
         }
 
