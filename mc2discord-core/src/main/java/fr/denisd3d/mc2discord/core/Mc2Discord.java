@@ -26,7 +26,6 @@ import fr.denisd3d.mc2discord.core.storage.LinkedPlayerList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
-import reactor.retry.Retry;
 import reactor.util.retry.RetrySpec;
 
 import java.io.File;
@@ -65,7 +64,7 @@ public class Mc2Discord {
                                 .evictInBackground(Duration.ofSeconds(30))
                                 .build()).proxyWithSystemProperties())
                         .build())
-                .onClientResponse(ResponseFunction.retryWhen(RouteMatcher.any(), RetrySpec.withThrowable(Retry.anyOf(IOException.class))))
+                .onClientResponse(ResponseFunction.retryWhen(RouteMatcher.any(), RetrySpec.max(1).filter(IOException.class::isInstance)))
                 .build()
                 .gateway()
                 .setEnabledIntents(IntentSet.all().andNot(IntentSet.of(Intent.GUILD_PRESENCES)))

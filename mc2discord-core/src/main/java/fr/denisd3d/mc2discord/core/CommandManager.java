@@ -146,7 +146,7 @@ public class CommandManager {
             return Flux.fromIterable(messages)
                     .index()
                     .concatMap(message -> message.getT1() == 0
-                            ? event.editReply(message.getT2()).withAllowedMentions(allowedMentions)
+                            ? event.editReply(message.getT2()).withAllowedMentionsOrNull(allowedMentions)
                             : event.createFollowup(message.getT2()).withAllowedMentions(allowedMentions));
         }).then();
     }

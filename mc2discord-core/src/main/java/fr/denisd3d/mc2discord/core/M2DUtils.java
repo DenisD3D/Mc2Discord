@@ -181,8 +181,8 @@ public class M2DUtils {
      * @return The color of the member
      */
     public static Mono<Integer> getMemberColor(Member member) {
-        return MathFlux.max(member.getRoles().filter(role -> role.getColor().getRGB() != 0), OrderUtil.ROLE_ORDER)
-                .map(Role::getColor)
+        return MathFlux.max(member.getRoles().filter(role -> role.getPrimaryColor().getRGB() != 0), OrderUtil.ROLE_ORDER)
+                .map(Role::getPrimaryColor)
                 .map(Color::getRGB)
                 .defaultIfEmpty(16777215);
     }

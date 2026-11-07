@@ -3,7 +3,7 @@ package fr.denisd3d.mc2discord.core;
 import fr.denisd3d.mc2discord.core.entities.Entity;
 import fr.denisd3d.mc2discord.core.entities.Template;
 import reactor.core.publisher.Mono;
-import reactor.util.annotation.Nullable;
+import javax.annotation.Nullable;
 
 import java.util.List;
 import java.util.Map;
