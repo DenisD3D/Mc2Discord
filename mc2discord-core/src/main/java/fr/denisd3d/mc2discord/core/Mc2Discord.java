@@ -59,10 +59,9 @@ public class Mc2Discord {
 
         DiscordClient.builder(this.config.general.token)
                 .setReactorResources(ReactorResources.builder()
-                        .httpClient(ReactorResources.newHttpClient(ConnectionProvider.builder("mc2discord")
-                                .maxIdleTime(Duration.ofSeconds(20))
-                                .evictInBackground(Duration.ofSeconds(30))
-                                .build()).proxyWithSystemProperties())
+                        .httpClient(ReactorResources.newHttpClient(
+                                ConnectionProvider.builder("mc2discord").maxIdleTime(Duration.ofSeconds(20)).evictInBackground(Duration.ofSeconds(30)).build())
+                                .proxyWithSystemProperties())
                         .build())
                 .onClientResponse(ResponseFunction.retryWhen(RouteMatcher.any(), RetrySpec.max(1).filter(IOException.class::isInstance)))
                 .build()
