@@ -115,8 +115,11 @@ public class DiscordEvent {
                 .flatMap(MessageReference::getMessageId)
                 .flatMap(snowflake -> Optional.of(Mono.defer(() -> event.getMessage().getChannel().flatMap(channel -> channel.getMessageById(snowflake)))))
                 .flatMap(message -> Optional.ofNullable(message.block()))
-                .flatMap(message -> Optional.ofNullable(message.getAuthorAsMember().block()))
-                .map(referencedMember -> MemberEntity.of(referencedMember, M2DUtils.getMemberColor(referencedMember).blockOptional().orElseThrow()))
+                .flatMap(message -> message.getWebhookId().isPresent() // Webhooks (eg: Minecraft players) aren't members
+                        ? Optional.of(MemberEntity.of(getWebhookAuthor(message)))
+                        : Optional.ofNullable(message.getAuthorAsMember().block())
+                                .map(referencedMember -> MemberEntity.of(referencedMember,
+                                        M2DUtils.getMemberColor(referencedMember).blockOptional().orElseThrow())))
                 .map(referencedMemberEntity -> Mc2Discord.INSTANCE.config.style.reply_format.render(referencedMemberEntity));
 
         Mc2Discord.INSTANCE.minecraft.sendMessage(Mc2Discord.INSTANCE.config.style.minecraft_chat_format, List.of(messageEntity, memberEntity), attachments,
