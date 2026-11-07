@@ -35,9 +35,18 @@ public class VersionCompat {
 
     // Chat components
 
+    /**
+     * @return null if the url is empty or invalid (eg: an error message), so the text is not clickable
+     */
     public static ClickEvent openUrl(String url) {
+        if (url == null || url.isBlank())
+            return null;
         //? if >=1.21.5 {
-        return new ClickEvent.OpenUrl(URI.create(url));
+        try {
+            return new ClickEvent.OpenUrl(URI.create(url));
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
         //?} else {
         /*return new ClickEvent(ClickEvent.Action.OPEN_URL, url);
         *///?}
