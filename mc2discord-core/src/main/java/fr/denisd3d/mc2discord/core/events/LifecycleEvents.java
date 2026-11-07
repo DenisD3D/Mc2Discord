@@ -182,7 +182,7 @@ public class LifecycleEvents {
             return Flux.empty();
         });
         Flux<Member> guildMemberFlux = guilds.flatMap(Guild::getMembers).doOnNext(M2DUtils::cacheMember).onErrorResume(throwable -> {
-            Mc2Discord.INSTANCE.errors.add("Missing SERVER MEMBERS intent, cannot cache members list");
+            Mc2Discord.INSTANCE.errors.add("Cannot cache members list: " + throwable.getMessage());
             return Flux.empty();
         });
 

@@ -11,6 +11,7 @@ import discord4j.core.event.domain.interaction.ChatInputAutoCompleteEvent;
 import discord4j.core.event.domain.interaction.ChatInputInteractionEvent;
 import discord4j.core.event.domain.lifecycle.ReadyEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
+import discord4j.core.object.entity.ApplicationInfo;
 import discord4j.gateway.GatewayReactorResources;
 import discord4j.gateway.intent.Intent;
 import discord4j.gateway.intent.IntentSet;
@@ -57,15 +58,16 @@ public class Mc2Discord {
             return;
         }
 
-        DiscordClient.builder(this.config.general.token)
+        DiscordClient discordClient = DiscordClient.builder(this.config.general.token)
                 .setReactorResources(ReactorResources.builder()
                         .httpClient(ReactorResources.newHttpClient(
                                 ConnectionProvider.builder("mc2discord").maxIdleTime(Duration.ofSeconds(20)).evictInBackground(Duration.ofSeconds(30)).build())
                                 .proxyWithSystemProperties())
                         .build())
                 .onClientResponse(ResponseFunction.retryWhen(RouteMatcher.any(), RetrySpec.max(1).filter(IOException.class::isInstance)))
-                .build()
-                .gateway()
+                .build();
+
+        discordClient.gateway()
                 .setEnabledIntents(IntentSet.all().andNot(IntentSet.of(Intent.GUILD_PRESENCES)))
                 .setGatewayReactorResources(reactorResources -> GatewayReactorResources.builder(reactorResources)
                         .httpClient(ReactorResources.newHttpClient(ConnectionProvider.create("d4j-gateway", 1)).proxyWithSystemProperties())
@@ -76,9 +78,19 @@ public class Mc2Discord {
                             throwable.getCloseStatus().getCode());
                     this.errors.add("Error while starting Discord bot: " + throwable.getCloseStatus().getReason().orElse("") + " (code "
                             + throwable.getCloseStatus().getCode() + ")");
-                    if (throwable.getCloseStatus().getCode() == 4014) {
-                        Mc2Discord.LOGGER.error("Make sure all required intents are enabled on Discord developer website (MESSAGE CONTENT & SERVER MEMBERS)");
-                        this.errors.add("Make sure all required intents are enabled on Discord developer website (MESSAGE CONTENT & SERVER MEMBERS)");
+                    if (throwable.getCloseStatus().getCode() == 4014) { // Disallowed intents, the REST API still works to know which ones
+                        discordClient.getApplicationInfo()
+                                .map(applicationInfoData -> ApplicationInfo.Flag.of(applicationInfoData.flags().toOptional().orElse(0)))
+                                .subscribe(flags -> {
+                                    List<String> missingIntents = new ArrayList<>();
+                                    if (!flags.contains(ApplicationInfo.Flag.GATEWAY_MESSAGE_CONTENT)
+                                            && !flags.contains(ApplicationInfo.Flag.GATEWAY_MESSAGE_CONTENT_LIMITED))
+                                        missingIntents.add("MESSAGE CONTENT");
+                                    if (!flags.contains(ApplicationInfo.Flag.GATEWAY_GUILD_MEMBERS)
+                                            && !flags.contains(ApplicationInfo.Flag.GATEWAY_GUILD_MEMBERS_LIMITED))
+                                        missingIntents.add("SERVER MEMBERS");
+                                    reportMissingIntents(missingIntents.isEmpty() ? "MESSAGE CONTENT & SERVER MEMBERS" : String.join(" & ", missingIntents));
+                                }, error -> reportMissingIntents("MESSAGE CONTENT & SERVER MEMBERS"));
                     }
                 })
                 .doOnError(ClientException.class, throwable -> {
@@ -96,7 +108,17 @@ public class Mc2Discord {
                     this.client.on(MemberLeaveEvent.class, event -> Mono.fromRunnable(() -> DiscordEvent.onMemberLeave(event))).subscribe();
                     this.client.on(ChatInputInteractionEvent.class, CommandManager::onChatInputInteraction).subscribe();
                     this.client.on(ChatInputAutoCompleteEvent.class, CommandManager::onChatInputAutoComplete).subscribe();
+                }, throwable -> {
+                    if (throwable instanceof CloseException || throwable instanceof ClientException)
+                        return; // Already reported above
+                    Mc2Discord.LOGGER.error("Error while starting Discord bot", throwable);
+                    this.errors.add("Error while starting Discord bot: " + throwable.getMessage());
                 });
+    }
+
+    private void reportMissingIntents(String intents) {
+        Mc2Discord.LOGGER.error("Make sure all required intents are enabled on Discord developer website ({})", intents);
+        this.errors.add("Make sure all required intents are enabled on Discord developer website (" + intents + ")");
     }
 
     private boolean loadConfig() {

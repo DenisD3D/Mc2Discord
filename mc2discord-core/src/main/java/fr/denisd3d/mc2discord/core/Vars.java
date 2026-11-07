@@ -34,6 +34,5 @@ public class Vars {
     public static Long startTime = null;
 
     public Possible<AllowedMentions> allowedMentions = Possible.absent();
-    public boolean missingMessageContentIntent = false;
     public boolean isStarted = false;
 }
