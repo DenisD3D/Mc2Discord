@@ -52,6 +52,7 @@ public class LifecycleEvents {
                 Mc2Discord.INSTANCE.errors.add(stringObjectMap.getOrDefault("message", "") + " (code " + stringObjectMap.getOrDefault("code", "xxx")
                         + ") for channel " + channel.channel_id.asString());
             })
+                    .onErrorResume(ClientException.class, e -> Mono.empty()) // Reported above
                     .flatMap(guildChannel -> guildChannel.getEffectivePermissions(Mc2Discord.INSTANCE.vars.bot_id)
                             .map(permissions -> Tuples.of(guildChannel, permissions)))
                     .subscribe(tuple -> {
@@ -97,22 +98,25 @@ public class LifecycleEvents {
                     Map<String, Object> stringObjectMap = e.getErrorResponse().map(ErrorResponse::getFields).orElse(Collections.emptyMap());
                     Mc2Discord.INSTANCE.errors.add(stringObjectMap.getOrDefault("message", "") + " (code " + stringObjectMap.getOrDefault("code", "xxx")
                             + ") for status channel " + channel.channel_id.asString());
-                }).flatMap(guildChannel -> guildChannel.getEffectivePermissions(Mc2Discord.INSTANCE.vars.bot_id)).subscribe(permissionSet -> {
-                    ArrayList<String> missingPermissions = new ArrayList<>();
-                    if (!permissionSet.contains(Permission.ADMINISTRATOR)) {
-                        if (!permissionSet.contains(Permission.VIEW_CHANNEL)) {
-                            missingPermissions.add("VIEW_CHANNEL");
-                        }
-                        if (!permissionSet.contains(Permission.MANAGE_CHANNELS)) {
-                            missingPermissions.add("MANAGE_CHANNELS");
-                        }
-                    }
+                })
+                        .onErrorResume(ClientException.class, e -> Mono.empty()) // Reported above
+                        .flatMap(guildChannel -> guildChannel.getEffectivePermissions(Mc2Discord.INSTANCE.vars.bot_id))
+                        .subscribe(permissionSet -> {
+                            ArrayList<String> missingPermissions = new ArrayList<>();
+                            if (!permissionSet.contains(Permission.ADMINISTRATOR)) {
+                                if (!permissionSet.contains(Permission.VIEW_CHANNEL)) {
+                                    missingPermissions.add("VIEW_CHANNEL");
+                                }
+                                if (!permissionSet.contains(Permission.MANAGE_CHANNELS)) {
+                                    missingPermissions.add("MANAGE_CHANNELS");
+                                }
+                            }
 
-                    if (!missingPermissions.isEmpty()) {
-                        Mc2Discord.INSTANCE.errors
-                                .add("Missing permissions for status channel " + channel.channel_id.asString() + ": " + String.join(", ", missingPermissions));
-                    }
-                });
+                            if (!missingPermissions.isEmpty()) {
+                                Mc2Discord.INSTANCE.errors.add("Missing permissions for status channel " + channel.channel_id.asString() + ": "
+                                        + String.join(", ", missingPermissions));
+                            }
+                        });
             }
         }
 
