@@ -68,7 +68,8 @@ public class MinecraftImpl implements IMinecraft {
                             if (replacement != null) {
                                 component.append(replacement.copy().withStyle(style));
                             } else {
-                                appendWithLinks(component, Template.resolve(placeholder, entities), style);
+                                // Values like Discord messages must not apply Minecraft formatting codes
+                                appendWithLinks(component, Template.resolve(placeholder, entities).replaceAll("§.?", ""), style);
                             }
                         }
                     }
