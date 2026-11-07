@@ -28,6 +28,7 @@ public class CommandManager {
     private static final String COMMAND_OPTION = "command";
     private static final int MAX_CHOICES = 25; // Discord limits
     private static final int MAX_CHOICE_LENGTH = 100;
+    private static final Duration COMMAND_TIMEOUT = Duration.ofSeconds(30);
 
     /**
      * Permissions of a Discord member to execute Minecraft commands
@@ -113,7 +114,8 @@ public class CommandManager {
         if (command.equals("help"))
             return Mono.fromSupplier(() -> Mc2Discord.INSTANCE.minecraft.executeHelpCommand(permissions.level(), permissions.commands()));
 
-        return Mc2Discord.INSTANCE.minecraft.executeCommand(command, permissions.levelFor(command));
+        return Mc2Discord.INSTANCE.minecraft.executeCommand(command, permissions.levelFor(command))
+                .timeout(COMMAND_TIMEOUT, Mono.fromSupplier(() -> Mc2Discord.INSTANCE.langManager.formatMessage("commands.timeout"))); // Server stopping or stuck
     }
 
     private static boolean canUseSlashCommand(Interaction interaction) {

@@ -139,6 +139,8 @@ public class MinecraftImpl implements IMinecraft {
         for (String command : commands) {
             CommandNode<CommandSourceStack> node = commandDispatcher.getRoot();
             for (String child : command.split(" ")) {
+                if (node == null)
+                    break;
                 node = node.getChild(child);
             }
             if (node != null) {
