@@ -20,7 +20,7 @@ dependencies {
     }
 
     // Config
-    implementation(group = "com.github.denisd3d", name = "config4j", version = "2.0.0") // Brings Night Config TOML
+    api(group = "com.github.denisd3d", name = "config4j", version = "2.0.0") // Brings Night Config TOML
 
     // Messages
     implementation(group = "net.fellbaum", name = "jemoji", version = "2.1.0") // Brings Jackson 3
