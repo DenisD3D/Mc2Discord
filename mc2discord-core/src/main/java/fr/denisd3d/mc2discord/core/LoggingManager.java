@@ -16,6 +16,7 @@ import java.util.Collections;
 
 public class LoggingManager {
     public static final DiscordAppender da = DiscordAppender.createAppender("DiscordLogging", null);
+
     public static void init() {
         ((Logger) LogManager.getRootLogger()).addAppender(da);
         da.start();
@@ -49,7 +50,8 @@ public class LoggingManager {
             if (event.getLevel().intLevel() <= Level.getLevel(Mc2Discord.INSTANCE.config.misc.logs_level).intLevel()) {
                 String loggerName = event.getLoggerName().substring(event.getLoggerName().lastIndexOf(".") + 1);
                 logs += Mc2Discord.INSTANCE.config.misc.logs_format.render(new LogEntity(loggerName, event.getThreadName(),
-                        Instant.ofEpochMilli(event.getInstant().getEpochMillisecond()), event.getLevel().name(), event.getMessage().getFormattedMessage())) + "\n";
+                        Instant.ofEpochMilli(event.getInstant().getEpochMillisecond()), event.getLevel().name(), event.getMessage().getFormattedMessage()))
+                        + "\n";
                 scheduleMessage();
             }
         }
