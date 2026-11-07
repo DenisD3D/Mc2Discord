@@ -27,6 +27,7 @@ public class AccountManager {
      */
     private static final PassiveExpiringMap<Snowflake, Integer> failedAttempts = new PassiveExpiringMap<>(10, TimeUnit.MINUTES);
     private static final int MAX_FAILED_ATTEMPTS = 5;
+    private static final int MAX_NICKNAME_LENGTH = 32; // Discord limit
 
     public static void init() {
         if (!Mc2Discord.INSTANCE.config.features.account_linking)
@@ -66,11 +67,18 @@ public class AccountManager {
                     Member member = memberIntegerTuple2.getT1();
                     Integer color = memberIntegerTuple2.getT2();
 
-                    return member.edit(GuildMemberEditSpec.builder()
-                            .nicknameOrNull(Mc2Discord.INSTANCE.config.account.discord_pseudo_format
-                                    .render(new PlayerEntity(Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid),
-                                            Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid), uuid), MemberEntity.of(member, color)))
-                            .build());
+                    String nickname = Mc2Discord.INSTANCE.config.account.discord_pseudo_format
+                            .render(new PlayerEntity(Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid),
+                                    Mc2Discord.INSTANCE.minecraft.getPlayerNameFromUUID(uuid), uuid), MemberEntity.of(member, color));
+
+                    if (nickname.codePointCount(0, nickname.length()) > MAX_NICKNAME_LENGTH) {
+                        String truncated = nickname.substring(0, nickname.offsetByCodePoints(0, MAX_NICKNAME_LENGTH));
+                        Mc2Discord.LOGGER.warn("The Discord nickname \"{}\" is longer than {} characters, it was shortened to \"{}\"", nickname,
+                                MAX_NICKNAME_LENGTH, truncated);
+                        nickname = truncated;
+                    }
+
+                    return member.edit(GuildMemberEditSpec.builder().nicknameOrNull(nickname).build());
                 })
                 .subscribe(null, M2DUtils.warnOnError("Cannot rename the Discord member " + discordId.asString()));
 
