@@ -5,6 +5,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.denisd3d.mc2discord.core.M2DUtils;
 import fr.denisd3d.mc2discord.core.Mc2Discord;
 import fr.denisd3d.mc2discord.core.MessageManager;
+import fr.denisd3d.mc2discord.core.events.MinecraftEvents;
 import fr.denisd3d.mc2discord.minecraft.Entities;
 import fr.denisd3d.mc2discord.minecraft.VersionCompat;
 import fr.denisd3d.mc2discord.minecraft.commands.DiscordCommandSource;
@@ -43,7 +44,7 @@ public class TellrawCommandMixin {
         ServerPlayer serverPlayer = commandContext.getSource().getPlayer();
         String messageContent = VersionCompat.resolveComponentArgument(commandContext, "message").getString();
         if (serverPlayer != null) {
-            MessageManager.sendChatMessage(messageContent, Entities.player(serverPlayer)).subscribe();
+            MinecraftEvents.onMinecraftChatMessageEvent(messageContent, Entities.player(serverPlayer)); // Ignores hidden players
         } else {
             MessageManager.sendInfoMessage("relayed_command", messageContent).subscribe();
         }

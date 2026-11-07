@@ -5,6 +5,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.denisd3d.mc2discord.core.M2DUtils;
 import fr.denisd3d.mc2discord.core.Mc2Discord;
 import fr.denisd3d.mc2discord.core.MessageManager;
+import fr.denisd3d.mc2discord.core.events.MinecraftEvents;
 import fr.denisd3d.mc2discord.minecraft.Entities;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.ChatType;
@@ -40,7 +41,7 @@ public class SayCommandMixin {
 
         String messageContent = ChatType.bind(ChatType.SAY_COMMAND, source).decorate(message.decoratedContent()).getString();
         if (serverPlayer != null) {
-            MessageManager.sendChatMessage(messageContent, Entities.player(serverPlayer)).subscribe();
+            MinecraftEvents.onMinecraftChatMessageEvent(messageContent, Entities.player(serverPlayer)); // Ignores hidden players
         } else {
             MessageManager.sendInfoMessage("relayed_command", messageContent).subscribe();
         }
