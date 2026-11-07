@@ -89,10 +89,11 @@ public class Mc2Discord {
                 })
                 .subscribe(gatewayDiscordClient -> {
                     this.client = gatewayDiscordClient;
-                    this.client.on(ReadyEvent.class).subscribe(LifecycleEvents::onDiscordReady);
-                    this.client.on(MessageCreateEvent.class).subscribe(DiscordEvent::onMessageCreate);
-                    this.client.on(MemberJoinEvent.class).subscribe(DiscordEvent::onMemberJoin);
-                    this.client.on(MemberLeaveEvent.class).subscribe(DiscordEvent::onMemberLeave);
+                    // With a mapper, an error is logged without stopping the handling of the next events
+                    this.client.on(ReadyEvent.class, event -> Mono.fromRunnable(() -> LifecycleEvents.onDiscordReady(event))).subscribe();
+                    this.client.on(MessageCreateEvent.class, event -> Mono.fromRunnable(() -> DiscordEvent.onMessageCreate(event))).subscribe();
+                    this.client.on(MemberJoinEvent.class, event -> Mono.fromRunnable(() -> DiscordEvent.onMemberJoin(event))).subscribe();
+                    this.client.on(MemberLeaveEvent.class, event -> Mono.fromRunnable(() -> DiscordEvent.onMemberLeave(event))).subscribe();
                     this.client.on(ChatInputInteractionEvent.class, CommandManager::onChatInputInteraction).subscribe();
                     this.client.on(ChatInputAutoCompleteEvent.class, CommandManager::onChatInputAutoComplete).subscribe();
                 });
