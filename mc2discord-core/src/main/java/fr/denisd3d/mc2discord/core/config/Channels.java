@@ -32,6 +32,11 @@ public class Channels {
         @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
         public SendMode mode = SendMode.WEBHOOK;
 
+        @SerdeKey("silent")
+        @SerdeComment("config.channels.silent.comment")
+        @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
+        public boolean silent = false;
+
         @SerdeKey("comment")
         @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
         public String comment;

@@ -1,6 +1,7 @@
 package fr.denisd3d.mc2discord.core;
 
 import discord4j.common.util.Snowflake;
+import discord4j.core.object.entity.Message;
 import discord4j.core.object.entity.Webhook;
 import discord4j.core.object.entity.channel.MessageChannel;
 import discord4j.core.object.entity.channel.TopLevelGuildMessageChannel;
@@ -91,6 +92,14 @@ public class MessageManager {
     }
 
     /**
+     * @param channel Discord channel id
+     * @return Whether messages sent in this channel should not trigger notifications
+     */
+    public static boolean isSilent(Snowflake channel) {
+        return Mc2Discord.INSTANCE.config.channels.channels.stream().anyMatch(c -> c.channel_id.equals(channel) && c.silent);
+    }
+
+    /**
      * Send a message using a webhook
      * See {@link #createWebhookMessage(Snowflake, String, Possible, Possible, boolean, Collection, Collection)} for more details
      */
@@ -128,6 +137,8 @@ public class MessageManager {
                         builder.embeds(embeds);
                     if (files != null)
                         builder.files(files);
+                    if (isSilent(channel))
+                        builder.addFlag(Message.Flag.SUPPRESS_NOTIFICATIONS);
 
                     return webhook.execute(builder.build()).doOnError(ClientException.isStatusCode(404), throwable -> webhooks.remove(channel)); // Webhook deleted
                 }))
@@ -194,6 +205,8 @@ public class MessageManager {
                         builder.embeds(embeds);
                     if (files != null)
                         builder.files(files);
+                    if (isSilent(channel))
+                        builder.addFlag(Message.Flag.SUPPRESS_NOTIFICATIONS);
 
                     return messageChannel.createMessage(builder.build());
                 }))
@@ -248,6 +261,8 @@ public class MessageManager {
                         mbuilder.addAllEmbeds(embeds);
                     if (files != null)
                         mbuilder.files(files);
+                    if (isSilent(channel))
+                        mbuilder.addFlag(Message.Flag.SUPPRESS_NOTIFICATIONS);
 
                     return messageChannel.createMessage(mbuilder.build());
                 }))
