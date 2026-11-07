@@ -132,7 +132,7 @@ public class MessageManager {
         if (username.isAbsent() && avatarUrl.isAbsent())
             return createPlainTextMessage(channel, message, username, surroundWithCodeBlock); // If username and avatar is absent, fallback to plain text for bot account to be used instead of a webhook with same name (allow color)
 
-        return getMc2DiscordWebhook(channel)
+        Mono<Void> send = Mono.defer(() -> getMc2DiscordWebhook(channel)
                 .flatMapMany(webhook -> Flux.fromIterable(M2DUtils.breakStringInMessages(message, 2000, surroundWithCodeBlock)).flatMap(s -> {
                     WebhookExecuteSpec.Builder builder = WebhookExecuteSpec.builder()
                             .username(username)
@@ -147,9 +147,15 @@ public class MessageManager {
                     if (isSilent(channel))
                         builder.addFlag(Message.Flag.SUPPRESS_NOTIFICATIONS);
 
-                    return webhook.execute(builder.build()).doOnError(ClientException.isStatusCode(404), throwable -> webhooks.remove(channel)); // Webhook deleted
+                    return webhook.execute(builder.build());
                 }))
-                .then();
+                .then());
+
+        // The webhook was deleted, send the message again with a new one. Files can only be read once
+        return send.onErrorResume(ClientException.isStatusCode(404), throwable -> {
+            webhooks.remove(channel);
+            return files == null ? send : Mono.error(throwable);
+        });
     }
 
     /**
