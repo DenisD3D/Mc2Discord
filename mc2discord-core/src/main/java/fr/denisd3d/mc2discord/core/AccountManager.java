@@ -107,8 +107,17 @@ public class AccountManager {
         if (!Mc2Discord.INSTANCE.config.features.account_linking)
             return false; // The account linking is disabled
 
-        if (event.getGuildId().isPresent())
-            return false; // The message is not in private message
+        if (event.getMessage().getAuthor().map(User::isBot).orElse(true))
+            return false; // Bot or webhook messages can't link an account
+
+        if (event.getGuildId().isPresent()) {
+            if (Mc2Discord.INSTANCE.config.channels.channels.stream()
+                    .filter(channel -> channel.subscriptions.contains("account_linking"))
+                    .noneMatch(channel -> channel.channel_id.equals(event.getMessage().getChannelId())))
+                return false; // The message is not in an account linking channel
+        } else if (!Mc2Discord.INSTANCE.config.account.allow_private_messages) {
+            return false; // Linking in private message is disabled
+        }
 
         String message = event.getMessage().getContent();
 

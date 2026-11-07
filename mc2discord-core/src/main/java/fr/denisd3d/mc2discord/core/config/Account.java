@@ -18,6 +18,11 @@ public class Account {
     @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
     public Snowflake guild_id = M2DUtils.NIL_SNOWFLAKE;
 
+    @SerdeKey("allow_private_messages")
+    @SerdeComment("config.account.allow_private_messages.comment")
+    @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
+    public boolean allow_private_messages = true;
+
     @SerdeKey("rename_discord_member")
     @SerdeComment("config.account.rename_discord_member.comment")
     @SerdeSkipDeserializingIf(SkipDeIf.IS_MISSING)
