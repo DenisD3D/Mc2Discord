@@ -1,5 +1,6 @@
 package fr.denisd3d.mc2discord.core;
 
+import discord4j.common.util.Snowflake;
 import discord4j.core.object.presence.Activity;
 import discord4j.core.object.presence.ClientActivity;
 import discord4j.core.object.presence.ClientPresence;
@@ -10,13 +11,19 @@ import fr.denisd3d.mc2discord.core.config.converters.RandomTemplate;
 import fr.denisd3d.mc2discord.core.entities.Template;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 
 public class StatusManager {
     private static Timer timer;
     private static boolean isCancelled = false;
+    /**
+     * Kept across restarts of the mod, Discord only allows 2 channel renames per 10 minutes
+     */
+    private static final Map<Snowflake, Long> lastChannelUpdates = new ConcurrentHashMap<>();
 
     public static void init() {
         isCancelled = false;
@@ -31,7 +38,9 @@ public class StatusManager {
             if (statusChannel.channel_id.equals(M2DUtils.NIL_SNOWFLAKE) || statusChannel.update_period == 0
                     || (statusChannel.name_message.isEmpty() && statusChannel.topic_message.isEmpty()))
                 continue;
-            timer.schedule(new ChannelUpdateTask(statusChannel), 0, statusChannel.update_period * 1000);
+            long period = statusChannel.update_period * 1000;
+            long delay = Math.max(0, lastChannelUpdates.getOrDefault(statusChannel.channel_id, 0L) + period - System.currentTimeMillis());
+            timer.schedule(new ChannelUpdateTask(statusChannel), delay, period);
         }
     }
 
@@ -58,6 +67,7 @@ public class StatusManager {
                 if (isCancelled) // If mod is stopped
                     return;
 
+                lastChannelUpdates.put(this.statusChannel.channel_id, System.currentTimeMillis());
                 Template nameMessage = this.statusChannel.name_message.pick();
                 Template topicMessage = this.statusChannel.topic_message.pick();
 
