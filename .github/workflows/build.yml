@@ -36,6 +36,7 @@ jobs:
           MINECRAFT: ${{ inputs.minecraft }}
 
   build:
+    name: Build ${{ matrix.minecraft.display }}-${{ matrix.loader }}
     needs: versions
     runs-on: ubuntu-latest
     strategy:
@@ -61,7 +62,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
-        run: ./gradlew :${{ matrix.minecraft.project }}-${{ matrix.loader }}:build
+        run: ./gradlew :${{ matrix.minecraft.project }}-${{ matrix.loader }}:build --configure-on-demand
         env:
           INPUT_VERSION: ${{ inputs.version }}
       - uses: actions/upload-artifact@v7
@@ -71,4 +72,4 @@ jobs:
             versions/${{ matrix.minecraft.project }}-${{ matrix.loader }}/build/libs/
             !versions/${{ matrix.minecraft.project }}-${{ matrix.loader }}/build/libs/*-slim.jar
             !versions/${{ matrix.minecraft.project }}-${{ matrix.loader }}/build/libs/*-all.jar
-            !versions/${{ matrix.minecraft.project }}-${{ matrix.loader }}/build/libs/*-dev.jar
+          if-no-files-found: error
