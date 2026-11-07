@@ -31,6 +31,7 @@ import reactor.util.retry.RetrySpec;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +60,10 @@ public class Mc2Discord {
 
         DiscordClient.builder(this.config.general.token)
                 .setReactorResources(ReactorResources.builder()
-                        .httpClient(ReactorResources.newHttpClient(ConnectionProvider.create("mc2discord")).proxyWithSystemProperties())
+                        .httpClient(ReactorResources.newHttpClient(ConnectionProvider.builder("mc2discord")
+                                .maxIdleTime(Duration.ofSeconds(20))
+                                .evictInBackground(Duration.ofSeconds(30))
+                                .build()).proxyWithSystemProperties())
                         .build())
                 .onClientResponse(ResponseFunction.retryWhen(RouteMatcher.any(), RetrySpec.withThrowable(Retry.anyOf(IOException.class))))
                 .build()
