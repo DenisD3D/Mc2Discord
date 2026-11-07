@@ -64,12 +64,6 @@ public interface IMinecraft {
     }
 
     /**
-     * Check if a new version of the mod is available
-     * @return The new version number or null if no new version is available
-     */
-    String getNewVersion();
-
-    /**
      * Get minecraft crash report datas (list of mods, java version, ...)
      * @return The crash report datas
      */

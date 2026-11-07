@@ -198,11 +198,6 @@ public class MinecraftImpl implements IMinecraft {
     }
 
     @Override
-    public String getNewVersion() {
-        return null;
-    }
-
-    @Override
     public String getEnvInfo() {
         return (new CrashReport("Mc2Discord status command / Not a real error!", new Throwable())).getFriendlyReport(ReportType.TEST);
     }

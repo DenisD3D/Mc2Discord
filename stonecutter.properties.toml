@@ -6,7 +6,6 @@ mod.name = "Mc2Discord"
 mod.authors = "DenisD3D"
 mod.description = "Link your Minecraft chat with your Discord server"
 mod.issue_tracker_url = "https://github.com/DenisD3D/Mc2Discord/issues"
-mod.update_json_url = "https://raw.githubusercontent.com/DenisD3D/Mc2Discord/main/update.json"
 mod.display_url = "https://www.curseforge.com/minecraft/mc-mods/mc2discord"
 
 loomx.loom_version = "1.15-SNAPSHOT"

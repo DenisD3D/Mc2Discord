@@ -53,11 +53,6 @@ public class M2DCommands {
             }
         }
 
-        String newVersion = Mc2Discord.INSTANCE.minecraft.getNewVersion();
-        if (newVersion != null) {
-            result.add(Mc2Discord.INSTANCE.langManager.translate("commands.status.version", newVersion));
-        }
-
         if (Mc2Discord.INSTANCE.errors.size() != 0) {
             result.add(Mc2Discord.INSTANCE.langManager.translate("commands.status.errors"));
             result.addAll(Mc2Discord.INSTANCE.errors);

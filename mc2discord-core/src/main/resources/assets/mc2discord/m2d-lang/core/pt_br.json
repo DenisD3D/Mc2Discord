@@ -5,7 +5,6 @@
     "commands.status.state": "Estado: %s",
     "commands.status.shard": "Tempo de resposta (shard %d): %d",
     "commands.status.invalid_config": "Configuração inválida, o bot não está conectado",
-    "commands.status.version": "Nova versão: %d",
     "commands.status.errors": "Erros:",
     "commands.status.no_error": "Nenhum erro",
     "commands.restart.content": "Mc2Discord reiniciado",

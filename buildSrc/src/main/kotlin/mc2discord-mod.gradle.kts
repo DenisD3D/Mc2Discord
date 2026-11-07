@@ -124,7 +124,6 @@ tasks {
             "modAuthors" to prop("mod.authors"),
             "modDescription" to prop("mod.description"),
             "modIssueTrackerUrl" to prop("mod.issue_tracker_url"),
-            "modUpdateJsonUrl" to prop("mod.update_json_url"),
             "modDisplayUrl" to prop("mod.display_url"),
             "javaVersion" to prop("mod.java"),
             "minecraftVersionRange" to prop("mod.mc_range"),

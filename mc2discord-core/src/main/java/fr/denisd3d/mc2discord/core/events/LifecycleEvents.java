@@ -201,10 +201,6 @@ public class LifecycleEvents {
         CommandManager.init();
 
         Mc2Discord.LOGGER.info("Mc2Discord started as " + Mc2Discord.INSTANCE.vars.bot_name + "#" + Mc2Discord.INSTANCE.vars.bot_discriminator);
-        String newVersion = Mc2Discord.INSTANCE.minecraft.getNewVersion();
-        if (newVersion != null) {
-            Mc2Discord.LOGGER.info("New Mc2Discord version available: " + newVersion);
-        }
         for (String error : Mc2Discord.INSTANCE.errors) {
             Mc2Discord.LOGGER.warn(error);
         }
